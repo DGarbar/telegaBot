@@ -1,6 +1,7 @@
 package org.dharbar.telegabot.client.mono;
 
 import org.dharbar.telegabot.client.mono.config.MonoFeignConfig;
+import org.dharbar.telegabot.client.mono.response.RateMonoResponse;
 import org.dharbar.telegabot.client.mono.response.TransactionMonoResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,4 +15,7 @@ public interface MonoClient {
     @GetMapping(value = "/personal/statement/0/{from}/{to}")
     List<TransactionMonoResponse> getTransactions(@PathVariable long from,
                                                   @PathVariable long to);
+
+    @GetMapping(value = "/bank/currency")
+    List<RateMonoResponse> getRates();
 }

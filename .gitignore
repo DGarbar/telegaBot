@@ -1,8 +1,12 @@
 HELP.md
 target/
 /.mvn/
+/mvnw
+/mvnw.cmd
 !**/src/main/**/target/
 !**/src/test/**/target/
+/src/test/get rates.http
+/src/main/resources/localTest/**
 .env
 
 ### STS ###
@@ -33,8 +37,3 @@ build/
 ### VS Code ###
 .vscode/
 
-/src/main/resources/monoAprilTxs.json
-/src/main/resources/monoMarchTxs.json
-/src/test/get rates.http
-/mvnw
-/mvnw.cmd
