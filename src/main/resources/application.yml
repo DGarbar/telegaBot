@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: telegaBot
+
+logging:
+  level:
+    org.dharbar.telegabot.client: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+
+api:
+  rate:
+    url: https://bank.gov.ua/NBUStatService/v1/statdirectory
+
+  mono:
+    url: https://api.monobank.ua
+    token: ${API_MONO_TOKEN}
+
+  notion:
+    url: https://api.notion.com/v1
+    token: ${API_NOTION_TOKEN}
+
+
+telegram:
+  name: ${TELEGRAM_BOT_NAME}
+  token: ${TELEGRAM_TOKEN}
+

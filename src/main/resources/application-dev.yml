@@ -1,0 +1,10 @@
+#logging:
+#  level:
+#    org.dharbar.telegabot.client.notion: DEBUG
+#
+#feign:
+#  client:
+#    config:
+#      default:
+#        loggerLevel: full
+#
