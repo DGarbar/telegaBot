@@ -27,6 +27,15 @@ api:
     token: ${API_NOTION_TOKEN}
 
 
+  binancep2p:
+    url: https://p2p.binance.com
+
+  binance:
+    url: https://api2.binance.com
+    key: ${API_BINANCE_KEY}
+    secret: ${API_BINANCE_SECRET}
+
+
 telegram:
   name: ${TELEGRAM_BOT_NAME}
   token: ${TELEGRAM_TOKEN}
