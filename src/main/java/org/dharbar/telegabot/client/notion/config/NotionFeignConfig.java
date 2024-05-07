@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.support.SpringEncoder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
@@ -34,6 +35,7 @@ public class NotionFeignConfig {
         return new SpringEncoder(objectFactory);
     }
 
+    @Profile("dev")
     @Bean
     public Logger.Level feignLoggerLevel() {
         return Logger.Level.FULL;

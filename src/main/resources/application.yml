@@ -39,4 +39,8 @@ api:
 telegram:
   name: ${TELEGRAM_BOT_NAME}
   token: ${TELEGRAM_TOKEN}
+  my:
+    chat-id: ${TELEGRAM_MY_CHAT_ID}
 
+task:
+  rates: 0 0 13,16 * * ?
