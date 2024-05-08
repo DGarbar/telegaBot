@@ -9,13 +9,13 @@
         <relativePath/>
     </parent>
     <groupId>org.example</groupId>
-    <artifactId>telegaBot</artifactId>
+    <artifactId>telegabot</artifactId>
     <version>0.0.1</version>
-    <name>telegaBot</name>
-    <description>telegaBot</description>
+    <name>telegabot</name>
+    <description>telegabot</description>
+
     <properties>
         <java.version>17</java.version>
-        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <dependencies>
@@ -87,27 +87,6 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>1.4.13</version>
-                <executions>
-                    <execution>
-                        <id>default</id>
-                        <goals>
-                            <goal>build</goal>
-                            <goal>push</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <repository>registry.heroku.com/telegabot/web</repository>
-                    <tag>latest</tag>
-                    <buildArgs>
-                        <JAR_FILE>telegaBot.jar</JAR_FILE>
-                    </buildArgs>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
