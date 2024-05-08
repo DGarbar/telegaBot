@@ -13,6 +13,7 @@ RUN mvn -Dmaven.test.skip=true clean package
 FROM openjdk:17-oracle
 WORKDIR /app
 COPY --from=build /app/target/telegaBot-*.jar /app/telegaBot.jar
+COPY --from=build /app/entrypoint.sh /app/entrypoint.sh
 EXPOSE 8080
-CMD ["java", "-jar", "telegaBot.jar"]
-
+RUN chmod +x /apps/entrypoint.sh
+CMD ["/app/entrypoint.sh"]
