@@ -1,8 +1,8 @@
 package org.dharbar.telegabot.task;
 
 import lombok.RequiredArgsConstructor;
-import org.dharbar.telegabot.service.bot.MessageHelper;
-import org.dharbar.telegabot.service.bot.TelegramBot;
+import org.dharbar.telegabot.bot.MessageHelper;
+import org.dharbar.telegabot.bot.TelegramBot;
 import org.dharbar.telegabot.service.rate.RateService;
 import org.dharbar.telegabot.service.rate.dto.RateDto;
 import org.dharbar.telegabot.service.rate.dto.RateProvider;

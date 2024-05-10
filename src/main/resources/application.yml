@@ -46,4 +46,9 @@ telegram:
     chat-id: ${TELEGRAM_MY_CHAT_ID}
 
 task:
-  rates: 0 0 13,16 * * ?
+  rates: 0 0 10,13 * * ?
+
+
+# TODO
+#spring.quartz.job-store-type=jdbc
+#spring.quartz.jdbc.initialize-schema=always

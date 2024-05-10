@@ -1,4 +1,4 @@
-package org.dharbar.telegabot.service.bot;
+package org.dharbar.telegabot.bot;
 
 import org.dharbar.telegabot.service.rate.dto.RateDto;
 import org.dharbar.telegabot.service.rate.dto.RateProvider;

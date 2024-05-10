@@ -1,7 +1,9 @@
-package org.dharbar.telegabot.service.bot;
+package org.dharbar.telegabot.bot;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dharbar.telegabot.job.JobService;
+import org.dharbar.telegabot.job.jobs.AlertPriceJob.AlertPriceJobData;
 import org.dharbar.telegabot.service.rate.RateService;
 import org.dharbar.telegabot.service.rate.dto.RateDto;
 import org.dharbar.telegabot.service.rate.dto.RateProvider;
@@ -21,6 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
 
+    private final JobService jobService;
     private final RateService rateService;
 
     @Value("${telegram.name}")
@@ -42,28 +45,43 @@ public class TelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
         if (update.hasMessage() && message.hasText()) {
-
             String messageText = message.getText();
-            String response = toResponse(messageText);
-
             Long chatId = message.getChatId();
-            sendMessage(chatId, response);
+            respondTo(chatId, messageText);
         }
     }
 
-    private String toResponse(String messageText) {
-        return switch (messageText) {
-            case "/start" -> "Hi!";
-            case "/binance" -> {
+    private void respondTo(Long chatId, String messageText) {
+        try {
+            if (messageText.equals("/start")) {
+                sendMessage(chatId, "Hello! I am a bot that can help you with rates and other stuff.");
+
+            } else if (messageText.equals("/binance")) {
                 Map<RateProvider, List<RateDto>> cryptoRates = rateService.getCryptoRates();
-                yield MessageHelper.rateMessage(cryptoRates);
-            }
-            case "/rate" -> {
+                String message = MessageHelper.rateMessage(cryptoRates);
+                sendMessage(chatId, message);
+
+            } else if (messageText.equals("/rate")) {
                 Map<RateProvider, List<RateDto>> providerToRates = rateService.getCurrencyRates();
-                yield MessageHelper.rateMessage(providerToRates);
+                String message = MessageHelper.rateMessage(providerToRates);
+                sendMessage(chatId, message);
+
+            } else if (messageText.startsWith("/watch")) {
+                String[] splitedMessage = messageText.split(" ");
+                double targetPrice = Double.parseDouble(splitedMessage[1]);
+                AlertPriceJobData alertPriceJobData = AlertPriceJobData.builder()
+                        .chatId(chatId)
+                        .targetPrice(targetPrice)
+                        .build();
+                jobService.watchTargetPrice(alertPriceJobData);
+            } else {
+                sendMessage(chatId, "I don't understand you.");
             }
-            default -> "Error";
-        };
+
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            sendMessage(chatId, "Something went wrong. Please try again later.");
+        }
     }
 
     public void sendMessage(Long chatId, String textToSend) {

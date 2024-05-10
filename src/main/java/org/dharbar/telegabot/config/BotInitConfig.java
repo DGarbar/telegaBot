@@ -1,7 +1,7 @@
 package org.dharbar.telegabot.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dharbar.telegabot.service.bot.TelegramBot;
+import org.dharbar.telegabot.bot.TelegramBot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
