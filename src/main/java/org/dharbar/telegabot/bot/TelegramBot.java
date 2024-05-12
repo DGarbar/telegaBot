@@ -69,11 +69,14 @@ public class TelegramBot extends TelegramLongPollingBot {
             } else if (messageText.startsWith("/watch")) {
                 String[] splitedMessage = messageText.split(" ");
                 double targetPrice = Double.parseDouble(splitedMessage[1]);
+                int secondsRetry = Integer.parseInt(splitedMessage[2]);
                 AlertPriceJobData alertPriceJobData = AlertPriceJobData.builder()
                         .chatId(chatId)
                         .targetPrice(targetPrice)
                         .build();
-                jobService.watchTargetPrice(alertPriceJobData);
+                jobService.watchTargetPrice(alertPriceJobData, secondsRetry);
+            } else if (messageText.startsWith("/watchEnd")) {
+                jobService.watchEnd(chatId);
             } else {
                 sendMessage(chatId, "I don't understand you.");
             }

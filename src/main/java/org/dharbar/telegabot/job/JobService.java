@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.JobKey.jobKey;
-import static org.quartz.SimpleScheduleBuilder.repeatMinutelyForTotalCount;
+import static org.quartz.SimpleScheduleBuilder.repeatSecondlyForTotalCount;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 @Slf4j
@@ -23,7 +23,7 @@ public class JobService {
 
     private final Scheduler scheduler;
 
-    public void watchTargetPrice(AlertPriceJob.AlertPriceJobData alertPriceJobData) {
+    public void watchTargetPrice(AlertPriceJob.AlertPriceJobData alertPriceJobData, int secondsRetry) {
         long chatId = alertPriceJobData.getChatId();
         JobKey jobKey = jobKey("alert-job-USDT-" + chatId);
 
@@ -38,7 +38,7 @@ public class JobService {
         Trigger trigger = newTrigger()
                 .withIdentity("trigger-alert-job-USDT-" + chatId)
                 .startNow()
-                .withSchedule(repeatMinutelyForTotalCount(10, 30))
+                .withSchedule(repeatSecondlyForTotalCount(10, secondsRetry))
                 .build();
 
         try {
@@ -46,6 +46,11 @@ public class JobService {
         } catch (SchedulerException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void watchEnd(Long chatId) {
+        JobKey jobKey = jobKey("alert-job-USDT-" + chatId);
+        removeJob(jobKey);
     }
 
     private void removeJob(JobKey jobKey) {
