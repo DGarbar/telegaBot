@@ -27,7 +27,7 @@ public class RateService {
     private final MonoRateService monoRateService;
     private final BinanceRateService binanceRateService;
 
-    public Map<RateProvider, List<RateDto>> getCurrencyRates() {
+    public Map<RateProvider, List<RateDto>> getFiatCurrencyRates() {
         List<RateDto> nbuRates = nbuRateService.getRates(CURRENCY_FROM, UAH);
         List<RateDto> monoRates = monoRateService.getRates(CURRENCY_FROM, UAH);
 

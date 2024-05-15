@@ -3,6 +3,7 @@ package org.dharbar.telegabot.bot;
 import org.dharbar.telegabot.service.rate.dto.RateDto;
 import org.dharbar.telegabot.service.rate.dto.RateProvider;
 
+import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,14 +20,31 @@ public class MessageHelper {
         String rateMessage = rates.stream()
                 .map(MessageHelper::toRateMessage)
                 .collect(Collectors.joining("\n"));
-        return String.format("%s:\n%s", rateProvider, rateMessage);
+        return String.format("<b>%s</b>:\n%s\n", rateProvider, rateMessage);
     }
 
     private static String toRateMessage(RateDto rate) {
-        if (rate.getRateSell() == 0) {
-            return String.format("%s -> %s  =  %.2f", rate.getCurrencyFrom(), rate.getCurrencyTo(), rate.getRateBuy());
+        StringBuilder message = new StringBuilder();
+
+        Currency currencyFrom = rate.getCurrencyFrom();
+        Currency currencyTo = rate.getCurrencyTo();
+        double rateBuy = rate.getRateBuy();
+        double rateSell = rate.getRateSell();
+
+        if (Currency.getInstance("UAH").equals(currencyTo)) {
+            message.append(currencyFrom).append(" = ");
+        } else {
+            message.append(currencyFrom).append(" -> ").append(currencyTo).append(" = ");
         }
-        return String.format("%s -> %s  =  %.2f ::: %.2f", rate.getCurrencyFrom(), rate.getCurrencyTo(), rate.getRateBuy(), rate.getRateSell());
+
+        if (rateSell == 0 || rateBuy == 0) {
+            double price = rateSell == 0 ? rateBuy : rateSell;
+            message.append(String.format("%.2f", price));
+        } else {
+            message.append(String.format("%.2f ::: %.2f", rateBuy, rateSell));
+        }
+
+        return message.toString();
     }
 
 }

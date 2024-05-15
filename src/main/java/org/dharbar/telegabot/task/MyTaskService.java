@@ -27,7 +27,7 @@ public class MyTaskService {
 
     @Scheduled(cron = "${task.rates}")
     public void sendRates() {
-        Map<RateProvider, List<RateDto>> currencyRates = rateService.getCurrencyRates();
+        Map<RateProvider, List<RateDto>> currencyRates = rateService.getFiatCurrencyRates();
         Map<RateProvider, List<RateDto>> cryptoRates = rateService.getCryptoRates();
 
         String currencyRateMessage = MessageHelper.rateMessage(currencyRates);

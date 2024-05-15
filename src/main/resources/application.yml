@@ -46,7 +46,7 @@ telegram:
     chat-id: ${TELEGRAM_MY_CHAT_ID}
 
 task:
-  rates: 0 0 10,13 * * ?
+  rates: 0 0 7,10 * * ?
 
 
 # TODO
