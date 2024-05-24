@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dharbar.telegabot.service.statement.dto.TransactionDto;
-import org.dharbar.telegabot.service.statement.mapper.TransactionMapper;
 import org.dharbar.telegabot.service.statement.mono.MonoService;
 import org.dharbar.telegabot.service.statement.notion.NotionService;
 import org.springframework.stereotype.Service;
@@ -20,8 +19,6 @@ public class NotionStatementService {
 
     private final NotionService notionService;
     private final MonoService monoService;
-
-    private final TransactionMapper transactionMapper;
 
     public void updateStatementTable() {
         Pair<LocalDate, List<TransactionDto>> localDateListPair = notionService.lastDayTransaction();
