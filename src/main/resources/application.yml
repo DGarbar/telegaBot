@@ -5,6 +5,16 @@ spring:
   application:
     name: telegabot
 
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    change-log: db/changelog/db.changelog-master.yml
+
+
 logging:
   level:
     org.dharbar.telegabot.client: DEBUG

@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: telegabot
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/telegaBotDb

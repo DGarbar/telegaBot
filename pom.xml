@@ -36,6 +36,21 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jdbc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
 
@@ -96,6 +111,19 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <!--            <plugin>
+               <groupId>org.liquibase</groupId>
+               <artifactId>liquibase-maven-plugin</artifactId>
+               <version>4.27.0</version>
+               <configuration>
+                  <driver>org.h2.Driver</driver>
+                  <url>jdbc:h2:file:./target/h2db/db/carapp</url>
+                  <username>carapp</username>
+                  <password />
+                  <outputChangeLogFile>src/main/resources/liquibase-outputChangeLog.xml</outputChangeLogFile>
+               </configuration>
+            </plugin>-->
 
         </plugins>
     </build>

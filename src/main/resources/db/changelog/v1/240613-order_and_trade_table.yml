@@ -1,0 +1,88 @@
+databaseChangeLog:
+  - changeSet:
+      id: 240613-init
+      author: dgarbar
+      changes:
+        - createTable:
+            tableName: order
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: trade_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ticker
+                  type: varchar(4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rate
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_at
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_usd
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_uah
+                  type: decimal(10,2)
+              #                  constraints:
+              #                    nullable: false
+              - column:
+                  name: commission_usd
+                  type: decimal(10,2)
+              #                  constraints:
+              #                    nullable: false
+              - column:
+                  name: comment
+                  type: varchar(255)
+        - createTable:
+            tableName: trade
+#             contains
+            #    private BigDecimal netProfitUsd;
+            #    private BigDecimal profitPercentage;
+            #    private String tradeSummary;
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: is_closed
+                  type: boolean
+              - column:
+                  name: net_profit_usd
+                  type: decimal(10,2)
+              - column:
+                  name: profit_percentage
+                  type: decimal(10,2)
+              - column:
+                  name: comment
+                  type: varchar(255)
+
