@@ -4,6 +4,27 @@ databaseChangeLog:
       author: dgarbar
       changes:
         - createTable:
+            tableName: trade
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: is_closed
+                  type: boolean
+              - column:
+                  name: net_profit_usd
+                  type: decimal(10,2)
+              - column:
+                  name: profit_percentage
+                  type: decimal(10,2)
+              - column:
+                  name: comment
+                  type: varchar(255)
+        - createTable:
             tableName: order
             columns:
               - column:
@@ -22,6 +43,8 @@ databaseChangeLog:
                   type: UUID
                   constraints:
                     nullable: false
+                    foreignKeyName: fk_order_trade
+                    references: trade(id)
               - column:
                   name: ticker
                   type: varchar(4)
@@ -57,31 +80,6 @@ databaseChangeLog:
                   type: decimal(10,2)
               #                  constraints:
               #                    nullable: false
-              - column:
-                  name: comment
-                  type: varchar(255)
-        - createTable:
-            tableName: trade
-#             contains
-            #    private BigDecimal netProfitUsd;
-            #    private BigDecimal profitPercentage;
-            #    private String tradeSummary;
-            columns:
-              - column:
-                  name: id
-                  type: UUID
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: is_closed
-                  type: boolean
-              - column:
-                  name: net_profit_usd
-                  type: decimal(10,2)
-              - column:
-                  name: profit_percentage
-                  type: decimal(10,2)
               - column:
                   name: comment
                   type: varchar(255)
