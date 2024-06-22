@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dharbar.telegabot.bot.scenario.CommandScenario;
 import org.dharbar.telegabot.bot.scenario.ScenarioResult;
 import org.dharbar.telegabot.job.JobService;
-import org.dharbar.telegabot.service.rate.RateService;
+import org.dharbar.telegabot.service.rate.RateFacadeService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -25,7 +25,7 @@ import java.util.Map;
 public class TelegramBot extends TelegramLongPollingBot {
 
     private final JobService jobService;
-    private final RateService rateService;
+    private final RateFacadeService rateService;
 
     private final List<CommandScenario> commandScenarios;
 

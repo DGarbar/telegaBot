@@ -1,7 +1,7 @@
-package org.dharbar.telegabot.trademanager.repository.config;
+package org.dharbar.telegabot.repository.config;
 
-import org.dharbar.telegabot.trademanager.repository.entity.OrderEntity;
-import org.dharbar.telegabot.trademanager.repository.entity.TradeEntity;
+import org.dharbar.telegabot.repository.entity.OrderEntity;
+import org.dharbar.telegabot.repository.entity.TradeEntity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.relational.core.mapping.event.BeforeConvertCallback;

@@ -1,4 +1,4 @@
-package org.dharbar.telegabot.trademanager.repository.entity;
+package org.dharbar.telegabot.repository.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

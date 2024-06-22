@@ -1,10 +1,10 @@
-package org.dharbar.telegabot.trademanager.service;
+package org.dharbar.telegabot.service.trademanagment;
 
 import lombok.RequiredArgsConstructor;
-import org.dharbar.telegabot.trademanager.repository.TradeRepository;
-import org.dharbar.telegabot.trademanager.repository.entity.OrderEntity;
-import org.dharbar.telegabot.trademanager.repository.entity.OrderType;
-import org.dharbar.telegabot.trademanager.repository.entity.TradeEntity;
+import org.dharbar.telegabot.repository.TradeRepository;
+import org.dharbar.telegabot.repository.entity.OrderEntity;
+import org.dharbar.telegabot.repository.entity.OrderType;
+import org.dharbar.telegabot.repository.entity.TradeEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +21,8 @@ public class TradeService {
     @Transactional
     public void createTestTrade() {
         TradeEntity trade = TradeEntity.builder()
+                .netProfitUsd(BigDecimal.ONE)
+                .profitPercentage(BigDecimal.ZERO)
                 .build();
 
         OrderEntity order = OrderEntity.builder()

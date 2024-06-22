@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class NotionStatementService {
+public class NotionStatementFacadeService {
 
     private final NotionService notionService;
     private final MonoService monoService;

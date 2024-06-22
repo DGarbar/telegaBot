@@ -18,7 +18,7 @@ import static org.dharbar.telegabot.service.rate.dto.RateProvider.NBU;
 
 @Service
 @RequiredArgsConstructor
-public class RateService {
+public class RateFacadeService {
 
     public static final Currency UAH = Currency.getInstance("UAH");
     public static final List<Currency> CURRENCY_FROM = List.of(Currency.getInstance("USD"), Currency.getInstance("EUR"));

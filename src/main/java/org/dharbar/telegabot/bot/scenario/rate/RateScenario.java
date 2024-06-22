@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dharbar.telegabot.bot.MessageHelper;
 import org.dharbar.telegabot.bot.scenario.CommandScenario;
 import org.dharbar.telegabot.bot.scenario.ScenarioResult;
-import org.dharbar.telegabot.service.rate.RateService;
+import org.dharbar.telegabot.service.rate.RateFacadeService;
 import org.dharbar.telegabot.service.rate.dto.RateDto;
 import org.dharbar.telegabot.service.rate.dto.RateProvider;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class RateScenario implements CommandScenario {
     public static final String UAH_FIAT_RATE_COMMAND = "Fiat rate";
     public static final String UAH_CRYPTO_RATE_COMMAND = "Crypto rate";
 
-    private final RateService rateService;
+    private final RateFacadeService rateService;
 
     @Override
     public ScenarioResult handle(String messageText, String prevCommand, Long chatId) {

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.dharbar.telegabot.bot.scenario.CommandScenario;
 import org.dharbar.telegabot.bot.scenario.ScenarioResult;
-import org.dharbar.telegabot.service.statement.NotionStatementService;
+import org.dharbar.telegabot.service.statement.NotionStatementFacadeService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -27,7 +27,7 @@ public class OtherScenario implements CommandScenario {
     @Value("${telegram.my.chat-id}")
     Long myChatId;
 
-    private final NotionStatementService notionStatementService;
+    private final NotionStatementFacadeService notionStatementService;
 
     @Override
     public ScenarioResult handle(String messageText, String prevCommand, Long chatId) {
