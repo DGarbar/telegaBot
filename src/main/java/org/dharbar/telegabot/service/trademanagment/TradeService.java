@@ -3,14 +3,13 @@ package org.dharbar.telegabot.service.trademanagment;
 import lombok.RequiredArgsConstructor;
 import org.dharbar.telegabot.repository.TradeRepository;
 import org.dharbar.telegabot.repository.entity.OrderEntity;
-import org.dharbar.telegabot.repository.entity.OrderType;
 import org.dharbar.telegabot.repository.entity.TradeEntity;
+import org.dharbar.telegabot.service.trademanagment.dto.TradeDto;
+import org.dharbar.telegabot.service.trademanagment.mapper.TradeMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.UUID;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -18,26 +17,17 @@ public class TradeService {
 
     private final TradeRepository tradeRepository;
 
-    @Transactional
-    public void createTestTrade() {
-        TradeEntity trade = TradeEntity.builder()
-                .netProfitUsd(BigDecimal.ONE)
-                .profitPercentage(BigDecimal.ZERO)
-                .build();
+    private final TradeMapper tradeMapper;
 
-        OrderEntity order = OrderEntity.builder()
-                .id(UUID.randomUUID())
-                .type(OrderType.BUY)
-                .ticker("AAPL")
-                .quantity(10.0)
-                .dateAt(LocalDate.now())
-                .rate(BigDecimal.TEN)
-                .totalUsd(BigDecimal.valueOf(1000.0))
-                .commissionUsd(BigDecimal.valueOf(1.0))
-                .build();
+    public List<TradeDto> getTrades() {
+        return tradeRepository.findAll().stream()
+                .map(tradeMapper::toDto)
+                .toList();
+    }
 
-        trade.addOrder(order);
-
+    public void saveTrade(TradeDto tradeDto) {
+        Set<OrderEntity> orders = tradeMapper.toOrders(tradeDto.getByuOrder(), tradeDto.getSellOrders());
+        TradeEntity trade = tradeMapper.toEntity(tradeDto, orders);
         tradeRepository.save(trade);
     }
 }

@@ -3,6 +3,7 @@ target/
 /.mvn/
 /mvnw
 /mvnw.cmd
+/src/main/frontend/**
 !**/src/main/**/target/
 !**/src/test/**/target/
 /src/test/get rates.http
