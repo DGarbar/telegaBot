@@ -1,0 +1,13 @@
+.trade-view .trade-details-div {
+    display: flex;
+}
+
+.trade-view .trade-grid {
+    flex: 2;
+}
+
+.trade-view .order-details-form {
+    flex: 1;
+    padding: var(--lumo-space-m);
+}
+
