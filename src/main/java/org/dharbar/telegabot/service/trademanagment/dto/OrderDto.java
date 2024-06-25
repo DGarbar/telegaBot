@@ -1,14 +1,14 @@
 package org.dharbar.telegabot.service.trademanagment.dto;
 
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
 import org.dharbar.telegabot.repository.entity.OrderType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Value
+@Data
 @Builder
 public class OrderDto {
 

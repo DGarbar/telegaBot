@@ -36,7 +36,6 @@ public class TradeEntity {
     private String comment;
 
     public void addOrder(OrderEntity order) {
-        order.setId(UUID.randomUUID());
         order.setTradeId(this.id);
         orders.add(order);
     }

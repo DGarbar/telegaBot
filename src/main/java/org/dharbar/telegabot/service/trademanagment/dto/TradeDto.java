@@ -1,25 +1,26 @@
 package org.dharbar.telegabot.service.trademanagment.dto;
 
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
-@Value
+@Data
 @Builder
 public class TradeDto {
 
-    String id;
+    UUID id;
 
     OrderDto byuOrder;
 
     @Builder.Default
     Set<OrderDto> sellOrders = new HashSet<>();
 
-    Boolean isClosed = false;
+    Boolean isClosed;
 
     BigDecimal netProfitUsd;
     BigDecimal profitPercentage;

@@ -1,5 +1,6 @@
 HELP.md
 target/
+node_modules/**
 /.mvn/
 /mvnw
 /mvnw.cmd
@@ -8,6 +9,7 @@ target/
 !**/src/test/**/target/
 /src/test/get rates.http
 /src/main/resources/localTest/**
+/src/main/bundles/**
 .env
 
 ### STS ###
