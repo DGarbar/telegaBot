@@ -13,6 +13,16 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
+                  name: ticker
+                  type: varchar(4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_at
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
                   name: is_closed
                   type: boolean
                   defaultValueBoolean: false

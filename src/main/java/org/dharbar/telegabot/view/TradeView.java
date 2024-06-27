@@ -3,6 +3,7 @@ package org.dharbar.telegabot.view;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
@@ -10,15 +11,22 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.data.provider.QuerySortOrder;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import org.dharbar.telegabot.repository.entity.OrderType;
 import org.dharbar.telegabot.service.trademanagment.TradeService;
 import org.dharbar.telegabot.service.trademanagment.dto.OrderDto;
 import org.dharbar.telegabot.service.trademanagment.dto.TradeDto;
 import org.dharbar.telegabot.view.events.OrderFormEvent;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -28,6 +36,7 @@ public class TradeView extends VerticalLayout {
 
     private final Grid<TradeDto> grid;
     private final OrderDetailsForm tradeNewForm;
+    private final Checkbox isOnlyOpenCheckbox = new Checkbox("Open only", true);
 
     private final TradeService tradeService;
 
@@ -42,6 +51,9 @@ public class TradeView extends VerticalLayout {
 
         grid = setupGrid();
 
+        isOnlyOpenCheckbox.setValue(true);
+        isOnlyOpenCheckbox.addValueChangeListener(e -> listTrades());
+
         Div tradeDetailsDiv = new Div(grid, tradeNewForm);
         tradeDetailsDiv.setSizeFull();
         tradeDetailsDiv.addClassName("trade-details-div");
@@ -54,10 +66,11 @@ public class TradeView extends VerticalLayout {
     private Grid<TradeDto> setupGrid() {
         Grid<TradeDto> grid = new Grid<>(TradeDto.class, false);
         grid.addClassName("trade-grid");
-        grid.addColumn(TradeDto::getTicker).setHeader("Ticker").setSortable(true);
-        grid.addColumn(TradeDto::getBuyDateAt).setHeader("Date").setSortable(true);
+        grid.addColumn(TradeDto::getTicker).setHeader("Ticker").setKey("ticker").setSortable(true);
+        grid.addColumn(TradeDto::getDateAt).setHeader("Date").setKey("dateAt").setSortable(true);
         grid.addColumn(TradeDto::getBuyTotalUsd).setHeader("Buy $");
         grid.addColumn(TradeDto::getBuyRate).setHeader("Buy Rate");
+        // grid.addColumn(TradeDto::getSellOrders).setHeader("Sell Rate");
         grid.addColumn(TradeDto::getNetProfitUsd).setHeader("Profit $");
         grid.addColumn(TradeDto::getProfitPercentage).setHeader("Profit %");
         grid.addColumn(TradeDto::getComment).setHeader("Comment");
@@ -106,14 +119,11 @@ public class TradeView extends VerticalLayout {
     private void saveOrder(OrderFormEvent.SaveOrderEvent newBuyEvent) {
         OrderDto order = newBuyEvent.getOrderDto();
         if (OrderType.BUY == order.getType()) {
-            TradeDto trade = TradeDto.builder()
-                    .byuOrder(order)
-                    .build();
-            tradeService.saveTrade(trade);
+            tradeService.saveNewTrade(order);
 
         } else {
             TradeDto trade = grid.asSingleSelect().getValue();
-            tradeService.saveSellOrder(trade.getId(), order);
+            tradeService.saveTradeSellOrder(trade.getId(), order);
         }
 
         listTrades();
@@ -148,7 +158,21 @@ public class TradeView extends VerticalLayout {
     private void listTrades() {
         // TODO add filtering and pagination
         // grid.setItems(VaadinSpringDataHelpers.fromPagingRepository(repo))
-        grid.setItems(tradeService.getTrades());
+        if (isOnlyOpenCheckbox.getValue()) {
+            grid.setItems(query -> tradeService.getOpenTrades(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
+        } else {
+            grid.setItems(query -> tradeService.getTrades(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
+        }
+    }
+
+    private static PageRequest toPageRequest(Query<TradeDto, Void> query) {
+        List<Sort.Order> sorting = query.getSortOrders().stream()
+                .filter(sortOrder -> SortDirection.ASCENDING == sortOrder.getDirection())
+                .map(QuerySortOrder::getSorted)
+                .map(Sort.Order::asc)
+                .toList();
+
+        return PageRequest.of(query.getPage(), query.getPageSize(), Sort.by(sorting));
     }
 
     // todo add filtering

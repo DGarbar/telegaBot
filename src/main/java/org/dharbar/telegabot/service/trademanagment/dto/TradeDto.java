@@ -15,6 +15,9 @@ public class TradeDto {
 
     UUID id;
 
+    String ticker;
+    LocalDate dateAt;
+
     OrderDto byuOrder;
 
     @Builder.Default
@@ -25,14 +28,6 @@ public class TradeDto {
     BigDecimal netProfitUsd;
     BigDecimal profitPercentage;
     String comment;
-
-    public String getTicker() {
-        return byuOrder.getTicker();
-    }
-
-    public LocalDate getBuyDateAt() {
-        return byuOrder.getDateAt();
-    }
 
     public BigDecimal getBuyQuantity() {
         return byuOrder.getQuantity();

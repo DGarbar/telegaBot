@@ -21,12 +21,16 @@ public interface TradeMapper {
     @Mapping(target = "sellOrders", expression = "java(findSellOrders(tradeEntity.getOrders()))")
     TradeDto toDto(TradeEntity tradeEntity);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "profitPercentage", ignore = true)
+    @Mapping(target = "orders", ignore = true)
+    @Mapping(target = "netProfitUsd", ignore = true)
+    @Mapping(target = "isClosed", constant = "false")
+    TradeEntity toNewEntity(OrderEntity orderDto);
+
     OrderDto toDto(OrderEntity orderEntity);
 
-    @Mapping(target="isClosed", defaultValue = "false")
-    TradeEntity toEntity(TradeDto tradeDto, Set<OrderEntity> orders);
-
-    @Mapping(target="tradeId", ignore = true)
+    @Mapping(target = "tradeId", ignore = true)
     OrderEntity toEntity(OrderDto orders);
 
     Set<OrderEntity> toEntities(Set<OrderDto> orders);

@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -24,6 +25,10 @@ public class TradeEntity {
 
     @Id
     private UUID id;
+
+    private String ticker;
+
+    private LocalDate dateAt;
 
     @MappedCollection(idColumn = "trade_id")
     private Set<OrderEntity> orders = new HashSet<>();

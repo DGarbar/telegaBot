@@ -8,6 +8,7 @@ import org.dharbar.telegabot.repository.entity.TradeEntity;
 import org.dharbar.telegabot.service.trademanagment.dto.OrderDto;
 import org.dharbar.telegabot.service.trademanagment.dto.TradeDto;
 import org.dharbar.telegabot.service.trademanagment.mapper.TradeMapper;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +17,6 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,26 +27,33 @@ public class TradeService {
     private final TradeMapper tradeMapper;
 
     public Set<String> getTickers() {
-        return getTrades().stream()
-                .map(TradeDto::getTicker)
-                .collect(Collectors.toSet());
+        return tradeRepository.findDistinctTicker();
     }
 
-    public List<TradeDto> getTrades() {
-        return tradeRepository.findAll().stream()
+    public List<TradeDto> getOpenTrades(PageRequest pageRequest) {
+        return tradeRepository.findAllByIsClosedIsFalse(pageRequest).stream()
                 .map(tradeMapper::toDto)
                 .toList();
     }
 
-    public void saveTrade(TradeDto tradeDto) {
-        Set<OrderEntity> orders = tradeMapper.toOrders(tradeDto.getByuOrder(), tradeDto.getSellOrders());
-        TradeEntity trade = tradeMapper.toEntity(tradeDto, orders);
-        tradeRepository.save(trade);
+    public List<TradeDto> getTrades(PageRequest pageRequest) {
+        return tradeRepository.findAll(pageRequest).stream()
+                .map(tradeMapper::toDto)
+                .toList();
     }
 
-    // TODO for update for trade
+    public void saveNewTrade(OrderDto orderDto) {
+        OrderEntity order = tradeMapper.toEntity(orderDto);
+        TradeEntity newTrade = tradeMapper.toNewEntity(order);
+        // TODO fix with mapper
+        newTrade.addOrder(order);
+
+        tradeRepository.save(newTrade);
+    }
+
+    // TODO (later) for update for trade
     @Transactional
-    public void saveSellOrder(UUID tradeId, OrderDto sellOrderDto) {
+    public void saveTradeSellOrder(UUID tradeId, OrderDto sellOrderDto) {
         OrderEntity order = tradeMapper.toEntity(sellOrderDto);
         TradeEntity trade = tradeRepository.findById(tradeId).orElseThrow();
         trade.addOrder(order);
