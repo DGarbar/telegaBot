@@ -11,9 +11,6 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.provider.Query;
-import com.vaadin.flow.data.provider.QuerySortOrder;
-import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
@@ -22,11 +19,8 @@ import org.dharbar.telegabot.service.trademanagment.TradeService;
 import org.dharbar.telegabot.service.trademanagment.dto.OrderDto;
 import org.dharbar.telegabot.service.trademanagment.dto.TradeDto;
 import org.dharbar.telegabot.view.events.OrderFormEvent;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -50,9 +44,6 @@ public class TradeView extends VerticalLayout {
         tradeNewForm.addListener(OrderFormEvent.CloseEvent.class, e -> closeEditor());
 
         grid = setupGrid();
-
-        isOnlyOpenCheckbox.setValue(true);
-        isOnlyOpenCheckbox.addValueChangeListener(e -> listTrades());
 
         Div tradeDetailsDiv = new Div(grid, tradeNewForm);
         tradeDetailsDiv.setSizeFull();
@@ -97,7 +88,10 @@ public class TradeView extends VerticalLayout {
         Button addTradeButton = new Button("Buy new");
         addTradeButton.addClickListener(e -> openBuyOrder());
 
-        HorizontalLayout toolbar = new HorizontalLayout(addTradeButton);
+        isOnlyOpenCheckbox.setValue(true);
+        isOnlyOpenCheckbox.addValueChangeListener(e -> listTrades());
+
+        HorizontalLayout toolbar = new HorizontalLayout(isOnlyOpenCheckbox, addTradeButton);
         toolbar.addClassName("toolbar");
         return toolbar;
     }
@@ -156,26 +150,10 @@ public class TradeView extends VerticalLayout {
     }
 
     private void listTrades() {
-        // TODO add filtering and pagination
-        // grid.setItems(VaadinSpringDataHelpers.fromPagingRepository(repo))
         if (isOnlyOpenCheckbox.getValue()) {
             grid.setItems(query -> tradeService.getOpenTrades(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
         } else {
             grid.setItems(query -> tradeService.getTrades(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
         }
     }
-
-    private static PageRequest toPageRequest(Query<TradeDto, Void> query) {
-        List<Sort.Order> sorting = query.getSortOrders().stream()
-                .filter(sortOrder -> SortDirection.ASCENDING == sortOrder.getDirection())
-                .map(QuerySortOrder::getSorted)
-                .map(Sort.Order::asc)
-                .toList();
-
-        return PageRequest.of(query.getPage(), query.getPageSize(), Sort.by(sorting));
-    }
-
-    // todo add filtering
-    // by ticker
-    // by completed
 }
