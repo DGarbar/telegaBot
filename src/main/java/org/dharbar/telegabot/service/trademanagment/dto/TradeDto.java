@@ -5,8 +5,6 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -19,9 +17,7 @@ public class TradeDto {
     LocalDate dateAt;
 
     OrderDto byuOrder;
-
-    @Builder.Default
-    Set<OrderDto> sellOrders = new HashSet<>();
+    OrderDto sellOrder;
 
     Boolean isClosed;
 
@@ -39,5 +35,9 @@ public class TradeDto {
 
     public BigDecimal getBuyRate() {
         return byuOrder.getTotalUsd();
+    }
+
+    public BigDecimal getSellRate() {
+        return sellOrder == null ? null : sellOrder.getRate();
     }
 }

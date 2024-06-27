@@ -61,7 +61,7 @@ public class TradeView extends VerticalLayout {
         grid.addColumn(TradeDto::getDateAt).setHeader("Date").setKey("dateAt").setSortable(true);
         grid.addColumn(TradeDto::getBuyTotalUsd).setHeader("Buy $");
         grid.addColumn(TradeDto::getBuyRate).setHeader("Buy Rate");
-        // grid.addColumn(TradeDto::getSellOrders).setHeader("Sell Rate");
+        grid.addColumn(TradeDto::getSellRate).setHeader("Sell Rate");
         grid.addColumn(TradeDto::getNetProfitUsd).setHeader("Profit $");
         grid.addColumn(TradeDto::getProfitPercentage).setHeader("Profit %");
         grid.addColumn(TradeDto::getComment).setHeader("Comment");
