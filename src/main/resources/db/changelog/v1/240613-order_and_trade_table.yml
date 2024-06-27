@@ -15,6 +15,9 @@ databaseChangeLog:
               - column:
                   name: is_closed
                   type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
               - column:
                   name: net_profit_usd
                   type: decimal(10,2)

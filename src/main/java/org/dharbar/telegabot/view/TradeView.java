@@ -19,6 +19,7 @@ import org.dharbar.telegabot.service.trademanagment.dto.TradeDto;
 import org.dharbar.telegabot.view.events.OrderFormEvent;
 
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.UUID;
 
 @Route("trades")
@@ -34,7 +35,8 @@ public class TradeView extends VerticalLayout {
         addClassName("trade-view");
         this.tradeService = tradeService;
 
-        tradeNewForm = new OrderDetailsForm();
+        Set<String> tickers = tradeService.getTickers();
+        tradeNewForm = new OrderDetailsForm(tickers);
         tradeNewForm.addListener(OrderFormEvent.SaveOrderEvent.class, this::saveOrder);
         tradeNewForm.addListener(OrderFormEvent.CloseEvent.class, e -> closeEditor());
 
@@ -138,8 +140,8 @@ public class TradeView extends VerticalLayout {
     }
 
     private void closeEditor() {
-        tradeNewForm.setOrder(null);
         tradeNewForm.setVisible(false);
+        // tradeNewForm.setOrder(null);
         removeClassName("editing");
     }
 

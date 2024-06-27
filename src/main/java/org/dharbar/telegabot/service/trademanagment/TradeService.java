@@ -16,6 +16,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +25,12 @@ public class TradeService {
     private final TradeRepository tradeRepository;
 
     private final TradeMapper tradeMapper;
+
+    public Set<String> getTickers() {
+        return getTrades().stream()
+                .map(TradeDto::getTicker)
+                .collect(Collectors.toSet());
+    }
 
     public List<TradeDto> getTrades() {
         return tradeRepository.findAll().stream()

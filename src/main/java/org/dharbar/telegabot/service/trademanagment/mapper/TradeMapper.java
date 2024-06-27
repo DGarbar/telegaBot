@@ -23,6 +23,7 @@ public interface TradeMapper {
 
     OrderDto toDto(OrderEntity orderEntity);
 
+    @Mapping(target="isClosed", defaultValue = "false")
     TradeEntity toEntity(TradeDto tradeDto, Set<OrderEntity> orders);
 
     @Mapping(target="tradeId", ignore = true)
