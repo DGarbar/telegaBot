@@ -9,7 +9,9 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
@@ -24,38 +26,29 @@ import java.util.stream.Stream;
 @Slf4j
 public class OrderDetailsForm extends FormLayout {
 
-    public static final String DECIMAL_PATTERN = "\\d*\\.?\\d*";
-
     private final ComboBox<String> tickerComboBox = new ComboBox<>("Ticker");
-    private final TextField quantityField = new TextField("Quantity");
-    private final TextField rateField = new TextField("Rate");
+    private final BigDecimalField quantityField = new BigDecimalField("Quantity");
+    private final BigDecimalField rateField = new BigDecimalField("Rate");
     private final DatePicker dateAtField = new DatePicker("Date at");
-    private final TextField totalUsdField = new TextField("Total USD");
-    private final TextField commissionUsdField = new TextField("Commission");
+    private final BigDecimalField totalUsdField = new BigDecimalField("Total");
+    private final BigDecimalField commissionUsdField = new BigDecimalField("Commission");
     private final TextField commentField = new TextField("Comment");
-    private final Binder<OrderDto> orderDtoBinder;
+    private final Binder<OrderDto> orderDtoBinder = new Binder<>(OrderDto.class);
 
-    private final Button saveButton;
-
-    // TODO for sell auto calculation of fields
+    private final Button saveButton = new Button("Save");
 
     public OrderDetailsForm(Set<String> tickers) {
         addClassName("order-details-form");
 
-        saveButton = new Button("Save");
         Component buttonLayout = buttonLayout(saveButton);
 
         setupTickerComboBox(tickers);
-
-        quantityField.setPattern(DECIMAL_PATTERN);
-        rateField.setPattern(DECIMAL_PATTERN);
-        totalUsdField.setPattern(DECIMAL_PATTERN);
-        commissionUsdField.setPattern(DECIMAL_PATTERN);
+        setupFields();
 
         Stream.of(tickerComboBox, quantityField, rateField, dateAtField, totalUsdField, commissionUsdField, buttonLayout)
                 .forEach(this::add);
 
-        orderDtoBinder = setupBinder();
+        setupBinder();
     }
 
     private Component buttonLayout(Button saveButton) {
@@ -92,32 +85,34 @@ public class OrderDetailsForm extends FormLayout {
         });
     }
 
-    private Binder<OrderDto> setupBinder() {
-        final Binder<OrderDto> orderDtoBinder;
-        // TODO Validation
-        orderDtoBinder = new Binder<>(OrderDto.class);
+    private void setupFields() {
+        commissionUsdField.setSuffixComponent(VaadinIcon.DOLLAR.create());
+        rateField.setSuffixComponent(VaadinIcon.DOLLAR.create());
+        rateField.addValueChangeListener(e -> recalculateTotalField());
+        quantityField.addValueChangeListener(e -> recalculateTotalField());
+        totalUsdField.setSuffixComponent(VaadinIcon.DOLLAR.create());
+    }
+
+    private void recalculateTotalField() {
+        BigDecimal quantity = quantityField.getValue();
+        BigDecimal rate = rateField.getValue();
+        if (quantity == null || rate == null) {
+            return;
+        }
+        BigDecimal totalUsd = quantity.multiply(rate).stripTrailingZeros();
+        totalUsdField.setValue(totalUsd);
+    }
+
+    private void setupBinder() {
         orderDtoBinder.bind(tickerComboBox, OrderDto::getTicker, OrderDto::setTicker);
-        orderDtoBinder.forField(quantityField)
-                .withConverter(BigDecimal::new, BigDecimal::toString)
-                .withNullRepresentation(BigDecimal.ZERO)
-                .bind(OrderDto::getQuantity, OrderDto::setQuantity);
-        orderDtoBinder.forField(rateField)
-                .withConverter(BigDecimal::new, BigDecimal::toString)
-                .withNullRepresentation(BigDecimal.ZERO)
-                .bind(OrderDto::getRate, OrderDto::setRate);
+        orderDtoBinder.forField(quantityField).bind(OrderDto::getQuantity, OrderDto::setQuantity);
+        orderDtoBinder.forField(rateField).bind(OrderDto::getRate, OrderDto::setRate);
         orderDtoBinder.bind(dateAtField, OrderDto::getDateAt, OrderDto::setDateAt);
-        orderDtoBinder.forField(totalUsdField)
-                .withConverter(BigDecimal::new, BigDecimal::toString)
-                .withNullRepresentation(BigDecimal.ZERO)
-                .bind(OrderDto::getTotalUsd, OrderDto::setTotalUsd);
-        orderDtoBinder.forField(commissionUsdField)
-                .withConverter(BigDecimal::new, BigDecimal::toString)
-                .withNullRepresentation(BigDecimal.ZERO)
-                .bind(OrderDto::getCommissionUsd, OrderDto::setCommissionUsd);
+        orderDtoBinder.forField(totalUsdField).bind(OrderDto::getTotalUsd, OrderDto::setTotalUsd);
+        orderDtoBinder.forField(commissionUsdField).bind(OrderDto::getCommissionUsd, OrderDto::setCommissionUsd);
         orderDtoBinder.bind(commentField, OrderDto::getComment, OrderDto::setComment);
 
         orderDtoBinder.addStatusChangeListener(event -> saveButton.setEnabled(orderDtoBinder.isValid()));
-        return orderDtoBinder;
     }
 
     public void setOrder(OrderDto orderDto) {
