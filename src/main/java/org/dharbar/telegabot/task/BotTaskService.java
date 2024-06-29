@@ -17,7 +17,7 @@ import java.util.Map;
 @ConditionalOnProperty(name = "telegram.my.chat-id")
 @Service
 @RequiredArgsConstructor
-public class MyTaskService {
+public class BotTaskService {
 
     private final TelegramBot telegramBot;
     private final RateFacadeService rateService;
@@ -25,7 +25,7 @@ public class MyTaskService {
     @Value("${telegram.my.chat-id}")
     private Long chatId;
 
-    @Scheduled(cron = "${task.rates}")
+    @Scheduled(cron = "${task.rate-message}")
     public void sendRates() {
         Map<RateProvider, List<RateDto>> currencyRates = rateService.getFiatCurrencyRates();
         Map<RateProvider, List<RateDto>> cryptoRates = rateService.getCryptoRates();

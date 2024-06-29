@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 240628-stock_price_table
+      author: dgarbar
+      changes:
+        - createTable:
+            tableName: stock_price
+            columns:
+              - column:
+                  name: ticker
+                  type: varchar(4)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: price
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: datetime
+                  constraints:
+                    nullable: false

@@ -15,6 +15,11 @@ spring:
     job-store-type: jdbc
     jdbc:
       initialize-schema: never
+    properties:
+      org:
+        quartz:
+          jobStore:
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
 
   liquibase:
     change-log: db/changelog/db.changelog-master.yml
@@ -65,9 +70,5 @@ telegram:
     chat-id: ${TELEGRAM_MY_CHAT_ID}
 
 task:
-  rates: 0 0 7,10 * * ?
-
-
-# TODO
-#spring.quartz.job-store-type=jdbc
-#spring.quartz.jdbc.initialize-schema=always
+  rate-message: 0 0 7,10 * * ?
+  stock-price-update: 0 7 0 * * 1-5
