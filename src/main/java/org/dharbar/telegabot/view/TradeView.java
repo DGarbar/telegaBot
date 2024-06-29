@@ -9,20 +9,27 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import org.dharbar.telegabot.repository.entity.OrderType;
+import org.dharbar.telegabot.service.stockprice.StockPriceService;
+import org.dharbar.telegabot.service.stockprice.dto.StockPriceDto;
 import org.dharbar.telegabot.service.trademanagment.TradeService;
 import org.dharbar.telegabot.service.trademanagment.dto.OrderDto;
 import org.dharbar.telegabot.service.trademanagment.dto.TradeDto;
 import org.dharbar.telegabot.view.events.OrderFormEvent;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Route("trades")
 @CssImport("./styles/shared-styles.css")
@@ -33,15 +40,23 @@ public class TradeView extends VerticalLayout {
     private final Checkbox isOnlyOpenCheckbox = new Checkbox("Open only", true);
 
     private final TradeService tradeService;
+    private final StockPriceService stockPriceService;
 
-    public TradeView(TradeService tradeService) {
+    private final Map<String, BigDecimal> tickerToPrice;
+
+    public TradeView(TradeService tradeService, StockPriceService stockPriceService) {
         addClassName("trade-view");
         this.tradeService = tradeService;
+        this.stockPriceService = stockPriceService;
 
-        Set<String> tickers = tradeService.getTickers();
+        tickerToPrice = stockPriceService.findAll().stream()
+                .collect(Collectors.toMap(StockPriceDto::getTicker, StockPriceDto::getPrice));
+        Set<String> tickers = tickerToPrice.keySet();
+
         tradeNewForm = new OrderDetailsForm(tickers);
         tradeNewForm.addListener(OrderFormEvent.SaveOrderEvent.class, this::saveOrder);
         tradeNewForm.addListener(OrderFormEvent.CloseEvent.class, e -> closeEditor());
+        tradeNewForm.addListener(OrderFormEvent.SaveTickerEvent.class, this::addNewTicker);
 
         grid = setupGrid();
 
@@ -64,6 +79,7 @@ public class TradeView extends VerticalLayout {
         grid.addColumn(TradeDto::getSellRate).setHeader("Sell Rate");
         grid.addColumn(TradeDto::getNetProfitUsd).setHeader("Profit $");
         grid.addColumn(TradeDto::getProfitPercentage).setHeader("Profit %");
+
         grid.addColumn(TradeDto::getComment).setHeader("Comment");
         grid.getColumns().forEach(column -> column.setAutoWidth(true));
 
@@ -156,5 +172,20 @@ public class TradeView extends VerticalLayout {
         } else {
             grid.setItems(query -> tradeService.getTrades(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
         }
+    }
+
+    private void addNewTicker(OrderFormEvent.SaveTickerEvent e) {
+        String ticker = e.getTicker();
+        try {
+            StockPriceDto stockPrice = stockPriceService.createStockPrice(ticker);
+            tickerToPrice.put(ticker, stockPrice.getPrice());
+        } catch (Exception ex) {
+            Notification notification = new Notification("Failed to add new ticker " + ticker, 5000, Notification.Position.TOP_END);
+            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            notification.open();
+            return;
+        }
+
+        tradeNewForm.setTickerValues(tickerToPrice.keySet(), ticker);
     }
 }

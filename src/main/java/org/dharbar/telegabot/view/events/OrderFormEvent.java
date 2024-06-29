@@ -26,4 +26,14 @@ public abstract class OrderFormEvent extends ComponentEvent<OrderDetailsForm> {
         }
     }
 
+    @Getter
+    public static class SaveTickerEvent extends OrderFormEvent {
+        private final String ticker;
+
+        public SaveTickerEvent(OrderDetailsForm source, OrderDto orderDto, String ticker) {
+            super(source, orderDto);
+            this.ticker = ticker;
+        }
+    }
+
 }

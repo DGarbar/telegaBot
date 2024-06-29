@@ -79,9 +79,7 @@ public class OrderDetailsForm extends FormLayout {
         tickerComboBox.setAllowedCharPattern("[A-Z]");
         tickerComboBox.addCustomValueSetListener(e -> {
             String customValue = e.getDetail();
-            tickers.add(customValue);
-            tickerComboBox.setItems(tickers);
-            tickerComboBox.setValue(customValue);
+            fireEvent(new OrderFormEvent.SaveTickerEvent(this, orderDtoBinder.getBean(), customValue));
         });
     }
 
@@ -117,6 +115,11 @@ public class OrderDetailsForm extends FormLayout {
 
     public void setOrder(OrderDto orderDto) {
         orderDtoBinder.setBean(orderDto);
+    }
+
+    public void setTickerValues(Set<String> tickers, String ticker) {
+        tickerComboBox.setItems(tickers);
+        tickerComboBox.setValue(ticker);
     }
 
     @Override

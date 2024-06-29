@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -25,10 +24,6 @@ public class TradeService {
     private final TradeRepository tradeRepository;
 
     private final TradeMapper tradeMapper;
-
-    public Set<String> getTickers() {
-        return tradeRepository.findDistinctTicker();
-    }
 
     public List<TradeDto> getOpenTrades(PageRequest pageRequest) {
         return tradeRepository.findAllByIsClosedIsFalse(pageRequest).stream()
