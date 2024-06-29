@@ -151,6 +151,7 @@ public class TradeView extends VerticalLayout {
 
     private void listTrades() {
         if (isOnlyOpenCheckbox.getValue()) {
+            // TODO (later) refresh items instead of recreate
             grid.setItems(query -> tradeService.getOpenTrades(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
         } else {
             grid.setItems(query -> tradeService.getTrades(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());

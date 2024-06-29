@@ -11,6 +11,11 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+
   liquibase:
     change-log: db/changelog/db.changelog-master.yml
 
@@ -47,6 +52,10 @@ api:
     url: https://api2.binance.com
     key: ${API_BINANCE_KEY}
     secret: ${API_BINANCE_SECRET}
+
+  tiingo:
+    url: https://api.tiingo.com/tiingo
+    token: ${API_TIINGO_TOKEN}
 
 
 telegram:

@@ -1,4 +1,6 @@
 databaseChangeLog:
   - include:
       file: classpath:db/changelog/v1/240613-order_and_trade_table.yml
+  - include:
+      file: classpath:db/changelog/v1/240629-quartz_tables.xml
 

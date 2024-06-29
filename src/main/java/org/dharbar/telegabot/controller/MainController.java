@@ -1,4 +1,4 @@
-package org.dharbar.controller;
+package org.dharbar.telegabot.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
