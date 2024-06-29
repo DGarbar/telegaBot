@@ -7,9 +7,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+// TODO
 @Data
 @Builder
-public class TradeDto {
+public class TradeAnalysisDto {
 
     UUID id;
 
@@ -24,11 +25,6 @@ public class TradeDto {
     BigDecimal netProfitUsd;
     BigDecimal profitPercentage;
     String comment;
-
-    // TODO Pull into another object ?
-    BigDecimal currentRate;
-    BigDecimal currentProfitUsd;
-    BigDecimal currentProfitPercentage;
 
     public BigDecimal getBuyQuantity() {
         return byuOrder.getQuantity();

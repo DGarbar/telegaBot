@@ -10,6 +10,7 @@ import org.dharbar.telegabot.service.stockprice.mapper.StockPriceMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,6 +21,12 @@ public class StockPriceService {
     private final StockPriceRepository stockPriceRepository;
 
     private final StockPriceMapper stockPriceMapper;
+
+    // TODO caching
+    public Optional<StockPriceDto> find(String ticker) {
+        return stockPriceRepository.findById(ticker)
+                .map(stockPriceMapper::toDto);
+    }
 
     public List<StockPriceDto> findAll() {
         return stockPriceRepository.findAll().stream()
@@ -53,5 +60,4 @@ public class StockPriceService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No quote found for " + ticker));
     }
-
 }

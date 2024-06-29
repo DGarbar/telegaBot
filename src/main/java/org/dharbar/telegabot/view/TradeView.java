@@ -76,9 +76,26 @@ public class TradeView extends VerticalLayout {
         grid.addColumn(TradeDto::getDateAt).setHeader("Date").setKey("dateAt").setSortable(true);
         grid.addColumn(TradeDto::getBuyTotalUsd).setHeader("Buy $");
         grid.addColumn(TradeDto::getBuyRate).setHeader("Buy Rate");
-        grid.addColumn(TradeDto::getSellRate).setHeader("Sell Rate");
-        grid.addColumn(TradeDto::getNetProfitUsd).setHeader("Profit $");
-        grid.addColumn(TradeDto::getProfitPercentage).setHeader("Profit %");
+
+        // TODO maybe in serivce with TradePerformanceDto ?
+        grid.addColumn(tradeDto -> {
+            BigDecimal sellRate = tradeDto.getSellRate();
+            return sellRate != null
+                    ? sellRate
+                    : "*" + tradeDto.getCurrentRate();
+        }).setHeader("Sell Rate");
+        grid.addColumn(tradeDto -> {
+            BigDecimal netProfit = tradeDto.getNetProfitUsd();
+            return netProfit != null
+                    ? netProfit
+                    : "*" + tradeDto.getCurrentProfitUsd();
+        }).setHeader("Profit $");
+        grid.addColumn(tradeDto -> {
+            BigDecimal profitPercentage = tradeDto.getProfitPercentage();
+            return profitPercentage != null
+                    ? profitPercentage
+                    : "*" + tradeDto.getCurrentProfitPercentage();
+        }).setHeader("Profit %");
 
         grid.addColumn(TradeDto::getComment).setHeader("Comment");
         grid.getColumns().forEach(column -> column.setAutoWidth(true));

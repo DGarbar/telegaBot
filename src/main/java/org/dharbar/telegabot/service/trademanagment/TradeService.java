@@ -5,6 +5,7 @@ import org.dharbar.telegabot.repository.TradeRepository;
 import org.dharbar.telegabot.repository.entity.OrderEntity;
 import org.dharbar.telegabot.repository.entity.OrderType;
 import org.dharbar.telegabot.repository.entity.TradeEntity;
+import org.dharbar.telegabot.service.stockprice.StockPriceService;
 import org.dharbar.telegabot.service.trademanagment.dto.OrderDto;
 import org.dharbar.telegabot.service.trademanagment.dto.TradeDto;
 import org.dharbar.telegabot.service.trademanagment.mapper.TradeMapper;
@@ -25,10 +26,30 @@ public class TradeService {
 
     private final TradeMapper tradeMapper;
 
+    private final StockPriceService stockPriceService;
+
     public List<TradeDto> getOpenTrades(PageRequest pageRequest) {
         return tradeRepository.findAllByIsClosedIsFalse(pageRequest).stream()
                 .map(tradeMapper::toDto)
+                .map(this::populateWithAnalysis)
                 .toList();
+    }
+
+    public TradeDto populateWithAnalysis(TradeDto tradeDto) {
+        if (tradeDto.getIsClosed()) {
+            return tradeDto;
+        }
+
+        return stockPriceService.find(tradeDto.getTicker())
+                .map(stockPriceDto -> {
+                    BigDecimal currentRate = stockPriceDto.getPrice();
+                    tradeDto.setCurrentRate(currentRate);
+                    tradeDto.setCurrentProfitUsd(currentRate.subtract(tradeDto.getBuyRate()).multiply(tradeDto.getBuyQuantity()));
+                    tradeDto.setCurrentProfitPercentage(tradeDto.getCurrentProfitUsd().divide(tradeDto.getBuyTotalUsd(), 3, RoundingMode.HALF_UP));
+
+                    return tradeDto;
+                })
+                .orElse(tradeDto);
     }
 
     public List<TradeDto> getTrades(PageRequest pageRequest) {
