@@ -74,6 +74,7 @@ public class TradeService {
         TradeEntity trade = tradeRepository.findById(tradeId).orElseThrow();
         trade.addOrder(order);
 
+
         BigDecimal buyTotal = BigDecimal.ZERO;
         BigDecimal buyQuantity = BigDecimal.ZERO;
         BigDecimal sellTotal = BigDecimal.ZERO;
