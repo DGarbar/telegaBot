@@ -7,10 +7,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-// TODO
 @Data
 @Builder
-public class TradeAnalysisDto {
+public class TradeAnalyticDto {
 
     UUID id;
 
@@ -26,6 +25,10 @@ public class TradeAnalysisDto {
     BigDecimal profitPercentage;
     String comment;
 
+    BigDecimal currentRate;
+    BigDecimal currentNetProfitUsd;
+    BigDecimal currentProfitPercentage;
+
     public BigDecimal getBuyQuantity() {
         return byuOrder.getQuantity();
     }
@@ -34,11 +37,27 @@ public class TradeAnalysisDto {
         return byuOrder.getTotalUsd();
     }
 
+    public BigDecimal getBuyCommissionUsd() {
+        return byuOrder.getCommissionUsd();
+    }
+
     public BigDecimal getBuyRate() {
-        return byuOrder.getTotalUsd();
+        return byuOrder.getRate();
     }
 
     public BigDecimal getSellRate() {
         return sellOrder == null ? null : sellOrder.getRate();
+    }
+
+    public String getViewSellRate() {
+        return getSellRate() == null ? "*" + currentRate : getSellRate().toString();
+    }
+
+    public String getViewNetProfitUsd() {
+        return netProfitUsd == null ? "*" + currentNetProfitUsd : netProfitUsd.toString();
+    }
+
+    public String getViewProfitPercentage() {
+        return profitPercentage == null ? "*" + currentProfitPercentage : profitPercentage.toString();
     }
 }

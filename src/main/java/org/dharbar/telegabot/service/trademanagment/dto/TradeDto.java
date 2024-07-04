@@ -5,6 +5,8 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -16,33 +18,11 @@ public class TradeDto {
     String ticker;
     LocalDate dateAt;
 
-    OrderDto byuOrder;
-    OrderDto sellOrder;
+    List<OrderDto> orders;
 
     Boolean isClosed;
 
     BigDecimal netProfitUsd;
     BigDecimal profitPercentage;
     String comment;
-
-    // TODO Pull into another object ?
-    BigDecimal currentRate;
-    BigDecimal currentProfitUsd;
-    BigDecimal currentProfitPercentage;
-
-    public BigDecimal getBuyQuantity() {
-        return byuOrder.getQuantity();
-    }
-
-    public BigDecimal getBuyTotalUsd() {
-        return byuOrder.getTotalUsd();
-    }
-
-    public BigDecimal getBuyRate() {
-        return byuOrder.getTotalUsd();
-    }
-
-    public BigDecimal getSellRate() {
-        return sellOrder == null ? null : sellOrder.getRate();
-    }
 }
