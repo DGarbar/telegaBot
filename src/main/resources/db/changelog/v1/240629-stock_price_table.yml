@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: ticker
-                  type: varchar(4)
+                  type: varchar(20)
                   constraints:
                     primaryKey: true
                     nullable: false

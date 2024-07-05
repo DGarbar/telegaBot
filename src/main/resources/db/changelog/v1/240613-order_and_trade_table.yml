@@ -14,7 +14,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: ticker
-                  type: varchar(4)
+                  type: varchar(20)
                   constraints:
                     nullable: false
               - column:
@@ -60,7 +60,7 @@ databaseChangeLog:
                     references: trade(id)
               - column:
                   name: ticker
-                  type: varchar(4)
+                  type: varchar(20)
                   constraints:
                     nullable: false
               - column:

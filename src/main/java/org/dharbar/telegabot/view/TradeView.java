@@ -132,7 +132,7 @@ public class TradeView extends VerticalLayout {
 
         } else {
             TradeAnalyticDto trade = grid.asSingleSelect().getValue();
-            tradeAnalyticFacade.saveTradeNewOrder(trade.getId(), order);
+            tradeAnalyticFacade.addTradeNewOrder(trade.getId(), order);
         }
 
         listTrades();

@@ -40,18 +40,21 @@ public class TradeService {
                 .toList();
     }
 
-    public void saveNewTrade(OrderDto orderDto) {
+    public TradeDto saveNewTrade(OrderDto orderDto) {
         OrderEntity order = tradeMapper.toEntity(orderDto);
         TradeEntity newTrade = tradeMapper.toNewEntity(order);
         // TODO fix with mapper
         newTrade.addOrder(order);
 
-        tradeRepository.save(newTrade);
+        TradeEntity savedTrade = tradeRepository.save(newTrade);
+        return tradeMapper.toDto(savedTrade);
     }
 
-    public void saveTrade(TradeDto tradeDto) {
+    public TradeDto saveTrade(TradeDto tradeDto) {
         Set<OrderEntity> orders = tradeMapper.toEntities(tradeDto.getOrders());
         TradeEntity trade = tradeMapper.toEntity(tradeDto, orders);
-        tradeRepository.save(trade);
+        TradeEntity savedTrade = tradeRepository.save(trade);
+
+        return tradeMapper.toDto(savedTrade);
     }
 }

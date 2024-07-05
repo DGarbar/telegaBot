@@ -25,13 +25,14 @@ public class TradeAnalyticFacade {
 
     private final TradeAnalyticMapper tradeAnalyticMapper;
 
-    public void saveNewTrade(OrderDto orderDto) {
-        tradeService.saveNewTrade(orderDto);
+    public TradeAnalyticDto saveNewTrade(OrderDto orderDto) {
+        TradeDto tradeDto = tradeService.saveNewTrade(orderDto);
+        return tradeAnalyticMapper.toDto(tradeDto);
     }
 
     // TODO (later) for update for trade
     @Transactional
-    public void saveTradeNewOrder(UUID tradeId, OrderDto order) {
+    public TradeAnalyticDto addTradeNewOrder(UUID tradeId, OrderDto order) {
         TradeDto tradeDto = tradeService.getTrade(tradeId);
 
         List<OrderDto> orders = tradeDto.getOrders();
@@ -43,7 +44,9 @@ public class TradeAnalyticFacade {
         tradeDto.setProfitPercentage(tradeCalculation.profitPercentage());
         tradeDto.setIsClosed(tradeCalculation.isClosed());
 
-        tradeService.saveTrade(tradeDto);
+        TradeDto savedTrade = tradeService.saveTrade(tradeDto);
+        TradeAnalyticDto mappedDto = tradeAnalyticMapper.toDto(savedTrade);
+        return populateWithAnalytic(mappedDto);
     }
 
     public List<TradeAnalyticDto> getOpenTrades(PageRequest pageRequest) {
@@ -77,7 +80,7 @@ public class TradeAnalyticFacade {
                 .setScale(3, RoundingMode.HALF_UP);
         tradeAnalyticDto.setCurrentNetProfitUsd(netProfitUsd);
 
-        BigDecimal profitPercentage = netProfitUsd.divide(tradeAnalyticDto.getBuyRate().scaleByPowerOfTen(-2), 3, RoundingMode.HALF_UP);
+        BigDecimal profitPercentage = netProfitUsd.divide(tradeAnalyticDto.getBuyTotalUsd().scaleByPowerOfTen(-2), 3, RoundingMode.HALF_UP);
         tradeAnalyticDto.setCurrentProfitPercentage(profitPercentage);
 
         return tradeAnalyticDto;
