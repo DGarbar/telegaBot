@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+
 @Data
 @Builder
 public class TradeAnalyticDto {
@@ -59,5 +61,10 @@ public class TradeAnalyticDto {
 
     public String getViewProfitPercentage() {
         return profitPercentage == null ? "*" + currentProfitPercentage : profitPercentage.toString();
+    }
+
+    public long dealDurationDays() {
+        LocalDate sellDate = sellOrder == null ? LocalDate.now() : sellOrder.dateAt;
+        return DAYS.between(byuOrder.dateAt, sellDate);
     }
 }

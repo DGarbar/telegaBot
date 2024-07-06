@@ -42,3 +42,4 @@ build/
 
 /docker/data/**
 /src/main/resources/my/
+/src/main/resources/db/changelog/my/

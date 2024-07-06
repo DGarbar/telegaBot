@@ -23,6 +23,7 @@ import org.dharbar.telegabot.service.trademanagment.TradeAnalyticFacade;
 import org.dharbar.telegabot.service.trademanagment.dto.OrderDto;
 import org.dharbar.telegabot.service.trademanagment.dto.TradeAnalyticDto;
 import org.dharbar.telegabot.view.events.OrderFormEvent;
+import org.dharbar.telegabot.view.utils.StyleUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -32,7 +33,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Route("trades")
-@CssImport("./styles/shared-styles.css")
+@CssImport(value = "./styles/shared-styles.css", themeFor = "vaadin-grid")
 public class TradeView extends VerticalLayout {
 
     private final Grid<TradeAnalyticDto> grid;
@@ -45,6 +46,8 @@ public class TradeView extends VerticalLayout {
 
     public TradeView(TradeAnalyticFacade tradeAnalyticFacade, StockPriceService stockPriceService) {
         addClassName("trade-view");
+        setSizeFull();
+
         this.tradeAnalyticFacade = tradeAnalyticFacade;
 
         tickerToPrice = stockPriceService.findAll().stream()
@@ -70,14 +73,22 @@ public class TradeView extends VerticalLayout {
     private Grid<TradeAnalyticDto> setupGrid() {
         Grid<TradeAnalyticDto> grid = new Grid<>(TradeAnalyticDto.class, false);
         grid.addClassName("trade-grid");
-        grid.addColumn(TradeAnalyticDto::getTicker).setHeader("Ticker").setKey("ticker").setSortable(true);
+        grid.addColumn(TradeAnalyticDto::getTicker).setHeader("Ticker").setKey("ticker").setSortable(true)
+                .setClassNameGenerator(tradeAnalyticDto -> StyleUtils.toTickerStyle(tradeAnalyticDto.getTicker()));
         grid.addColumn(TradeAnalyticDto::getDateAt).setHeader("Date").setKey("dateAt").setSortable(true);
         grid.addColumn(TradeAnalyticDto::getBuyTotalUsd).setHeader("Buy $");
         grid.addColumn(TradeAnalyticDto::getBuyRate).setHeader("Buy Rate");
 
-        grid.addColumn(TradeAnalyticDto::getViewSellRate).setHeader("Sell Rate");
-        grid.addColumn(TradeAnalyticDto::getViewNetProfitUsd).setHeader("Profit $");
-        grid.addColumn(TradeAnalyticDto::getViewProfitPercentage).setHeader("Profit %");
+        grid.addColumn(TradeAnalyticDto::getSellRate).setHeader("Sell Rate").setKey("sellRate");
+        grid.addColumn(TradeAnalyticDto::getNetProfitUsd).setHeader("Profit $").setKey("profitDollar");
+        grid.addColumn(TradeAnalyticDto::getProfitPercentage).setHeader("Profit %").setKey("profitPercentage")
+                .setClassNameGenerator(dto -> StyleUtils.toPercentageProfitStyle(dto.getProfitPercentage()));
+
+        grid.addColumn(TradeAnalyticDto::getCurrentRate).setHeader("Current Rate");
+        grid.addColumn(TradeAnalyticDto::getCurrentNetProfitUsd).setHeader("Current Profit $");
+        grid.addColumn(TradeAnalyticDto::getCurrentProfitPercentage).setHeader("Current Profit %")
+                .setClassNameGenerator(dto -> StyleUtils.toPercentageProfitStyle(dto.getCurrentProfitPercentage()));
+        grid.addColumn(TradeAnalyticDto::dealDurationDays).setHeader("Deal days");
 
         grid.addColumn(TradeAnalyticDto::getComment).setHeader("Comment");
         grid.getColumns().forEach(column -> column.setAutoWidth(true));
@@ -95,9 +106,12 @@ public class TradeView extends VerticalLayout {
                         }))
                 .setHeader("Sell");
 
+        grid.setSizeFull();
+
         // grid.setItemDetailsRenderer(new ComponentRenderer<>(TradeDetailForm::new, TradeDetailForm::setTrade));
         return grid;
     }
+
 
     private Component setupToolbar() {
         Button addTradeButton = new Button("Buy new");
@@ -167,8 +181,18 @@ public class TradeView extends VerticalLayout {
     private void listTrades() {
         if (isOnlyOpenCheckbox.getValue()) {
             // TODO (later) refresh items instead of recreate
+
+            grid.getColumnByKey("sellRate").setVisible(false);
+            grid.getColumnByKey("profitDollar").setVisible(false);
+            grid.getColumnByKey("profitPercentage").setVisible(false);
+
             grid.setItems(query -> tradeAnalyticFacade.getOpenTrades(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
         } else {
+
+            grid.getColumnByKey("sellRate").setVisible(true);
+            grid.getColumnByKey("profitDollar").setVisible(true);
+            grid.getColumnByKey("profitPercentage").setVisible(true);
+
             grid.setItems(query -> tradeAnalyticFacade.getTrades(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
         }
     }
