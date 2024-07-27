@@ -33,7 +33,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Route("trades")
-@CssImport(value = "./styles/shared-styles.css", themeFor = "vaadin-grid")
+@CssImport(value = "./styles/shared-styles.css")
+@CssImport(value = "./styles/grid.css", themeFor = "vaadin-grid")
 public class TradeView extends VerticalLayout {
 
     private final Grid<TradeAnalyticDto> grid;
@@ -80,12 +81,14 @@ public class TradeView extends VerticalLayout {
         grid.addColumn(TradeAnalyticDto::getBuyRate).setHeader("Buy Rate");
 
         grid.addColumn(TradeAnalyticDto::getSellRate).setHeader("Sell Rate").setKey("sellRate");
-        grid.addColumn(TradeAnalyticDto::getNetProfitUsd).setHeader("Profit $").setKey("profitDollar");
+        grid.addColumn(TradeAnalyticDto::getNetProfitUsd).setHeader("Profit $").setKey("profitDollar")
+                .setClassNameGenerator(dto -> StyleUtils.toPercentageProfitStyle(dto.getProfitPercentage()));
         grid.addColumn(TradeAnalyticDto::getProfitPercentage).setHeader("Profit %").setKey("profitPercentage")
                 .setClassNameGenerator(dto -> StyleUtils.toPercentageProfitStyle(dto.getProfitPercentage()));
 
         grid.addColumn(TradeAnalyticDto::getCurrentRate).setHeader("Current Rate");
-        grid.addColumn(TradeAnalyticDto::getCurrentNetProfitUsd).setHeader("Current Profit $");
+        grid.addColumn(TradeAnalyticDto::getCurrentNetProfitUsd).setHeader("Current Profit $")
+                .setClassNameGenerator(dto -> StyleUtils.toPercentageProfitStyle(dto.getCurrentProfitPercentage()));
         grid.addColumn(TradeAnalyticDto::getCurrentProfitPercentage).setHeader("Current Profit %")
                 .setClassNameGenerator(dto -> StyleUtils.toPercentageProfitStyle(dto.getCurrentProfitPercentage()));
         grid.addColumn(TradeAnalyticDto::dealDurationDays).setHeader("Deal days");

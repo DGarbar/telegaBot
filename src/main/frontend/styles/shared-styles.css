@@ -11,15 +11,15 @@
     padding: var(--lumo-space-m);
 }
 
-.profit {
+.trade-grid  .profit {
     background-color: rgba(170, 250, 170, 0.62);
 }
 
-.good-profit {
+.trade-grid  .good-profit {
     background-color: rgba(96, 236, 96, 0.5);
 }
 
-.loss {
+.trade-grid .loss {
     background-color: rgba(201, 121, 121, 0.5);
 }
 
@@ -106,7 +106,7 @@
     color: rgba(255, 0, 0, 0.8);
 }
 
-.cmcsa {
+.trade-grid  .cmcsa {
     background-color: rgba(0, 32, 91, 0.1);
     color: rgba(0, 32, 91, 0.8);
 }
