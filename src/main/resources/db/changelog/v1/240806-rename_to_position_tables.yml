@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 240806-rename_to_position_tables
+      author: dgarbar
+      changes:
+        - renameTable:
+            oldTableName: trade
+            newTableName: position
+        - renameColumn:
+            tableName: order
+            oldColumnName: trade_id
+            newColumnName: position_id
+        - sql:
+            sql: ALTER TABLE "order" RENAME CONSTRAINT "fk_order_trade" TO "fk_order_position";

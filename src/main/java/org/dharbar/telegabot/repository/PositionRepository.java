@@ -1,6 +1,6 @@
 package org.dharbar.telegabot.repository;
 
-import org.dharbar.telegabot.repository.entity.TradeEntity;
+import org.dharbar.telegabot.repository.entity.PositionEntity;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface TradeRepository extends PagingAndSortingRepository<TradeEntity, UUID>, CrudRepository<TradeEntity, UUID> {
+public interface PositionRepository extends PagingAndSortingRepository<PositionEntity, UUID>, CrudRepository<PositionEntity, UUID> {
 
-    List<TradeEntity> findAllByIsClosedIsFalse(PageRequest pageRequest);
+    List<PositionEntity> findAllByIsClosedIsFalse(PageRequest pageRequest);
 }

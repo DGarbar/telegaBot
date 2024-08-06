@@ -22,7 +22,7 @@ public class OrderEntity {
     @Id
     private UUID id;
 
-    private UUID tradeId;
+    private UUID positionId;
 
     private OrderType type;
     private String ticker;

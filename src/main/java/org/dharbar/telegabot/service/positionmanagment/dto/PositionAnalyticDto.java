@@ -1,4 +1,4 @@
-package org.dharbar.telegabot.service.trademanagment.dto;
+package org.dharbar.telegabot.service.positionmanagment.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +11,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 
 @Data
 @Builder
-public class TradeAnalyticDto {
+public class PositionAnalyticDto {
 
     UUID id;
 

@@ -20,8 +20,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-@Table("trade")
-public class TradeEntity {
+@Table("position")
+public class PositionEntity {
 
     @Id
     private UUID id;
@@ -30,7 +30,7 @@ public class TradeEntity {
 
     private LocalDate dateAt;
 
-    @MappedCollection(idColumn = "trade_id")
+    @MappedCollection(idColumn = "position_id")
     private Set<OrderEntity> orders = new HashSet<>();
 
     private Boolean isClosed;
@@ -41,7 +41,7 @@ public class TradeEntity {
     private String comment;
 
     public void addOrder(OrderEntity order) {
-        order.setTradeId(this.id);
+        order.setPositionId(this.id);
         orders.add(order);
     }
 }

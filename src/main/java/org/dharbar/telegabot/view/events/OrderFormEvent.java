@@ -2,7 +2,7 @@ package org.dharbar.telegabot.view.events;
 
 import com.vaadin.flow.component.ComponentEvent;
 import lombok.Getter;
-import org.dharbar.telegabot.service.trademanagment.dto.OrderDto;
+import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
 import org.dharbar.telegabot.view.OrderDetailsForm;
 
 @Getter

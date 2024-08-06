@@ -1,0 +1,167 @@
+
+.profit {
+    background-color: rgba(170, 250, 170, 0.62);
+}
+
+.good-profit {
+    background-color: rgba(96, 236, 96, 0.5);
+}
+
+.loss {
+    background-color: rgba(201, 121, 121, 0.5);
+}
+
+.big-loss {
+    background-color: rgba(229, 65, 65, 0.7);
+}
+
+
+/**/
+
+.goog {
+    background-color: rgba(66, 133, 244, 0.1);
+    color: rgba(66, 133, 244, 0.8);
+}
+
+.de {
+    background-color: rgba(0, 120, 0, 0.1);
+    color: rgba(0, 120, 0, 0.8);
+}
+
+.aapl {
+    background-color: rgba(245, 245, 245, 0.1);
+    color: rgb(81, 81, 234);
+}
+
+.ko {
+    background-color: rgba(255, 0, 0, 0.1);
+    color: rgba(239, 151, 151, 0.8);
+}
+
+.e {
+    background-color: rgba(255, 204, 0, 0.1);
+    color: rgba(150, 137, 81, 0.8);
+}
+
+.mtn {
+    background-color: rgba(0, 51, 102, 0.1);
+    color: rgba(0, 51, 102, 0.8);
+}
+
+.orcl {
+    background-color: rgba(255, 99, 71, 0.1);
+    color: rgba(161, 62, 45, 0.8);
+}
+
+.schd {
+    background-color: rgba(0, 122, 204, 0.1);
+    color: rgba(0, 122, 204, 0.8);
+}
+
+.abnb {
+    background-color: rgba(255, 90, 95, 0.1);
+    color: rgba(255, 90, 95, 0.8);
+}
+
+
+.swks {
+    background-color: rgba(0, 113, 197, 0.1);
+    color: rgba(0, 113, 197, 0.8);
+}
+
+.stm {
+    background-color: rgba(0, 86, 150, 0.1);
+    color: rgba(7, 31, 45, 0.8);
+}
+
+.mcd {
+    background-color: rgba(255, 203, 5, 0.2);
+    color: rgba(175, 139, 0, 0.8);
+}
+
+.bmy {
+    background-color: rgba(0, 153, 204, 0.1);
+    color: rgba(0, 153, 204, 0.8);
+}
+
+.msft {
+    background-color: rgba(0, 120, 215, 0.1);
+    color: rgba(0, 120, 215, 0.8);
+}
+
+.tsla {
+    background-color: rgba(255, 0, 0, 0.1);
+    color: rgba(255, 0, 0, 0.8);
+}
+
+.cmcsa {
+    background-color: rgba(2, 25, 63, 0.1);
+    color: rgba(182, 190, 227, 0.8);
+}
+
+.ma {
+    background-color: rgba(42, 23, 23, 0.75);
+    color: rgba(255, 191, 0, 0.8);
+}
+
+.voo {
+    background-color: rgba(2, 122, 255, 0.1);
+    color: rgba(2, 122, 255, 0.8);
+}
+
+.shel {
+    background-color: rgba(255, 211, 0, 0.1);
+    color: rgba(255, 211, 0, 0.8);
+}
+
+.gabc {
+    background-color: rgba(70, 130, 180, 0.1);
+    color: rgba(70, 130, 180, 0.8);
+}
+
+.colb {
+    background-color: rgba(115, 157, 196, 0.1);
+    color: rgba(0, 75, 141, 0.8);
+}
+
+
+.zroz {
+    background-color: rgba(134, 185, 234, 0.7);
+    color: rgb(65, 97, 40);
+}
+
+.edv {
+    background-color: rgba(132, 193, 255, 0.3);
+    color: rgb(97, 168, 44);
+}
+
+
+.pfe {
+    background-color: rgba(42, 127, 203, 0.1);
+    color: rgba(148, 59, 192, 0.8);
+}
+
+.bp {
+    background-color: rgba(153, 211, 146, 0.1);
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.cnq {
+    background-color: rgba(176, 232, 225, 0.1);
+    color: rgba(111, 224, 178, 0.8);
+}
+
+.cnq {
+    background-color: rgba(176, 232, 225, 0.1);
+    color: rgba(73, 157, 122, 0.8);
+}
+
+.sq {
+    background-color: rgba(63, 96, 166, 0.1);
+    color: rgba(132, 93, 248, 0.75);
+}
+
+.nxt {
+    background-color: rgba(161, 104, 57, 0.1);
+    color: rgba(190, 55, 51, 0.56);
+}

@@ -16,7 +16,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
 import lombok.extern.slf4j.Slf4j;
-import org.dharbar.telegabot.service.trademanagment.dto.OrderDto;
+import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
 import org.dharbar.telegabot.view.events.OrderFormEvent;
 
 import java.math.BigDecimal;

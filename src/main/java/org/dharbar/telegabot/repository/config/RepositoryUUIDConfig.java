@@ -1,7 +1,7 @@
 package org.dharbar.telegabot.repository.config;
 
 import org.dharbar.telegabot.repository.entity.OrderEntity;
-import org.dharbar.telegabot.repository.entity.TradeEntity;
+import org.dharbar.telegabot.repository.entity.PositionEntity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.relational.core.mapping.event.BeforeConvertCallback;
@@ -22,12 +22,12 @@ public class RepositoryUUIDConfig {
     }
 
     @Bean
-    BeforeConvertCallback<TradeEntity> beforeConvertTradeEntityCallback() {
-        return (trade) -> {
-            if (trade.getId() == null) {
-                trade.setId(UUID.randomUUID());
+    BeforeConvertCallback<PositionEntity> beforeConvertPositionEntityCallback() {
+        return (position) -> {
+            if (position.getId() == null) {
+                position.setId(UUID.randomUUID());
             }
-            return trade;
+            return position;
         };
     }
 }

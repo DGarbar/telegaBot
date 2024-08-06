@@ -17,11 +17,11 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import org.dharbar.telegabot.repository.entity.OrderType;
+import org.dharbar.telegabot.service.positionmanagment.PositionsAnalyticFacade;
+import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
+import org.dharbar.telegabot.service.positionmanagment.dto.PositionAnalyticDto;
 import org.dharbar.telegabot.service.stockprice.StockPriceService;
 import org.dharbar.telegabot.service.stockprice.dto.StockPriceDto;
-import org.dharbar.telegabot.service.trademanagment.TradeAnalyticFacade;
-import org.dharbar.telegabot.service.trademanagment.dto.OrderDto;
-import org.dharbar.telegabot.service.trademanagment.dto.TradeAnalyticDto;
 import org.dharbar.telegabot.view.events.OrderFormEvent;
 import org.dharbar.telegabot.view.utils.StyleUtils;
 
@@ -32,98 +32,98 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Route("trades")
+@Route("positions")
 @CssImport(value = "./styles/shared-styles.css")
 @CssImport(value = "./styles/grid.css", themeFor = "vaadin-grid")
-public class TradeView extends VerticalLayout {
+public class PositionView extends VerticalLayout  {
 
-    private final Grid<TradeAnalyticDto> grid;
-    private final OrderDetailsForm tradeNewForm;
+    private final Grid<PositionAnalyticDto> grid;
+    private final OrderDetailsForm orderDetailsForm;
     private final Checkbox isOnlyOpenCheckbox = new Checkbox("Open only", true);
 
-    private final TradeAnalyticFacade tradeAnalyticFacade;
+    private final PositionsAnalyticFacade positionAnalyticFacade;
 
     private final Map<String, BigDecimal> tickerToPrice;
 
-    public TradeView(TradeAnalyticFacade tradeAnalyticFacade, StockPriceService stockPriceService) {
-        addClassName("trade-view");
+    public PositionView(PositionsAnalyticFacade positionAnalyticFacade, StockPriceService stockPriceService) {
+        addClassName("position-view");
         setSizeFull();
 
-        this.tradeAnalyticFacade = tradeAnalyticFacade;
+        this.positionAnalyticFacade = positionAnalyticFacade;
 
         tickerToPrice = stockPriceService.findAll().stream()
                 .collect(Collectors.toMap(StockPriceDto::getTicker, StockPriceDto::getPrice));
         Set<String> tickers = tickerToPrice.keySet();
 
-        tradeNewForm = new OrderDetailsForm(tickers);
-        tradeNewForm.addListener(OrderFormEvent.SaveOrderEvent.class, this::saveOrder);
-        tradeNewForm.addListener(OrderFormEvent.CloseEvent.class, e -> closeEditor());
-        tradeNewForm.addListener(OrderFormEvent.SaveTickerEvent.class, this::addNewTicker);
+        orderDetailsForm = new OrderDetailsForm(tickers);
+        orderDetailsForm.addListener(OrderFormEvent.SaveOrderEvent.class, this::saveOrder);
+        orderDetailsForm.addListener(OrderFormEvent.CloseEvent.class, e -> closeEditor());
+        orderDetailsForm.addListener(OrderFormEvent.SaveTickerEvent.class, this::addNewTicker);
 
         grid = setupGrid();
 
-        Div tradeDetailsDiv = new Div(grid, tradeNewForm);
-        tradeDetailsDiv.setSizeFull();
-        tradeDetailsDiv.addClassName("trade-details-div");
+        Div positionDetailsDiv = new Div(grid, orderDetailsForm);
+        positionDetailsDiv.setSizeFull();
+        positionDetailsDiv.addClassName("position-details-div");
 
-        add(setupToolbar(), tradeDetailsDiv);
-        listTrades();
+        add(setupToolbar(), positionDetailsDiv);
+        listPositions();
         closeEditor();
     }
 
-    private Grid<TradeAnalyticDto> setupGrid() {
-        Grid<TradeAnalyticDto> grid = new Grid<>(TradeAnalyticDto.class, false);
-        grid.addClassName("trade-grid");
-        grid.addColumn(TradeAnalyticDto::getTicker).setHeader("Ticker").setKey("ticker").setSortable(true)
-                .setClassNameGenerator(tradeAnalyticDto -> StyleUtils.toTickerStyle(tradeAnalyticDto.getTicker()));
-        grid.addColumn(TradeAnalyticDto::getDateAt).setHeader("Date").setKey("dateAt").setSortable(true);
-        grid.addColumn(TradeAnalyticDto::getBuyTotalUsd).setHeader("Buy $");
-        grid.addColumn(TradeAnalyticDto::getBuyRate).setHeader("Buy Rate");
+    private Grid<PositionAnalyticDto> setupGrid() {
+        Grid<PositionAnalyticDto> grid = new Grid<>(PositionAnalyticDto.class, false);
+        grid.addClassName("position-grid");
+        grid.addColumn(PositionAnalyticDto::getTicker).setHeader("Ticker").setKey("ticker").setSortable(true)
+                .setClassNameGenerator(positionAnalyticDto -> StyleUtils.toTickerStyle(positionAnalyticDto.getTicker()));
+        grid.addColumn(PositionAnalyticDto::getDateAt).setHeader("Date").setKey("dateAt").setSortable(true);
+        grid.addColumn(PositionAnalyticDto::getBuyTotalUsd).setHeader("Buy $");
+        grid.addColumn(PositionAnalyticDto::getBuyRate).setHeader("Buy Rate");
 
-        grid.addColumn(TradeAnalyticDto::getSellRate).setHeader("Sell Rate").setKey("sellRate");
-        grid.addColumn(TradeAnalyticDto::getNetProfitUsd).setHeader("Profit $").setKey("profitDollar")
+        grid.addColumn(PositionAnalyticDto::getSellRate).setHeader("Sell Rate").setKey("sellRate");
+        grid.addColumn(PositionAnalyticDto::getNetProfitUsd).setHeader("Profit $").setKey("profitDollar")
                 .setClassNameGenerator(dto -> StyleUtils.toPercentageProfitStyle(dto.getProfitPercentage()));
-        grid.addColumn(TradeAnalyticDto::getProfitPercentage).setHeader("Profit %").setKey("profitPercentage")
+        grid.addColumn(PositionAnalyticDto::getProfitPercentage).setHeader("Profit %").setKey("profitPercentage")
                 .setClassNameGenerator(dto -> StyleUtils.toPercentageProfitStyle(dto.getProfitPercentage()));
 
-        grid.addColumn(TradeAnalyticDto::getCurrentRate).setHeader("Current Rate");
-        grid.addColumn(TradeAnalyticDto::getCurrentNetProfitUsd).setHeader("Current Profit $")
+        grid.addColumn(PositionAnalyticDto::getCurrentRate).setHeader("Current Rate");
+        grid.addColumn(PositionAnalyticDto::getCurrentNetProfitUsd).setHeader("Current Profit $")
                 .setClassNameGenerator(dto -> StyleUtils.toPercentageProfitStyle(dto.getCurrentProfitPercentage()));
-        grid.addColumn(TradeAnalyticDto::getCurrentProfitPercentage).setHeader("Current Profit %")
+        grid.addColumn(PositionAnalyticDto::getCurrentProfitPercentage).setHeader("Current Profit %")
                 .setClassNameGenerator(dto -> StyleUtils.toPercentageProfitStyle(dto.getCurrentProfitPercentage()));
-        grid.addColumn(TradeAnalyticDto::dealDurationDays).setHeader("Deal days");
+        grid.addColumn(PositionAnalyticDto::dealDurationDays).setHeader("Deal days");
 
-        grid.addColumn(TradeAnalyticDto::getComment).setHeader("Comment");
+        grid.addColumn(PositionAnalyticDto::getComment).setHeader("Comment");
         grid.getColumns().forEach(column -> column.setAutoWidth(true));
 
         grid.addColumn(new ComponentRenderer<>(
                         Button::new,
-                        (button, trade) -> {
+                        (button, position) -> {
                             button.addThemeVariants(
                                     ButtonVariant.LUMO_ICON,
                                     ButtonVariant.LUMO_ERROR,
                                     ButtonVariant.LUMO_TERTIARY);
-                            button.addClickListener(e -> this.openSellOrder(trade));
+                            button.addClickListener(e -> this.openSellOrder(position));
                             button.setIcon(new Icon(VaadinIcon.CLOSE_CIRCLE));
-                            button.setEnabled(!trade.getIsClosed());
+                            button.setEnabled(!position.getIsClosed());
                         }))
                 .setHeader("Sell");
 
         grid.setSizeFull();
 
-        // grid.setItemDetailsRenderer(new ComponentRenderer<>(TradeDetailForm::new, TradeDetailForm::setTrade));
+        // grid.setItemDetailsRenderer(new ComponentRenderer<>(PositionsDetailForm::new, PositionsDetailForm::setPositions));
         return grid;
     }
 
 
     private Component setupToolbar() {
-        Button addTradeButton = new Button("Buy new");
-        addTradeButton.addClickListener(e -> openBuyOrder());
+        Button addPositionsButton = new Button("Buy new");
+        addPositionsButton.addClickListener(e -> openBuyOrder());
 
         isOnlyOpenCheckbox.setValue(true);
-        isOnlyOpenCheckbox.addValueChangeListener(e -> listTrades());
+        isOnlyOpenCheckbox.addValueChangeListener(e -> listPositions());
 
-        HorizontalLayout toolbar = new HorizontalLayout(isOnlyOpenCheckbox, addTradeButton);
+        HorizontalLayout toolbar = new HorizontalLayout(isOnlyOpenCheckbox, addPositionsButton);
         toolbar.addClassName("toolbar");
         return toolbar;
     }
@@ -137,51 +137,51 @@ public class TradeView extends VerticalLayout {
                 .dateAt(LocalDate.now())
                 .build();
 
-        tradeNewForm.setOrder(order);
-        tradeNewForm.setVisible(true);
+        orderDetailsForm.setOrder(order);
+        orderDetailsForm.setVisible(true);
         addClassName("editing");
     }
 
     private void saveOrder(OrderFormEvent.SaveOrderEvent newBuyEvent) {
         OrderDto order = newBuyEvent.getOrderDto();
         if (OrderType.BUY == order.getType()) {
-            tradeAnalyticFacade.saveNewTrade(order);
+            positionAnalyticFacade.saveNewPosition(order);
 
         } else {
-            TradeAnalyticDto trade = grid.asSingleSelect().getValue();
-            tradeAnalyticFacade.addTradeNewOrder(trade.getId(), order);
+            PositionAnalyticDto position = grid.asSingleSelect().getValue();
+            positionAnalyticFacade.addPositionNewOrder(position.getId(), order);
         }
 
-        listTrades();
+        listPositions();
         closeEditor();
     }
 
-    private void openSellOrder(TradeAnalyticDto tradeDto) {
-        // TODO maybe link through trade
-        grid.select(tradeDto);
+    private void openSellOrder(PositionAnalyticDto positionDto) {
+        // TODO maybe link through position
+        grid.select(positionDto);
 
         OrderDto order = OrderDto.builder()
                 .id(UUID.randomUUID())
                 .type(OrderType.SELL)
-                .ticker(tradeDto.getTicker())
-                .rate(tradeDto.getCurrentRate())
-                .quantity(tradeDto.getBuyQuantity())
+                .ticker(positionDto.getTicker())
+                .rate(positionDto.getCurrentRate())
+                .quantity(positionDto.getBuyQuantity())
                 .commissionUsd(BigDecimal.ZERO)
                 .dateAt(LocalDate.now())
                 .build();
 
-        tradeNewForm.setOrder(order);
-        tradeNewForm.setVisible(true);
+        orderDetailsForm.setOrder(order);
+        orderDetailsForm.setVisible(true);
         addClassName("editing");
     }
 
     private void closeEditor() {
-        tradeNewForm.setVisible(false);
-        // tradeNewForm.setOrder(null);
+        orderDetailsForm.setVisible(false);
+        // positionNewForm.setOrder(null);
         removeClassName("editing");
     }
 
-    private void listTrades() {
+    private void listPositions() {
         if (isOnlyOpenCheckbox.getValue()) {
             // TODO (later) refresh items instead of recreate
 
@@ -189,21 +189,21 @@ public class TradeView extends VerticalLayout {
             grid.getColumnByKey("profitDollar").setVisible(false);
             grid.getColumnByKey("profitPercentage").setVisible(false);
 
-            grid.setItems(query -> tradeAnalyticFacade.getOpenTrades(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
+            grid.setItems(query -> positionAnalyticFacade.getOpenPositions(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
         } else {
 
             grid.getColumnByKey("sellRate").setVisible(true);
             grid.getColumnByKey("profitDollar").setVisible(true);
             grid.getColumnByKey("profitPercentage").setVisible(true);
 
-            grid.setItems(query -> tradeAnalyticFacade.getTrades(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
+            grid.setItems(query -> positionAnalyticFacade.getPositions(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
         }
     }
 
     private void addNewTicker(OrderFormEvent.SaveTickerEvent e) {
         String ticker = e.getTicker();
         try {
-            StockPriceDto stockPrice = tradeAnalyticFacade.createStockPrice(ticker);
+            StockPriceDto stockPrice = positionAnalyticFacade.createStockPrice(ticker);
             tickerToPrice.put(ticker, stockPrice.getPrice());
         } catch (Exception ex) {
             Notification notification = new Notification("Failed to add new ticker " + ticker, 5000, Notification.Position.TOP_END);
@@ -212,6 +212,6 @@ public class TradeView extends VerticalLayout {
             return;
         }
 
-        tradeNewForm.setTickerValues(tickerToPrice.keySet(), ticker);
+        orderDetailsForm.setTickerValues(tickerToPrice.keySet(), ticker);
     }
 }

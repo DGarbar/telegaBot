@@ -1,4 +1,4 @@
-package org.dharbar.telegabot.service.trademanagment.dto;
+package org.dharbar.telegabot.service.positionmanagment.dto;
 
 import lombok.Builder;
 import lombok.Data;

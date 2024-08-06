@@ -2,14 +2,13 @@ package org.dharbar.telegabot.csvservice;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import com.opencsv.exceptions.CsvException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.dharbar.telegabot.csvservice.dto.StonkRowBean;
 import org.dharbar.telegabot.repository.entity.OrderType;
-import org.dharbar.telegabot.service.trademanagment.TradeAnalyticFacade;
-import org.dharbar.telegabot.service.trademanagment.dto.OrderDto;
-import org.dharbar.telegabot.service.trademanagment.dto.TradeAnalyticDto;
+import org.dharbar.telegabot.service.positionmanagment.PositionsAnalyticFacade;
+import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
+import org.dharbar.telegabot.service.positionmanagment.dto.PositionAnalyticDto;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +26,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StonksCsvServiceMapper {
 
-    private final TradeAnalyticFacade tradeAnalyticFacade;
+    private final PositionsAnalyticFacade positionAnalyticFacade;
     // private final StockPriceService
 
     @Transactional
@@ -42,12 +41,12 @@ public class StonksCsvServiceMapper {
                 .filter(stonkRowBean -> StringUtils.isNotBlank(stonkRowBean.getTicker()))
                 .toList();
 
-        beans.forEach(this::toTrade);
+        beans.forEach(this::toPosition);
 
         System.out.println();
     }
 
-    public void toTrade(StonkRowBean stonkRowBean) {
+    public void toPosition(StonkRowBean stonkRowBean) {
         // TODO update stockPrice.
 
         OrderDto buy = OrderDto.builder()
@@ -61,7 +60,7 @@ public class StonksCsvServiceMapper {
                 .commissionUsd(stonkRowBean.getBuyCommissionUsd())
                 .build();
 
-        TradeAnalyticDto tradeAnalyticDto = tradeAnalyticFacade.saveNewTrade(buy);
+        PositionAnalyticDto positionAnalyticDto = positionAnalyticFacade.saveNewPosition(buy);
 
         boolean isClosed = stonkRowBean.getSellDateAt() != null;
         if (isClosed) {
@@ -76,7 +75,7 @@ public class StonksCsvServiceMapper {
                     .commissionUsd(stonkRowBean.getSellCommissionUsd())
                     .build();
 
-            tradeAnalyticFacade.addTradeNewOrder(tradeAnalyticDto.getId(), sell);
+            positionAnalyticFacade.addPositionNewOrder(positionAnalyticDto.getId(), sell);
         }
     }
 }
