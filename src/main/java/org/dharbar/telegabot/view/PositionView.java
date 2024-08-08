@@ -16,11 +16,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
+import org.dharbar.telegabot.controller.PositionController;
+import org.dharbar.telegabot.controller.StockPriceController;
+import org.dharbar.telegabot.controller.response.PositionResponse;
+import org.dharbar.telegabot.facade.PositionFacade;
 import org.dharbar.telegabot.repository.entity.OrderType;
-import org.dharbar.telegabot.service.positionmanagment.PositionsAnalyticFacade;
 import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
-import org.dharbar.telegabot.service.positionmanagment.dto.PositionAnalyticDto;
-import org.dharbar.telegabot.service.stockprice.StockPriceService;
 import org.dharbar.telegabot.service.stockprice.dto.StockPriceDto;
 import org.dharbar.telegabot.view.events.OrderFormEvent;
 import org.dharbar.telegabot.view.utils.StyleUtils;
@@ -37,21 +38,27 @@ import java.util.stream.Collectors;
 @CssImport(value = "./styles/grid.css", themeFor = "vaadin-grid")
 public class PositionView extends VerticalLayout  {
 
-    private final Grid<PositionAnalyticDto> grid;
+    private final Grid<PositionResponse> grid;
     private final OrderDetailsForm orderDetailsForm;
     private final Checkbox isOnlyOpenCheckbox = new Checkbox("Open only", true);
 
-    private final PositionsAnalyticFacade positionAnalyticFacade;
+    private final PositionFacade positionAnalyticFacade;
+
+    private final PositionController positionController;
 
     private final Map<String, BigDecimal> tickerToPrice;
+    private final StockPriceController stockPriceController;
 
-    public PositionView(PositionsAnalyticFacade positionAnalyticFacade, StockPriceService stockPriceService) {
+    public PositionView(PositionFacade positionAnalyticFacade,
+                        StockPriceController stockPriceController,
+                        PositionController positionController) {
         addClassName("position-view");
         setSizeFull();
 
+        this.positionController = positionController;
         this.positionAnalyticFacade = positionAnalyticFacade;
 
-        tickerToPrice = stockPriceService.findAll().stream()
+        tickerToPrice = stockPriceController.getStockPrices().stream()
                 .collect(Collectors.toMap(StockPriceDto::getTicker, StockPriceDto::getPrice));
         Set<String> tickers = tickerToPrice.keySet();
 
@@ -69,31 +76,32 @@ public class PositionView extends VerticalLayout  {
         add(setupToolbar(), positionDetailsDiv);
         listPositions();
         closeEditor();
+        this.stockPriceController = stockPriceController;
     }
 
-    private Grid<PositionAnalyticDto> setupGrid() {
-        Grid<PositionAnalyticDto> grid = new Grid<>(PositionAnalyticDto.class, false);
+    private Grid<PositionResponse> setupGrid() {
+        Grid<PositionResponse> grid = new Grid<>(PositionResponse.class, false);
         grid.addClassName("position-grid");
-        grid.addColumn(PositionAnalyticDto::getTicker).setHeader("Ticker").setKey("ticker").setSortable(true)
+        grid.addColumn(PositionResponse::getTicker).setHeader("Ticker").setKey("ticker").setSortable(true)
                 .setClassNameGenerator(positionAnalyticDto -> StyleUtils.toTickerStyle(positionAnalyticDto.getTicker()));
-        grid.addColumn(PositionAnalyticDto::getDateAt).setHeader("Date").setKey("dateAt").setSortable(true);
-        grid.addColumn(PositionAnalyticDto::getBuyTotalUsd).setHeader("Buy $");
-        grid.addColumn(PositionAnalyticDto::getBuyRate).setHeader("Buy Rate");
+        grid.addColumn(PositionResponse::getDateAt).setHeader("Date").setKey("dateAt").setSortable(true);
+        grid.addColumn(PositionResponse::getBuyTotalUsd).setHeader("Buy $");
+        grid.addColumn(PositionResponse::getBuyRate).setHeader("Buy Rate");
 
-        grid.addColumn(PositionAnalyticDto::getSellRate).setHeader("Sell Rate").setKey("sellRate");
-        grid.addColumn(PositionAnalyticDto::getNetProfitUsd).setHeader("Profit $").setKey("profitDollar")
+        grid.addColumn(PositionResponse::getSellRate).setHeader("Sell Rate").setKey("sellRate");
+        grid.addColumn(PositionResponse::getNetProfitUsd).setHeader("Profit $").setKey("profitDollar")
                 .setClassNameGenerator(dto -> StyleUtils.toPercentageProfitStyle(dto.getProfitPercentage()));
-        grid.addColumn(PositionAnalyticDto::getProfitPercentage).setHeader("Profit %").setKey("profitPercentage")
+        grid.addColumn(PositionResponse::getProfitPercentage).setHeader("Profit %").setKey("profitPercentage")
                 .setClassNameGenerator(dto -> StyleUtils.toPercentageProfitStyle(dto.getProfitPercentage()));
 
-        grid.addColumn(PositionAnalyticDto::getCurrentRate).setHeader("Current Rate");
-        grid.addColumn(PositionAnalyticDto::getCurrentNetProfitUsd).setHeader("Current Profit $")
+        grid.addColumn(PositionResponse::getCurrentRate).setHeader("Current Rate");
+        grid.addColumn(PositionResponse::getCurrentNetProfitUsd).setHeader("Current Profit $")
                 .setClassNameGenerator(dto -> StyleUtils.toPercentageProfitStyle(dto.getCurrentProfitPercentage()));
-        grid.addColumn(PositionAnalyticDto::getCurrentProfitPercentage).setHeader("Current Profit %")
+        grid.addColumn(PositionResponse::getCurrentProfitPercentage).setHeader("Current Profit %")
                 .setClassNameGenerator(dto -> StyleUtils.toPercentageProfitStyle(dto.getCurrentProfitPercentage()));
-        grid.addColumn(PositionAnalyticDto::dealDurationDays).setHeader("Deal days");
+        grid.addColumn(PositionResponse::dealDurationDays).setHeader("Deal days");
 
-        grid.addColumn(PositionAnalyticDto::getComment).setHeader("Comment");
+        grid.addColumn(PositionResponse::getComment).setHeader("Comment");
         grid.getColumns().forEach(column -> column.setAutoWidth(true));
 
         grid.addColumn(new ComponentRenderer<>(
@@ -148,7 +156,7 @@ public class PositionView extends VerticalLayout  {
             positionAnalyticFacade.saveNewPosition(order);
 
         } else {
-            PositionAnalyticDto position = grid.asSingleSelect().getValue();
+            PositionResponse position = grid.asSingleSelect().getValue();
             positionAnalyticFacade.addPositionNewOrder(position.getId(), order);
         }
 
@@ -156,7 +164,7 @@ public class PositionView extends VerticalLayout  {
         closeEditor();
     }
 
-    private void openSellOrder(PositionAnalyticDto positionDto) {
+    private void openSellOrder(PositionResponse positionDto) {
         // TODO maybe link through position
         grid.select(positionDto);
 
@@ -182,30 +190,28 @@ public class PositionView extends VerticalLayout  {
     }
 
     private void listPositions() {
-        if (isOnlyOpenCheckbox.getValue()) {
+        Boolean isOnlyOpen = isOnlyOpenCheckbox.getValue();
+        if (isOnlyOpen) {
             // TODO (later) refresh items instead of recreate
 
             grid.getColumnByKey("sellRate").setVisible(false);
             grid.getColumnByKey("profitDollar").setVisible(false);
             grid.getColumnByKey("profitPercentage").setVisible(false);
-
-            grid.setItems(query -> positionAnalyticFacade.getOpenPositions(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
         } else {
-
             grid.getColumnByKey("sellRate").setVisible(true);
             grid.getColumnByKey("profitDollar").setVisible(true);
             grid.getColumnByKey("profitPercentage").setVisible(true);
-
-            grid.setItems(query -> positionAnalyticFacade.getPositions(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
         }
+
+        grid.setItems(query -> positionController.getPositions(isOnlyOpen, VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
     }
 
-    private void addNewTicker(OrderFormEvent.SaveTickerEvent e) {
-        String ticker = e.getTicker();
+    private void addNewTicker(OrderFormEvent.SaveTickerEvent event) {
+        String ticker = event.getTicker();
         try {
-            StockPriceDto stockPrice = positionAnalyticFacade.createStockPrice(ticker);
+            StockPriceDto stockPrice = stockPriceController.createStockPrice(ticker);
             tickerToPrice.put(ticker, stockPrice.getPrice());
-        } catch (Exception ex) {
+        } catch (Exception e) {
             Notification notification = new Notification("Failed to add new ticker " + ticker, 5000, Notification.Position.TOP_END);
             notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             notification.open();

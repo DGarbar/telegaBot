@@ -1,4 +1,4 @@
-package org.dharbar.telegabot.service.positionmanagment.dto;
+package org.dharbar.telegabot.controller.response;
 
 import lombok.Builder;
 import lombok.Data;
@@ -11,15 +11,16 @@ import static java.time.temporal.ChronoUnit.DAYS;
 
 @Data
 @Builder
-public class PositionAnalyticDto {
+public class PositionResponse {
 
     UUID id;
 
     String ticker;
     LocalDate dateAt;
 
-    OrderDto byuOrder;
-    OrderDto sellOrder;
+    // TODO make it list
+    OrderResponse byuOrder;
+    OrderResponse sellOrder;
 
     Boolean isClosed;
 
@@ -64,7 +65,7 @@ public class PositionAnalyticDto {
     }
 
     public long dealDurationDays() {
-        LocalDate sellDate = sellOrder == null ? LocalDate.now() : sellOrder.dateAt;
-        return DAYS.between(byuOrder.dateAt, sellDate);
+        LocalDate sellDate = sellOrder == null ? LocalDate.now() : sellOrder.getDateAt();
+        return DAYS.between(byuOrder.getDateAt(), sellDate);
     }
 }

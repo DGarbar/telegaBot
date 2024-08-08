@@ -13,17 +13,12 @@ import java.util.Collection;
 import java.util.Set;
 
 @Mapper(componentModel = "spring", collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED, imports = {OrderType.class})
-public interface PositionMapper {
+public interface PositionServiceMapper {
 
     PositionDto toDto(PositionEntity positionEntity);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "profitPercentage", ignore = true)
-    @Mapping(target = "orders", ignore = true)
-    @Mapping(target = "netProfitUsd", ignore = true)
-    @Mapping(target = "isClosed", constant = "false")
-    PositionEntity toNewEntity(OrderEntity orderDto);
-
+    @Mapping(target = "dateAt", expression = "java(java.time.LocalDate.now())")
+    PositionEntity toNewEntity(PositionDto positionDto, Set<OrderEntity> orders);
     PositionEntity toEntity(PositionDto positionDto, Set<OrderEntity> orders);
 
     OrderDto toDto(OrderEntity orderEntity);

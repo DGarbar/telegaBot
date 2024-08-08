@@ -1,4 +1,4 @@
-package org.dharbar.telegabot.service.rate;
+package org.dharbar.telegabot.facade;
 
 import lombok.RequiredArgsConstructor;
 import org.dharbar.telegabot.service.rate.binance.BinanceRateService;

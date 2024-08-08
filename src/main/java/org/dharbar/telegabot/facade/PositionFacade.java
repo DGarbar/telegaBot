@@ -1,13 +1,16 @@
-package org.dharbar.telegabot.service.positionmanagment;
+package org.dharbar.telegabot.facade;
 
 import lombok.RequiredArgsConstructor;
+import org.dharbar.telegabot.controller.request.CreatePositionRequest;
+import org.dharbar.telegabot.controller.response.PositionResponse;
 import org.dharbar.telegabot.repository.entity.OrderType;
+import org.dharbar.telegabot.service.positionmanagment.PositionService;
 import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
-import org.dharbar.telegabot.service.positionmanagment.dto.PositionAnalyticDto;
 import org.dharbar.telegabot.service.positionmanagment.dto.PositionDto;
-import org.dharbar.telegabot.service.positionmanagment.mapper.PositionAnalyticMapper;
+import org.dharbar.telegabot.service.positionmanagment.mapper.PositionFacadeMapper;
 import org.dharbar.telegabot.service.stockprice.StockPriceService;
 import org.dharbar.telegabot.service.stockprice.dto.StockPriceDto;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,21 +22,47 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class PositionsAnalyticFacade {
+public class PositionFacade {
     private final PositionService positionService;
     private final StockPriceService stockPriceService;
 
-    private final PositionAnalyticMapper positionAnalyticMapper;
+    private final PositionFacadeMapper positionFacadeMapper;
 
-    public PositionAnalyticDto saveNewPosition(OrderDto orderDto) {
-        PositionDto positionDto = positionService.saveNewPosition(orderDto);
-        return positionAnalyticMapper.toDto(positionDto);
+    public Page<PositionResponse> getPositions(PageRequest pageRequest) {
+        return positionService.getPositions(pageRequest)
+                .map(positionFacadeMapper::toResponse)
+                .map(this::populateWithAnalytic);
+    }
+
+    public Page<PositionResponse> getOpenPositions(PageRequest pageRequest) {
+        return positionService.getOpenPositions(pageRequest)
+                .map(positionFacadeMapper::toResponse)
+                .map(this::populateWithAnalytic);
+    }
+
+    public PositionResponse createPosition(CreatePositionRequest request) {
+        List<OrderDto> orderDtos = positionFacadeMapper.toDtos(request.getOrders());
+        PositionDto positionDto = positionFacadeMapper.toDto(request, orderDtos);
+
+        PositionDto savedPositionDto = positionService.saveNewPosition(positionDto);
+        return positionFacadeMapper.toResponse(savedPositionDto);
+    }
+
+    @Deprecated
+    public PositionResponse saveNewPosition(OrderDto orderDto) {
+        PositionDto positionDto = PositionDto.builder()
+                .ticker(orderDto.getTicker())
+                .orders(List.of(orderDto))
+                .build();
+
+        PositionDto savedPositionDto = positionService.saveNewPosition(positionDto);
+        return positionFacadeMapper.toResponse(savedPositionDto);
     }
 
     // TODO (later) for update for position
     @Transactional
-    public PositionAnalyticDto addPositionNewOrder(UUID positionId, OrderDto order) {
-        PositionDto positionDto = positionService.getPosition(positionId);
+    public PositionResponse addPositionNewOrder(UUID positionId, OrderDto order) {
+        PositionDto positionDto = positionService.get(positionId);
 
         List<OrderDto> orders = positionDto.getOrders();
         orders.add(order);
@@ -45,49 +74,31 @@ public class PositionsAnalyticFacade {
         positionDto.setIsClosed(positionCalculation.isClosed());
 
         PositionDto savedPosition = positionService.savePosition(positionDto);
-        PositionAnalyticDto mappedDto = positionAnalyticMapper.toDto(savedPosition);
+        PositionResponse mappedDto = positionFacadeMapper.toResponse(savedPosition);
         return populateWithAnalytic(mappedDto);
     }
 
-    public List<PositionAnalyticDto> getOpenPositions(PageRequest pageRequest) {
-        return positionService.getOpenPositions(pageRequest).stream()
-                .map(positionAnalyticMapper::toDto)
-                .map(this::populateWithAnalytic)
-                .toList();
-    }
-
-    public List<PositionAnalyticDto> getPositions(PageRequest pageRequest) {
-        return positionService.getPositions(pageRequest).stream()
-                .map(positionAnalyticMapper::toDto)
-                .map(this::populateWithAnalytic)
-                .toList();
-    }
-
-    private PositionAnalyticDto populateWithAnalytic(PositionAnalyticDto positionAnalyticDto) {
+    private PositionResponse populateWithAnalytic(PositionResponse positionAnalyticDto) {
         return stockPriceService.find(positionAnalyticDto.getTicker())
                 .map(stockPriceDto -> populatePositionWithCurrentValues(positionAnalyticDto, stockPriceDto))
                 .orElse(positionAnalyticDto);
     }
 
-    private static PositionAnalyticDto populatePositionWithCurrentValues(PositionAnalyticDto positionAnalyticDto, StockPriceDto stockPriceDto) {
+    private static PositionResponse populatePositionWithCurrentValues(PositionResponse positionResponse, StockPriceDto stockPriceDto) {
         BigDecimal currentRate = stockPriceDto.getPrice();
-        positionAnalyticDto.setCurrentRate(currentRate);
+        positionResponse.setCurrentRate(currentRate);
 
-        BigDecimal currentPrice = currentRate.multiply(positionAnalyticDto.getBuyQuantity());
+        BigDecimal currentPrice = currentRate.multiply(positionResponse.getBuyQuantity());
         BigDecimal netProfitUsd = currentPrice
-                .subtract(positionAnalyticDto.getBuyTotalUsd())
-                .subtract(positionAnalyticDto.getBuyCommissionUsd())
+                .subtract(positionResponse.getBuyTotalUsd())
+                .subtract(positionResponse.getBuyCommissionUsd())
                 .setScale(3, RoundingMode.HALF_UP);
-        positionAnalyticDto.setCurrentNetProfitUsd(netProfitUsd);
+        positionResponse.setCurrentNetProfitUsd(netProfitUsd);
 
-        BigDecimal profitPercentage = netProfitUsd.divide(positionAnalyticDto.getBuyTotalUsd().scaleByPowerOfTen(-2), 3, RoundingMode.HALF_UP);
-        positionAnalyticDto.setCurrentProfitPercentage(profitPercentage);
+        BigDecimal profitPercentage = netProfitUsd.divide(positionResponse.getBuyTotalUsd().scaleByPowerOfTen(-2), 3, RoundingMode.HALF_UP);
+        positionResponse.setCurrentProfitPercentage(profitPercentage);
 
-        return positionAnalyticDto;
-    }
-
-    public StockPriceDto createStockPrice(String ticker) {
-        return stockPriceService.createStockPrice(ticker);
+        return positionResponse;
     }
 
     private static PositionCalculation calculatePositionValues(List<OrderDto> orders) {

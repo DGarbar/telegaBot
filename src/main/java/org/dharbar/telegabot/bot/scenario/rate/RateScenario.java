@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dharbar.telegabot.bot.MessageHelper;
 import org.dharbar.telegabot.bot.scenario.CommandScenario;
 import org.dharbar.telegabot.bot.scenario.ScenarioResult;
-import org.dharbar.telegabot.service.rate.RateFacadeService;
+import org.dharbar.telegabot.facade.RateFacadeService;
 import org.dharbar.telegabot.service.rate.dto.RateDto;
 import org.dharbar.telegabot.service.rate.dto.RateProvider;
 import org.springframework.stereotype.Service;

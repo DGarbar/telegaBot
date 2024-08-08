@@ -14,7 +14,7 @@ public class StockPriceTaskService {
 
     @Scheduled(cron = "${task.stock-price-update}")
     public void updateStockPrice() {
-        stockPriceService.findAll().stream()
+        stockPriceService.getAll().stream()
                 .map(StockPriceDto::getTicker)
                 .forEach(stockPriceService::updateEndOfDayStockPriceFromProvider);
     }

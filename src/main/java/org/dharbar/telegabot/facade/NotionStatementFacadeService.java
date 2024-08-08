@@ -1,4 +1,4 @@
-package org.dharbar.telegabot.service.statement;
+package org.dharbar.telegabot.facade;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

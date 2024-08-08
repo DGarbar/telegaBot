@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.log4j.Log4j2;
 import org.dharbar.telegabot.bot.TelegramBot;
-import org.dharbar.telegabot.service.rate.RateFacadeService;
+import org.dharbar.telegabot.facade.RateFacadeService;
 import org.dharbar.telegabot.service.rate.dto.RateDto;
 import org.dharbar.telegabot.service.rate.dto.RateProvider;
 import org.quartz.JobDataMap;

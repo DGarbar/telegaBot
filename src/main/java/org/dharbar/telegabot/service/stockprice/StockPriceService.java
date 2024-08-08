@@ -28,7 +28,7 @@ public class StockPriceService {
                 .map(stockPriceMapper::toDto);
     }
 
-    public List<StockPriceDto> findAll() {
+    public List<StockPriceDto> getAll() {
         return stockPriceRepository.findAll().stream()
                 .map(stockPriceMapper::toDto)
                 .collect(Collectors.toList());
