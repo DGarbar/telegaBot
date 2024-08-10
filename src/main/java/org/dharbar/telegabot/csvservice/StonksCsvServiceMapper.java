@@ -40,7 +40,7 @@ public class StonksCsvServiceMapper {
     //             .quantity(stonkRowBean.getBuyQuantity())
     //             .rate(stonkRowBean.getBuyRate())
     //             .totalUsd(stonkRowBean.getBuyTotalUsd())
-    //             .commissionUsd(stonkRowBean.getBuyCommissionUsd())
+    //             .commissionUsd(stonkRowBean.getBuyCommissionAmount())
     //             .build();
     //
     //     PositionResponse positionAnalyticDto = positionAnalyticFacade.saveNewPosition(buy);
@@ -55,7 +55,7 @@ public class StonksCsvServiceMapper {
     //                 .quantity(stonkRowBean.getBuyQuantity())
     //                 .rate(stonkRowBean.getSellRate())
     //                 .totalUsd(stonkRowBean.getBuyQuantity().multiply(stonkRowBean.getSellRate()))
-    //                 .commissionUsd(stonkRowBean.getSellCommissionUsd())
+    //                 .commissionUsd(stonkRowBean.getSellCommissionAmount())
     //                 .build();
     //
     //         positionAnalyticFacade.addPositionNewOrder(positionAnalyticDto.getId(), sell);

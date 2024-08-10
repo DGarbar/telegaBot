@@ -4,3 +4,6 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/telegaBotDb
+
+  jpa:
+    show-sql: true

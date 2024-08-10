@@ -7,6 +7,8 @@ import org.dharbar.telegabot.repository.StockPriceRepository;
 import org.dharbar.telegabot.repository.entity.StockPriceEntity;
 import org.dharbar.telegabot.service.stockprice.dto.StockPriceDto;
 import org.dharbar.telegabot.service.stockprice.mapper.StockPriceMapper;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +24,7 @@ public class StockPriceService {
 
     private final StockPriceMapper stockPriceMapper;
 
-    // TODO caching
+    @Cacheable("stockPrice")
     public Optional<StockPriceDto> find(String ticker) {
         return stockPriceRepository.findById(ticker)
                 .map(stockPriceMapper::toDto);
@@ -42,6 +44,7 @@ public class StockPriceService {
                         () -> createStockPrice(ticker));
     }
 
+    @CachePut("stockPrice")
     public StockPriceDto createStockPrice(String ticker) {
         TiingoQuoteResponse response = getProviderResponse(ticker);
         StockPriceEntity stockPrice = stockPriceMapper.toNewEntity(ticker, response);

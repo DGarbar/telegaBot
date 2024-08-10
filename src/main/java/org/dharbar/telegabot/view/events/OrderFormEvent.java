@@ -2,27 +2,27 @@ package org.dharbar.telegabot.view.events;
 
 import com.vaadin.flow.component.ComponentEvent;
 import lombok.Getter;
-import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
-import org.dharbar.telegabot.view.OrderDetailsForm;
+import org.dharbar.telegabot.view.OrderCreationForm;
+import org.dharbar.telegabot.view.model.OrderViewModel;
 
 @Getter
-public abstract class OrderFormEvent extends ComponentEvent<OrderDetailsForm> {
-    private final OrderDto orderDto;
+public abstract class OrderFormEvent extends ComponentEvent<OrderCreationForm> {
+    private final OrderViewModel order;
 
-    public OrderFormEvent(OrderDetailsForm source, OrderDto orderDto) {
+    public OrderFormEvent(OrderCreationForm source, OrderViewModel order) {
         super(source, false);
-        this.orderDto = orderDto;
+        this.order = order;
     }
 
     public static class SaveOrderEvent extends OrderFormEvent {
-        public SaveOrderEvent(OrderDetailsForm source, OrderDto orderDto) {
-            super(source, orderDto);
+        public SaveOrderEvent(OrderCreationForm source, OrderViewModel order) {
+            super(source, order);
         }
     }
 
     public static class CloseEvent extends OrderFormEvent {
-        public CloseEvent(OrderDetailsForm source, OrderDto orderDto) {
-            super(source, orderDto);
+        public CloseEvent(OrderCreationForm source, OrderViewModel order) {
+            super(source, order);
         }
     }
 
@@ -30,8 +30,8 @@ public abstract class OrderFormEvent extends ComponentEvent<OrderDetailsForm> {
     public static class SaveTickerEvent extends OrderFormEvent {
         private final String ticker;
 
-        public SaveTickerEvent(OrderDetailsForm source, OrderDto orderDto, String ticker) {
-            super(source, orderDto);
+        public SaveTickerEvent(OrderCreationForm source, OrderViewModel order, String ticker) {
+            super(source, order);
             this.ticker = ticker;
         }
     }

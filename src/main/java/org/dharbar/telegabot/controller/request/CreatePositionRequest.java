@@ -11,4 +11,6 @@ public class CreatePositionRequest {
     String ticker;
 
     List<CreateOrderRequest> orders = new ArrayList<>();
+
+    String comment;
 }

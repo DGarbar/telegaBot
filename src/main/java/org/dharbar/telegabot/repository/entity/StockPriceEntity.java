@@ -1,42 +1,57 @@
 package org.dharbar.telegabot.repository.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.domain.Persistable;
-import org.springframework.data.relational.core.mapping.Table;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-@Table("stock_price")
-public class StockPriceEntity implements Persistable<String> {
+@Table(name = "stock_price")
+@Entity
+public class StockPriceEntity  {
+
     @Id
     private String ticker;
+
+    @Column(nullable = false)
     private BigDecimal price;
+
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @Transient
-    private boolean newEntity;
-
     @Override
-    public String getId() {
-        return getTicker();
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ?
+                ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() :
+                o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ?
+                ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() :
+                this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        StockPriceEntity that = (StockPriceEntity) o;
+        return getTicker() != null && Objects.equals(getTicker(), that.getTicker());
     }
 
     @Override
-    @JsonIgnore
-    public boolean isNew() {
-        return newEntity;
+    public final int hashCode() {
+        return this instanceof HibernateProxy ?
+                ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() :
+                getClass().hashCode();
     }
 }

@@ -13,12 +13,10 @@ public interface StockPriceMapper {
     @Mapping(target = "ticker", source = "ticker")
     @Mapping(target = "price", source = "response.close")
     @Mapping(target = "updatedAt", source = "response.date")
-    @Mapping(target = "newEntity", constant = "true")
     StockPriceEntity toNewEntity(String ticker, TiingoQuoteResponse response);
 
     @Mapping(target = "price", source = "response.close")
     @Mapping(target = "updatedAt", source = "response.date")
-    @Mapping(target = "newEntity", constant = "false")
     @Mapping(target = "ticker", ignore = true)
     StockPriceEntity toEntity(TiingoQuoteResponse response, @MappingTarget StockPriceEntity stockPriceEntity);
 

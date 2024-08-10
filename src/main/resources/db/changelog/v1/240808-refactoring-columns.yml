@@ -1,0 +1,125 @@
+databaseChangeLog:
+  - changeSet:
+      id: 240808-refactoring-columns
+      author: dgarbar
+      changes:
+        - tagDatabase:
+            tag: before-240808-refactoring-columns
+
+        - renameColumn:
+            tableName: position
+            oldColumnName: net_profit_usd
+            newColumnName: net_profit_amount
+        - addNotNullConstraint:
+            tableName: position
+            columnName: net_profit_amount
+            defaultNullValue: 0
+        - addDefaultValue:
+            tableName: position
+            columnName: net_profit_amount
+            defaultValue: 0
+
+
+        - renameColumn:
+            tableName: position
+            oldColumnName: date_at
+            newColumnName: open_at
+        - renameColumn:
+            tableName: order
+            oldColumnName: commission_usd
+            newColumnName: commission_amount
+
+        - addNotNullConstraint:
+            tableName: position
+            columnName: profit_percentage
+            defaultNullValue: 0
+        - addDefaultValue:
+            tableName: position
+            columnName: profit_percentage
+            defaultValue: 0
+
+        - addColumn:
+            tableName: order
+            columns:
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+                  valueComputed: "date_at"
+
+        - addColumn:
+            tableName: position
+            columns:
+              - column:
+                  name: closed_at
+                  type: date
+                  valueComputed: "(Select COALESCE(public.order.date_at, null) FROM public.order WHERE public.order.type = 'SELL' AND public.order.position_id = position.id)"
+
+              - column:
+                  name: buy_total_amount
+                  type: decimal(10,2)
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+                  valueComputed: "(SELECT COALESCE(SUM(total_usd), 0) from public.order WHERE public.order.type = 'BUY' AND public.order.position_id = position.id)"
+              - column:
+                  name: buy_quantity
+                  type: decimal(10,2)
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+                  valueComputed: "(SELECT COALESCE(SUM(quantity), 0) from public.order WHERE public.order.type = 'BUY' AND public.order.position_id = position.id)"
+              - column:
+                  name: buy_average_price
+                  type: decimal(10,2)
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+                  valueComputed: "(SELECT COALESCE(SUM(total_usd)/SUM(quantity), 0) from public.order WHERE public.order.type = 'BUY' AND public.order.position_id = position.id)"
+
+              - column:
+                  name: sell_total_amount
+                  type: decimal(10,2)
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+                  valueComputed: "(SELECT COALESCE(SUM(total_usd), 0) from public.order WHERE public.order.type = 'SELL' AND public.order.position_id = position.id)"
+              - column:
+                  name: sell_quantity
+                  type: decimal(10,2)
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+                  valueComputed: "(SELECT COALESCE(SUM(quantity), 0) from public.order WHERE public.order.type = 'SELL' AND public.order.position_id = position.id)"
+              - column:
+                  name: sell_average_price
+                  type: decimal(10,2)
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+                  valueComputed: "(SELECT COALESCE(SUM(total_usd)/SUM(quantity), 0) from public.order WHERE public.order.type = 'SELL' AND public.order.position_id = position.id)"
+
+              - column:
+                  name: commission_total_amount
+                  type: decimal(10,2)
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+                  valueComputed: "(SELECT COALESCE(SUM(commission_amount), 0) from public.order WHERE public.order.position_id = position.id)"
+
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+                  valueComputed: "open_at"
+
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+                  valueComputed: "(COALESCE(closed_at, open_at))"
+
+

@@ -16,36 +16,36 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
 import lombok.extern.slf4j.Slf4j;
-import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
 import org.dharbar.telegabot.view.events.OrderFormEvent;
+import org.dharbar.telegabot.view.model.OrderViewModel;
 
 import java.math.BigDecimal;
 import java.util.Set;
 import java.util.stream.Stream;
 
 @Slf4j
-public class OrderDetailsForm extends FormLayout {
+public class OrderCreationForm extends FormLayout {
 
     private final ComboBox<String> tickerComboBox = new ComboBox<>("Ticker");
     private final BigDecimalField quantityField = new BigDecimalField("Quantity");
     private final BigDecimalField rateField = new BigDecimalField("Rate");
     private final DatePicker dateAtField = new DatePicker("Date at");
     private final BigDecimalField totalUsdField = new BigDecimalField("Total");
-    private final BigDecimalField commissionUsdField = new BigDecimalField("Commission");
+    private final BigDecimalField commissionAmountField = new BigDecimalField("Commission");
     private final TextField commentField = new TextField("Comment");
-    private final Binder<OrderDto> orderDtoBinder = new Binder<>(OrderDto.class);
+    private final Binder<OrderViewModel> orderDtoBinder = new Binder<>(OrderViewModel.class);
 
     private final Button saveButton = new Button("Save");
 
-    public OrderDetailsForm(Set<String> tickers) {
-        addClassName("order-details-form");
+    public OrderCreationForm(Set<String> tickers) {
+        addClassName("order-creation-form");
 
         Component buttonLayout = buttonLayout(saveButton);
 
         setupTickerComboBox(tickers);
         setupFields();
 
-        Stream.of(tickerComboBox, quantityField, rateField, dateAtField, totalUsdField, commissionUsdField, buttonLayout)
+        Stream.of(tickerComboBox, quantityField, rateField, dateAtField, totalUsdField, commissionAmountField, buttonLayout)
                 .forEach(this::add);
 
         setupBinder();
@@ -84,7 +84,7 @@ public class OrderDetailsForm extends FormLayout {
     }
 
     private void setupFields() {
-        commissionUsdField.setSuffixComponent(VaadinIcon.DOLLAR.create());
+        commissionAmountField.setSuffixComponent(VaadinIcon.DOLLAR.create());
         rateField.setSuffixComponent(VaadinIcon.DOLLAR.create());
         rateField.addValueChangeListener(e -> recalculateTotalField());
         quantityField.addValueChangeListener(e -> recalculateTotalField());
@@ -102,18 +102,18 @@ public class OrderDetailsForm extends FormLayout {
     }
 
     private void setupBinder() {
-        orderDtoBinder.bind(tickerComboBox, OrderDto::getTicker, OrderDto::setTicker);
-        orderDtoBinder.forField(quantityField).bind(OrderDto::getQuantity, OrderDto::setQuantity);
-        orderDtoBinder.forField(rateField).bind(OrderDto::getRate, OrderDto::setRate);
-        orderDtoBinder.bind(dateAtField, OrderDto::getDateAt, OrderDto::setDateAt);
-        orderDtoBinder.forField(totalUsdField).bind(OrderDto::getTotalUsd, OrderDto::setTotalUsd);
-        orderDtoBinder.forField(commissionUsdField).bind(OrderDto::getCommissionUsd, OrderDto::setCommissionUsd);
-        orderDtoBinder.bind(commentField, OrderDto::getComment, OrderDto::setComment);
+        orderDtoBinder.bind(tickerComboBox, OrderViewModel::getTicker, OrderViewModel::setTicker);
+        orderDtoBinder.forField(quantityField).bind(OrderViewModel::getQuantity, OrderViewModel::setQuantity);
+        orderDtoBinder.forField(rateField).bind(OrderViewModel::getRate, OrderViewModel::setRate);
+        orderDtoBinder.bind(dateAtField, OrderViewModel::getDateAt, OrderViewModel::setDateAt);
+        orderDtoBinder.forField(totalUsdField).bind(OrderViewModel::getTotalUsd, OrderViewModel::setTotalUsd);
+        orderDtoBinder.forField(commissionAmountField).bind(OrderViewModel::getCommissionAmount, OrderViewModel::setCommissionAmount);
+        orderDtoBinder.bind(commentField, OrderViewModel::getComment, OrderViewModel::setComment);
 
         orderDtoBinder.addStatusChangeListener(event -> saveButton.setEnabled(orderDtoBinder.isValid()));
     }
 
-    public void setOrder(OrderDto orderDto) {
+    public void setOrder(OrderViewModel orderDto) {
         orderDtoBinder.setBean(orderDto);
     }
 

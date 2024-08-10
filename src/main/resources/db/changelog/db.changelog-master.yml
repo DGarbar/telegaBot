@@ -7,4 +7,6 @@ databaseChangeLog:
       file: classpath:db/changelog/v1/240629-stock_price_table.yml
   - include:
       file: classpath:db/changelog/v1/240806-rename_to_position_tables.yml
+  - include:
+      file: classpath:db/changelog/v1/240808-refactoring-columns.yml
 

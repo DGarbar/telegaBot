@@ -4,14 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.dharbar.telegabot.repository.PositionRepository;
 import org.dharbar.telegabot.repository.entity.OrderEntity;
 import org.dharbar.telegabot.repository.entity.PositionEntity;
+import org.dharbar.telegabot.service.positionmanagment.PositionCalculationService.PositionCalculation;
+import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
 import org.dharbar.telegabot.service.positionmanagment.dto.PositionDto;
 import org.dharbar.telegabot.service.positionmanagment.mapper.PositionServiceMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import static org.dharbar.telegabot.service.positionmanagment.PositionCalculationService.calculatePositionValues;
 
 @Service
 @RequiredArgsConstructor
@@ -27,27 +32,36 @@ public class PositionService {
                 .orElseThrow();
     }
 
-    public Page<PositionDto> getOpenPositions(PageRequest pageRequest) {
+    public Page<PositionDto> getOpenPositions(Pageable pageRequest) {
         return positionRepository.findAllByIsClosedIsFalse(pageRequest)
                 .map(positionMapper::toDto);
     }
 
-    public Page<PositionDto> getPositions(PageRequest pageRequest) {
+    public Page<PositionDto> getPositions(Pageable pageRequest) {
         return positionRepository.findAll(pageRequest)
                 .map(positionMapper::toDto);
     }
 
-    public PositionDto saveNewPosition(PositionDto positionDto) {
-        Set<OrderEntity> orders = positionMapper.toEntities(positionDto.getOrders());
-        PositionEntity position = positionMapper.toNewEntity(positionDto, orders);
+    public PositionDto cretePosition(String ticker, String comment, List<OrderDto> orderDtos) {
+        PositionCalculation positionCalculation = calculatePositionValues(orderDtos);
+        Set<OrderEntity> orders = positionMapper.toEntities(orderDtos);
+        PositionEntity position = positionMapper.toNewEntity(ticker, comment, positionCalculation, orders);
+
         PositionEntity savedPosition = positionRepository.save(position);
 
         return positionMapper.toDto(savedPosition);
     }
 
-    public PositionDto savePosition(PositionDto positionDto) {
-        Set<OrderEntity> orders = positionMapper.toEntities(positionDto.getOrders());
-        PositionEntity position = positionMapper.toEntity(positionDto, orders);
+    public PositionDto addOrder(UUID positionId, OrderDto orderDto) {
+        PositionEntity position = positionRepository.findById(positionId).orElseThrow();
+        Set<OrderDto> orderDtos = positionMapper.toDtos(position.getOrders());
+        orderDtos.add(orderDto);
+
+        // (optimization)TODO can calculate based only on new order + existing value
+        PositionCalculation positionCalculation = calculatePositionValues(orderDtos);
+        Set<OrderEntity> orders = positionMapper.toEntities(orderDtos);
+
+        positionMapper.updateEntity(position, orders, positionCalculation);
         PositionEntity savedPosition = positionRepository.save(position);
 
         return positionMapper.toDto(savedPosition);

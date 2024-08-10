@@ -26,7 +26,7 @@ public class StonkRowBean {
     BigDecimal buyRate;
 
     @CsvBindByPosition(position = 7)
-    BigDecimal buyCommissionUsd;
+    BigDecimal buyCommissionAmount;
 
     @CsvDate(value = "dd.MM.yy")
     @CsvBindByPosition(position = 10)
@@ -36,5 +36,5 @@ public class StonkRowBean {
     BigDecimal sellRate;
 
     @CsvBindByPosition(position = 13)
-    BigDecimal sellCommissionUsd;
+    BigDecimal sellCommissionAmount;
 }

@@ -21,7 +21,7 @@ public class OrderResponse {
     LocalDate dateAt;
     BigDecimal totalUsd;
     BigDecimal totalUah;
-    BigDecimal commissionUsd;
+    BigDecimal commissionAmount;
 
     String comment;
 }

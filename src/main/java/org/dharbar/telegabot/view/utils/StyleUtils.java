@@ -4,13 +4,16 @@ import java.math.BigDecimal;
 
 public class StyleUtils {
 
-    public static String toPercentageProfitStyle(BigDecimal profitPercentage) {
-        if (profitPercentage == null) {
+    public static String toProfitStyle(BigDecimal amount) {
+        if (amount == null) {
             return "";
         }
-        return switch (profitPercentage.compareTo(BigDecimal.valueOf(2))) {
-            case 1 -> profitPercentage.compareTo(BigDecimal.valueOf(5)) > 0 ? "good-profit" : "profit";
-            case -1 -> profitPercentage.compareTo(BigDecimal.valueOf(-5)) > 0 ? "loss" : "big-loss";
+        if (amount.equals(BigDecimal.ZERO)) {
+            return "";
+        }
+        return switch (amount.compareTo(BigDecimal.valueOf(2))) {
+            case 1 -> amount.compareTo(BigDecimal.valueOf(5)) > 0 ? "good-profit" : "profit";
+            case -1 -> amount.compareTo(BigDecimal.valueOf(-5)) > 0 ? "loss" : "big-loss";
             default -> "";
         };
     }

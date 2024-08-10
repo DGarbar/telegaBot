@@ -12,6 +12,7 @@ node_modules/**
 /src/main/bundles/**
 .env
 
+
 ### STS ###
 .apt_generated
 .classpath
@@ -43,3 +44,4 @@ build/
 /docker/data/**
 /src/main/resources/my/
 /src/main/resources/db/changelog/my/
+/src/main/resources/liquibase-local.properties

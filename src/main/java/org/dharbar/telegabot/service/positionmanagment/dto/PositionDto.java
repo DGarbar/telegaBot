@@ -15,13 +15,26 @@ public class PositionDto {
     UUID id;
 
     String ticker;
-    LocalDate dateAt;
+    LocalDate openAt;
+    LocalDate closedAt;
 
     List<OrderDto> orders;
 
     Boolean isClosed;
 
-    BigDecimal netProfitUsd;
+    BigDecimal buyTotalAmount;
+    BigDecimal buyQuantity;
+    BigDecimal buyAveragePrice;
+
+    BigDecimal sellTotalAmount;
+    BigDecimal sellQuantity;
+    BigDecimal sellAveragePrice;
+
+    BigDecimal commissionTotalAmount;
+
+    // Only for closed position
+    BigDecimal netProfitAmount;
     BigDecimal profitPercentage;
+
     String comment;
 }

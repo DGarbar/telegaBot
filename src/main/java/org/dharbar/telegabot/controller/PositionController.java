@@ -1,50 +1,46 @@
 package org.dharbar.telegabot.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.dharbar.telegabot.controller.request.CreateOrderRequest;
 import org.dharbar.telegabot.controller.request.CreatePositionRequest;
 import org.dharbar.telegabot.controller.response.PositionResponse;
 import org.dharbar.telegabot.facade.PositionFacade;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api/positions")
 public class PositionController {
 
-    private final PositionFacade positionsAnalyticFacade;
+    private final PositionFacade positionsFacade;
 
-    @GetMapping("/positions")
+    @GetMapping
     public Page<PositionResponse> getPositions(@RequestParam(defaultValue = "true") boolean isOpen,
-                                               PageRequest pageRequest) {
+                                               @PageableDefault(size = 40, sort = "openAt", direction = Sort.Direction.DESC) Pageable pageRequest) {
         return isOpen
-                ? positionsAnalyticFacade.getOpenPositions(pageRequest)
-                : positionsAnalyticFacade.getPositions(pageRequest);
+                ? positionsFacade.getOpenPositions(pageRequest)
+                : positionsFacade.getPositions(pageRequest);
     }
 
-    @PostMapping("/positions")
+    @PostMapping
     public PositionResponse createPosition(@RequestBody CreatePositionRequest request) {
-        return positionsAnalyticFacade.createPosition(request);
+        return positionsFacade.createPosition(request);
     }
 
-    // @PostMapping("/positions/{id}/orders")
-    // public PositionResponse addOrderToPosition(@RequestParam String id) {
-    //     return null;
-    // }
-
-
-    // Create new position in portfolio and pass initial order
-    //POST /portfolios/{}/positions
-
-
-    // Create new order in position
-    //POST /positions/{}/orders
-
-
-    // Get positions with order in it
-    //GET /positions-analytic/{}
+    @PostMapping("/{id}/orders")
+    public PositionResponse addOrderToPosition(@PathVariable UUID id, CreateOrderRequest request) {
+        return positionsFacade.addPositionNewOrder(id, request);
+    }
 }

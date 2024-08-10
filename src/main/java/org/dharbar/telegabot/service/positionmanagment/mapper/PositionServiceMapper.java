@@ -8,23 +8,37 @@ import org.dharbar.telegabot.service.positionmanagment.dto.PositionDto;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import java.util.Collection;
 import java.util.Set;
 
+import static org.dharbar.telegabot.service.positionmanagment.PositionCalculationService.PositionCalculation;
+
 @Mapper(componentModel = "spring", collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED, imports = {OrderType.class})
 public interface PositionServiceMapper {
 
-    PositionDto toDto(PositionEntity positionEntity);
+    PositionDto toDto(PositionEntity positions);
 
-    @Mapping(target = "dateAt", expression = "java(java.time.LocalDate.now())")
-    PositionEntity toNewEntity(PositionDto positionDto, Set<OrderEntity> orders);
-    PositionEntity toEntity(PositionDto positionDto, Set<OrderEntity> orders);
+    @Mapping(target = "openAt", expression = "java(java.time.LocalDate.now())")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "closedAt", ignore = true)
+    PositionEntity toNewEntity(String ticker, String comment, PositionCalculation calculation, Set<OrderEntity> orders);
 
-    OrderDto toDto(OrderEntity orderEntity);
+    @Mapping(target = "isClosed", source = "calculation.isClosed")
+    @Mapping(target = "closedAt", expression = "java(calculation.isClosed() ? java.time.LocalDate.now() : null)")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "openAt", ignore = true)
+    @Mapping(target = "comment", ignore = true)
+    @Mapping(target = "ticker", ignore = true)
+    void updateEntity(@MappingTarget PositionEntity position, Set<OrderEntity> orders, PositionCalculation calculation);
 
-    @Mapping(target = "positionId", ignore = true)
-    OrderEntity toEntity(OrderDto orders);
+    OrderDto toDto(OrderEntity orders);
 
-    Set<OrderEntity> toEntities(Collection<OrderDto> orders);
+    Set<OrderDto> toDtos(Set<OrderEntity> orders);
+
+    @Mapping(target = "position", ignore = true)
+    OrderEntity toEntity(OrderDto orderDtos);
+
+    Set<OrderEntity> toEntities(Collection<OrderDto> orderDtos);
 }
