@@ -2,8 +2,8 @@ package org.dharbar.telegabot.view.events;
 
 import com.vaadin.flow.component.ComponentEvent;
 import lombok.Getter;
-import org.dharbar.telegabot.view.OrderCreationForm;
 import org.dharbar.telegabot.view.model.OrderViewModel;
+import org.dharbar.telegabot.view.positionview.OrderCreationForm;
 
 @Getter
 public abstract class OrderFormEvent extends ComponentEvent<OrderCreationForm> {

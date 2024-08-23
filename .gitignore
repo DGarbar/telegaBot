@@ -5,6 +5,7 @@ node_modules/**
 /mvnw
 /mvnw.cmd
 /src/main/frontend/**
+!/src/main/frontend/styles
 !**/src/main/**/target/
 !**/src/test/**/target/
 /src/test/get rates.http

@@ -1,4 +1,4 @@
-package org.dharbar.telegabot.view;
+package org.dharbar.telegabot.view.positionview;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
@@ -8,9 +8,10 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -24,7 +25,9 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 @Slf4j
-public class OrderCreationForm extends FormLayout {
+public class OrderCreationForm extends Div {
+
+    private final VerticalLayout content;
 
     private final ComboBox<String> tickerComboBox = new ComboBox<>("Ticker");
     private final BigDecimalField quantityField = new BigDecimalField("Quantity");
@@ -38,17 +41,37 @@ public class OrderCreationForm extends FormLayout {
     private final Button saveButton = new Button("Save");
 
     public OrderCreationForm(Set<String> tickers) {
-        addClassName("order-creation-form");
+        addClassName("order-form");
 
-        Component buttonLayout = buttonLayout(saveButton);
+        content = new VerticalLayout();
+        content.setSizeUndefined();
+        content.addClassName("order-form-content");
+        add(content);
 
         setupTickerComboBox(tickers);
         setupFields();
 
-        Stream.of(tickerComboBox, quantityField, rateField, dateAtField, totalUsdField, commissionAmountField, buttonLayout)
-                .forEach(this::add);
+        Component buttonLayout = buttonLayout(saveButton);
 
         setupBinder();
+
+        HorizontalLayout horizontalLayout = new HorizontalLayout(quantityField, rateField);
+        horizontalLayout.setWidth("100%");
+        horizontalLayout.setFlexGrow(1, quantityField, rateField);
+
+        Stream.of(tickerComboBox, horizontalLayout, dateAtField, totalUsdField, commissionAmountField, buttonLayout)
+                .forEach(content::add);
+    }
+
+    private void setupTickerComboBox(Set<String> tickers) {
+        tickerComboBox.setItems(tickers);
+        tickerComboBox.setRequired(true);
+        tickerComboBox.setAllowCustomValue(true);
+        tickerComboBox.setAllowedCharPattern("[A-Z]");
+        tickerComboBox.addCustomValueSetListener(e -> {
+            String customValue = e.getDetail();
+            fireEvent(new OrderFormEvent.SaveTickerEvent(this, orderDtoBinder.getBean(), customValue));
+        });
     }
 
     private Component buttonLayout(Button saveButton) {
@@ -70,17 +93,6 @@ public class OrderCreationForm extends FormLayout {
         closeButton.addClickListener(e -> fireEvent(new OrderFormEvent.CloseEvent(this, orderDtoBinder.getBean())));
 
         return new HorizontalLayout(saveButton, closeButton);
-    }
-
-    private void setupTickerComboBox(Set<String> tickers) {
-        tickerComboBox.setItems(tickers);
-        tickerComboBox.setRequired(true);
-        tickerComboBox.setAllowCustomValue(true);
-        tickerComboBox.setAllowedCharPattern("[A-Z]");
-        tickerComboBox.addCustomValueSetListener(e -> {
-            String customValue = e.getDetail();
-            fireEvent(new OrderFormEvent.SaveTickerEvent(this, orderDtoBinder.getBean(), customValue));
-        });
     }
 
     private void setupFields() {

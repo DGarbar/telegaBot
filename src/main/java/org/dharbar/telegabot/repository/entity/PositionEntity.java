@@ -45,7 +45,8 @@ public class PositionEntity {
     @Column(nullable = false)
     private String ticker;
 
-    private UUID portfolioId;
+    // TODO
+    // private UUID portfolioId;
 
     @Setter(AccessLevel.PRIVATE)
     @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, orphanRemoval = true)

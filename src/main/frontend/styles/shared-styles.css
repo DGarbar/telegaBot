@@ -1,14 +1,85 @@
-.position-view .position-details-div {
-    display: flex;
+body {
+    /* Used by the menu and form overlays */
+    --overlay-box-shadow: 0 0 3px 2px var(--lumo-contrast-10pct);
 }
 
-.position-view .position-grid {
-    flex: 2;
+/*
+ * Special rules for narrow screens (responsive design rules)
+ */
+@media (max-width: 800px), (max-height: 600px) {
+
+    /*
+     * Make menu toggle visible, and smaller
+     */
+    .menu-toggle {
+        display: block;
+        height: var(--lumo-button-size);
+        width: var(--lumo-button-size);
+    }
+
+    .menu-header {
+        padding-left: 0;
+    }
 }
 
-.position-view .order-creation-form {
-    flex: 1;
-    padding: var(--lumo-space-m);
+@media (max-width: 550px) {
+
+    .order-form {
+        width: 100%;
+
+        /* Prevent text-fields from overflowing on narrow screens */
+        --vaadin-text-field-default-width: 6em;
+    }
 }
+
+.menu-header {
+    padding: 11px 16px;
+    padding-left: 32px;
+    font-size: var(--lumo-font-size-l);
+}
+
+.menu-toggle {
+    display: none;
+}
+
+.menu-link {
+    display: block;
+    padding: 10px 37px;
+    transition: transform 300ms;
+
+    font-family: var(--lumo-font-family);
+    font-size: var(--lumo-font-size-m);
+    font-weight: 500;
+    color: var(--lumo-secondary-text-color);
+}
+
+.menu-link:hover {
+    text-decoration: none;
+}
+
+.menu-link span {
+    padding-left: 5px;
+}
+
+.menu-button {
+    padding: 10px 42px;
+    color: var(--lumo-secondary-text-color);
+}
+
+
+.order-form {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    overflow: auto;
+    background: var(--lumo-base-color);
+    box-shadow: var(--overlay-box-shadow);
+}
+
+.order-form-content {
+    margin-top: var(--_vaadin-app-layout-navbar-offset-size);
+}
+
 
 
