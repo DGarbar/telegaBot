@@ -26,10 +26,9 @@ public class PositionService {
 
     private final PositionServiceMapper positionMapper;
 
-    public PositionDto get(UUID positionId) {
-        return positionRepository.findById(positionId)
-                .map(positionMapper::toDto)
-                .orElseThrow();
+    public Page<PositionDto> getPositions(Pageable pageRequest) {
+        return positionRepository.findAll(pageRequest)
+                .map(positionMapper::toDto);
     }
 
     public Page<PositionDto> getOpenPositions(Pageable pageRequest) {
@@ -37,9 +36,10 @@ public class PositionService {
                 .map(positionMapper::toDto);
     }
 
-    public Page<PositionDto> getPositions(Pageable pageRequest) {
-        return positionRepository.findAll(pageRequest)
-                .map(positionMapper::toDto);
+    public PositionDto get(UUID positionId) {
+        return positionRepository.findById(positionId)
+                .map(positionMapper::toDto)
+                .orElseThrow();
     }
 
     public PositionDto cretePosition(String ticker, String comment, List<OrderDto> orderDtos) {

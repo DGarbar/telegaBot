@@ -1,0 +1,50 @@
+databaseChangeLog:
+  - changeSet:
+      id: 240823-add-portfolio
+      author: dgarbar
+      changes:
+        - tagDatabase:
+            tag: before-240823-add-portfolio
+
+        - createTable:
+            tableName: portfolio
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+        - addColumn:
+            tableName: position
+            columns:
+              - column:
+                  name: portfolio_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_position_portfolio
+                    references: portfolio(id)
+

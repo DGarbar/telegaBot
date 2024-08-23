@@ -21,12 +21,12 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/positions")
+@RequestMapping()
 public class PositionController {
 
     private final PositionFacade positionsFacade;
 
-    @GetMapping
+    @GetMapping("/api/positions")
     public Page<PositionResponse> getPositions(@RequestParam(defaultValue = "true") boolean isOpen,
                                                @PageableDefault(size = 40, sort = "openAt", direction = Sort.Direction.DESC) Pageable pageRequest) {
         return isOpen
@@ -34,12 +34,12 @@ public class PositionController {
                 : positionsFacade.getPositions(pageRequest);
     }
 
-    @PostMapping
+    @PostMapping("/api/positions")
     public PositionResponse createPosition(@RequestBody CreatePositionRequest request) {
         return positionsFacade.createPosition(request);
     }
 
-    @PostMapping("/{id}/orders")
+    @PostMapping("/api/positions/{id}/orders")
     public PositionResponse addOrderToPosition(@PathVariable UUID id, CreateOrderRequest request) {
         return positionsFacade.addPositionNewOrder(id, request);
     }

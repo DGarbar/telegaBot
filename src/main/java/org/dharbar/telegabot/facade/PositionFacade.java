@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.dharbar.telegabot.controller.request.CreateOrderRequest;
 import org.dharbar.telegabot.controller.request.CreatePositionRequest;
 import org.dharbar.telegabot.controller.response.PositionResponse;
+import org.dharbar.telegabot.facade.mapper.PositionFacadeMapper;
 import org.dharbar.telegabot.service.positionmanagment.PositionService;
 import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
 import org.dharbar.telegabot.service.positionmanagment.dto.PositionDto;
-import org.dharbar.telegabot.service.positionmanagment.mapper.PositionFacadeMapper;
 import org.dharbar.telegabot.service.stockprice.StockPriceService;
 import org.dharbar.telegabot.service.stockprice.dto.StockPriceDto;
 import org.springframework.data.domain.Page;
@@ -40,6 +40,7 @@ public class PositionFacade {
                 .map(this::populateWithAnalytic);
     }
 
+    @Transactional
     public PositionResponse createPosition(CreatePositionRequest request) {
         List<OrderDto> orderDtos = positionFacadeMapper.toDtos(request.getOrders());
         PositionDto savedPositionDto = positionService.cretePosition(request.getTicker(), request.getComment(), orderDtos);

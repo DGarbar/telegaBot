@@ -23,6 +23,8 @@ public interface PositionServiceMapper {
     @Mapping(target = "openAt", expression = "java(java.time.LocalDate.now())")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "closedAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     PositionEntity toNewEntity(String ticker, String comment, PositionCalculation calculation, Set<OrderEntity> orders);
 
     @Mapping(target = "isClosed", source = "calculation.isClosed")
@@ -31,6 +33,8 @@ public interface PositionServiceMapper {
     @Mapping(target = "openAt", ignore = true)
     @Mapping(target = "comment", ignore = true)
     @Mapping(target = "ticker", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     void updateEntity(@MappingTarget PositionEntity position, Set<OrderEntity> orders, PositionCalculation calculation);
 
     OrderDto toDto(OrderEntity orders);
@@ -38,6 +42,7 @@ public interface PositionServiceMapper {
     Set<OrderDto> toDtos(Set<OrderEntity> orders);
 
     @Mapping(target = "position", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     OrderEntity toEntity(OrderDto orderDtos);
 
     Set<OrderEntity> toEntities(Collection<OrderDto> orderDtos);

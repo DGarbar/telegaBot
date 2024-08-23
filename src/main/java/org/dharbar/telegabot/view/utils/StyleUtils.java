@@ -8,7 +8,7 @@ public class StyleUtils {
         if (amount == null) {
             return "";
         }
-        if (amount.equals(BigDecimal.ZERO)) {
+        if (amount.compareTo(BigDecimal.ZERO) == 0) {
             return "";
         }
         return switch (amount.compareTo(BigDecimal.valueOf(2))) {
