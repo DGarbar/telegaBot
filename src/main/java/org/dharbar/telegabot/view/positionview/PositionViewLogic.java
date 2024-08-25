@@ -9,6 +9,7 @@ import org.dharbar.telegabot.view.model.PositionViewModel;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 public class PositionViewLogic {
 
@@ -63,12 +64,13 @@ public class PositionViewLogic {
         view.clearSelection();
 
         OrderViewModel order = event.getOrder();
-        boolean isNewPosition = order.getPositionId() == null;
-
+        UUID positionId = order.getPositionId();
+        boolean isNewPosition = positionId == null;
         if (isNewPosition) {
-            positionDataProvider.saveNewPosition(order);
+            UUID selectedPortfolioId = view.getSelectedPortfolioId();
+            positionDataProvider.saveNewPosition(selectedPortfolioId, order);
         } else {
-            positionDataProvider.addOrderToPosition(order);
+            positionDataProvider.addOrderToPosition(positionId, order);
         }
 
         view.showForm(false);

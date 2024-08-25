@@ -1,6 +1,7 @@
 package org.dharbar.telegabot.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.dharbar.telegabot.controller.filter.PositionFilter;
 import org.dharbar.telegabot.controller.request.CreateOrderRequest;
 import org.dharbar.telegabot.controller.request.CreatePositionRequest;
 import org.dharbar.telegabot.controller.response.PositionResponse;
@@ -27,11 +28,16 @@ public class PositionController {
     private final PositionFacade positionsFacade;
 
     @GetMapping("/api/positions")
-    public Page<PositionResponse> getPositions(@RequestParam(defaultValue = "true") boolean isOpen,
+    public Page<PositionResponse> getPositions(@RequestParam(required = false) String ticker,
+                                               @RequestParam(required = false) UUID portfolioId,
+                                               @RequestParam(required = false) Boolean isClosed,
                                                @PageableDefault(size = 40, sort = "openAt", direction = Sort.Direction.DESC) Pageable pageRequest) {
-        return isOpen
-                ? positionsFacade.getOpenPositions(pageRequest)
-                : positionsFacade.getPositions(pageRequest);
+        PositionFilter positionFilter = PositionFilter.builder()
+                .ticker(ticker)
+                .portfolioId(portfolioId)
+                .isClosed(isClosed)
+                .build();
+        return positionsFacade.getPositions(positionFilter, pageRequest);
     }
 
     @PostMapping("/api/positions")

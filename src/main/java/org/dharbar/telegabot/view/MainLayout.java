@@ -28,13 +28,16 @@ public class MainLayout extends AppLayout implements RouterLayout {
         addToNavbar(drawerToggle);
 
         // image, logo
-        final HorizontalLayout top = new HorizontalLayout();
+        HorizontalLayout top = new HorizontalLayout();
         top.setDefaultVerticalComponentAlignment(Alignment.CENTER);
         top.setClassName("menu-header");
+        addToNavbar(top);
 
         // Navigation items
         addToDrawer(createMenuLink(PositionView.class, PositionView.VIEW_NAME, VaadinIcon.DOLLAR.create()));
         addToDrawer(createMenuLink(AboutView.class, AboutView.VIEW_NAME, VaadinIcon.INFO_CIRCLE.create()));
+
+        setDrawerOpened(false);
     }
 
     private RouterLink createMenuLink(Class<? extends Component> viewClass,

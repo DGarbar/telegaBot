@@ -1,6 +1,7 @@
 package org.dharbar.telegabot.facade;
 
 import lombok.RequiredArgsConstructor;
+import org.dharbar.telegabot.controller.filter.PositionFilter;
 import org.dharbar.telegabot.controller.request.CreateOrderRequest;
 import org.dharbar.telegabot.controller.request.CreatePositionRequest;
 import org.dharbar.telegabot.controller.response.PositionResponse;
@@ -28,14 +29,8 @@ public class PositionFacade {
 
     private final PositionFacadeMapper positionFacadeMapper;
 
-    public Page<PositionResponse> getPositions(Pageable pageRequest) {
-        return positionService.getPositions(pageRequest)
-                .map(positionFacadeMapper::toResponse)
-                .map(this::populateWithAnalytic);
-    }
-
-    public Page<PositionResponse> getOpenPositions(Pageable pageRequest) {
-        return positionService.getOpenPositions(pageRequest)
+    public Page<PositionResponse> getPositions(PositionFilter filter, Pageable pageRequest) {
+        return positionService.getPositions(filter, pageRequest)
                 .map(positionFacadeMapper::toResponse)
                 .map(this::populateWithAnalytic);
     }
@@ -43,7 +38,7 @@ public class PositionFacade {
     @Transactional
     public PositionResponse createPosition(CreatePositionRequest request) {
         List<OrderDto> orderDtos = positionFacadeMapper.toDtos(request.getOrders());
-        PositionDto savedPositionDto = positionService.cretePosition(request.getTicker(), request.getComment(), orderDtos);
+        PositionDto savedPositionDto = positionService.cretePosition(request.getTicker(), request.getPortfolioId(), request.getComment(), orderDtos);
         PositionResponse response = positionFacadeMapper.toResponse(savedPositionDto);
         return populateWithAnalytic(response);
     }

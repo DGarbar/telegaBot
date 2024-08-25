@@ -12,6 +12,7 @@ import org.mapstruct.MappingTarget;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.dharbar.telegabot.service.positionmanagment.PositionCalculationService.PositionCalculation;
 
@@ -25,7 +26,7 @@ public interface PositionServiceMapper {
     @Mapping(target = "closedAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    PositionEntity toNewEntity(String ticker, String comment, PositionCalculation calculation, Set<OrderEntity> orders);
+    PositionEntity toNewEntity(String ticker, UUID portfolioId, String comment, PositionCalculation calculation, Set<OrderEntity> orders);
 
     @Mapping(target = "isClosed", source = "calculation.isClosed")
     @Mapping(target = "closedAt", expression = "java(calculation.isClosed() ? java.time.LocalDate.now() : null)")

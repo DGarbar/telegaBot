@@ -10,7 +10,6 @@ import java.util.UUID;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
-
 @Data
 @Builder
 public class PositionViewModel {
@@ -18,6 +17,9 @@ public class PositionViewModel {
     UUID id;
 
     String ticker;
+
+    UUID portfolioId;
+
     LocalDate openAt;
     LocalDate closedAt;
 

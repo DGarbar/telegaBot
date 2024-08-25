@@ -1,15 +1,18 @@
 package org.dharbar.telegabot.service.positionmanagment;
 
 import lombok.RequiredArgsConstructor;
+import org.dharbar.telegabot.controller.filter.PositionFilter;
 import org.dharbar.telegabot.repository.PositionRepository;
 import org.dharbar.telegabot.repository.entity.OrderEntity;
 import org.dharbar.telegabot.repository.entity.PositionEntity;
+import org.dharbar.telegabot.repository.specification.PositionSpec;
 import org.dharbar.telegabot.service.positionmanagment.PositionCalculationService.PositionCalculation;
 import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
 import org.dharbar.telegabot.service.positionmanagment.dto.PositionDto;
 import org.dharbar.telegabot.service.positionmanagment.mapper.PositionServiceMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,13 +29,9 @@ public class PositionService {
 
     private final PositionServiceMapper positionMapper;
 
-    public Page<PositionDto> getPositions(Pageable pageRequest) {
-        return positionRepository.findAll(pageRequest)
-                .map(positionMapper::toDto);
-    }
-
-    public Page<PositionDto> getOpenPositions(Pageable pageRequest) {
-        return positionRepository.findAllByIsClosedIsFalse(pageRequest)
+    public Page<PositionDto> getPositions(PositionFilter filter, Pageable pageRequest) {
+        Specification<PositionEntity> spec = PositionSpec.toSpec(filter);
+        return positionRepository.findAll(spec, pageRequest)
                 .map(positionMapper::toDto);
     }
 
@@ -42,10 +41,10 @@ public class PositionService {
                 .orElseThrow();
     }
 
-    public PositionDto cretePosition(String ticker, String comment, List<OrderDto> orderDtos) {
+    public PositionDto cretePosition(String ticker, UUID portfolioId, String comment, List<OrderDto> orderDtos) {
         PositionCalculation positionCalculation = calculatePositionValues(orderDtos);
         Set<OrderEntity> orders = positionMapper.toEntities(orderDtos);
-        PositionEntity position = positionMapper.toNewEntity(ticker, comment, positionCalculation, orders);
+        PositionEntity position = positionMapper.toNewEntity(ticker, portfolioId, comment, positionCalculation, orders);
 
         PositionEntity savedPosition = positionRepository.save(position);
 

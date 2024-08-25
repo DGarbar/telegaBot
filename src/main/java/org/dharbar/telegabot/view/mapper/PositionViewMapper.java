@@ -30,7 +30,7 @@ public interface PositionViewMapper {
     PositionViewModel toModel(PositionResponse response, List<OrderViewModel> orders);
 
     @Mapping(target = "comment", ignore = true)
-    CreatePositionRequest toCreatePositionRequest(String ticker, List<OrderViewModel> orders);
+    CreatePositionRequest toCreatePositionRequest(String ticker, UUID portfolioId, List<OrderViewModel> orders);
 
     CreateOrderRequest toCreateOrderRequest(OrderViewModel order);
 }

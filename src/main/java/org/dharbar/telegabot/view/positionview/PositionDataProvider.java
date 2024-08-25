@@ -1,6 +1,7 @@
 package org.dharbar.telegabot.view.positionview;
 
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
@@ -10,6 +11,7 @@ import org.dharbar.telegabot.controller.request.CreatePositionRequest;
 import org.dharbar.telegabot.controller.response.PositionResponse;
 import org.dharbar.telegabot.view.mapper.PositionViewMapper;
 import org.dharbar.telegabot.view.model.OrderViewModel;
+import org.dharbar.telegabot.view.model.PortfolioViewModel;
 import org.dharbar.telegabot.view.model.PositionViewModel;
 import org.springframework.data.domain.Page;
 
@@ -22,12 +24,18 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
     private final PositionController positionController;
     private final PositionViewMapper positionViewMapper;
 
-    private final Checkbox isOnlyOpenCheckbox;
+    // TODO make as supplier for filter fields ?
+    private final Select<PortfolioViewModel> portfolioSelect;
+    private final Checkbox isShowClosedCheckbox;
 
-    public PositionDataProvider(PositionController positionController, PositionViewMapper positionViewMapper, Checkbox isOnlyOpenCheckbox) {
+    public PositionDataProvider(PositionController positionController,
+                                PositionViewMapper positionViewMapper,
+                                Select<PortfolioViewModel> portfolioSelect,
+                                Checkbox isShowClosedCheckbox) {
         this.positionController = positionController;
         this.positionViewMapper = positionViewMapper;
-        this.isOnlyOpenCheckbox = isOnlyOpenCheckbox;
+        this.portfolioSelect = portfolioSelect;
+        this.isShowClosedCheckbox = isShowClosedCheckbox;
     }
 
     @Override
@@ -43,20 +51,27 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
     }
 
     private Page<PositionResponse> getPositionsResponse(Query query) {
-        boolean isOnlyOpen = isOnlyOpenCheckbox.getValue();
-        return positionController.getPositions(isOnlyOpen, VaadinSpringDataHelpers.toSpringPageRequest(query));
+        Boolean isClosedFilter = isShowClosedCheckbox.getValue() ? null : false;
+        PortfolioViewModel portfolioViewModel = portfolioSelect.getValue();
+        UUID portfolioId = portfolioViewModel != null ? portfolioViewModel.getId() : null;
+
+        return positionController.getPositions(
+                null,
+                portfolioId,
+                isClosedFilter,
+                VaadinSpringDataHelpers.toSpringPageRequest(query));
     }
 
-    public void saveNewPosition(OrderViewModel order) {
-        CreatePositionRequest createPositionRequest = positionViewMapper.toCreatePositionRequest(order.getTicker(), List.of(order));
+    public void saveNewPosition(UUID portfolioId, OrderViewModel order) {
+        CreatePositionRequest createPositionRequest = positionViewMapper.toCreatePositionRequest(order.getTicker(), portfolioId, List.of(order));
         positionController.createPosition(createPositionRequest);
 
         refreshAll();
     }
 
-    public void addOrderToPosition(OrderViewModel order) {
+    public void addOrderToPosition(UUID positionId, OrderViewModel order) {
         CreateOrderRequest createOrderRequest = positionViewMapper.toCreateOrderRequest(order);
-        PositionResponse positionResponse = positionController.addOrderToPosition(order.getPositionId(), createOrderRequest);
+        PositionResponse positionResponse = positionController.addOrderToPosition(positionId, createOrderRequest);
         PositionViewModel model = toModel(positionResponse);
 
         refreshItem(model);

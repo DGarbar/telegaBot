@@ -15,6 +15,9 @@ public class PositionDto {
     UUID id;
 
     String ticker;
+
+    UUID portfolioId;
+
     LocalDate openAt;
     LocalDate closedAt;
 

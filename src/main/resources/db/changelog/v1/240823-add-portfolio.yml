@@ -44,7 +44,7 @@ databaseChangeLog:
                   name: portfolio_id
                   type: UUID
                   constraints:
-                    nullable: false
+#                    nullable: false
                     foreignKeyName: fk_position_portfolio
                     references: portfolio(id)
 

@@ -18,6 +18,8 @@ public class PositionResponse {
     LocalDate openAt;
     LocalDate closedAt;
 
+    UUID portfolioId;
+
     List<OrderResponse> orders;
 
     Boolean isClosed;

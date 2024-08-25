@@ -29,10 +29,10 @@ public class PositionGrid extends Grid<PositionViewModel> {
         addColumn(PositionViewModel::getTicker).setHeader("Ticker").setKey("ticker").setFlexGrow(5)
                 .setSortable(true)
                 .setClassNameGenerator(positionAnalyticDto -> StyleUtils.toTickerStyle(positionAnalyticDto.getTicker()));
-        Grid.Column<PositionViewModel> openAtColumn = addColumn(PositionViewModel::getOpenAt).setHeader("Date").setKey("openAt").setSortable(true);
+        Grid.Column<PositionViewModel> openAtColumn = addColumn(PositionViewModel::getOpenAt).setHeader("Date").setKey("openAt").setSortable(true).setFlexGrow(5);
         // TODO
         // product -> decimalFormat.format(product.getPrice()) + " $")
-        addColumn(PositionViewModel::getBuyTotalAmount).setHeader("Buy $").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
+        addColumn(PositionViewModel::getBuyTotalAmount).setHeader("Invested").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
         addColumn(PositionViewModel::getBuyAveragePrice).setHeader("Buy Rate").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
 
         addColumn(PositionViewModel::getSellAveragePrice).setHeader("Sell Rate").setKey("sellRate").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
@@ -48,7 +48,7 @@ public class PositionGrid extends Grid<PositionViewModel> {
                 .setClassNameGenerator(dto -> StyleUtils.toProfitStyle(dto.getCurrentProfitPercentage()));
         addColumn(PositionViewModel::dealDurationDays).setHeader("Deal days").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
 
-        addColumn(PositionViewModel::getComment).setHeader("Comment").setFlexGrow(15);
+        addColumn(PositionViewModel::getComment).setHeader("Comment").setFlexGrow(10);
         // getColumns().forEach(column -> column.setAutoWidth(true));
 
         addColumn(new ComponentRenderer<>(
