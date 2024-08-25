@@ -17,11 +17,13 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
 import lombok.extern.slf4j.Slf4j;
+import org.dharbar.telegabot.service.stockprice.dto.StockPriceDto;
 import org.dharbar.telegabot.view.events.OrderFormEvent;
 import org.dharbar.telegabot.view.model.OrderViewModel;
+import org.dharbar.telegabot.view.positionview.ticker.StockPriceDataProvider;
 
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -29,7 +31,7 @@ public class OrderCreationForm extends Div {
 
     private final VerticalLayout content;
 
-    private final ComboBox<String> tickerComboBox = new ComboBox<>("Ticker");
+    private final ComboBox<StockPriceDto> tickerComboBox = new ComboBox<>("Ticker");
     private final BigDecimalField quantityField = new BigDecimalField("Quantity");
     private final BigDecimalField rateField = new BigDecimalField("Rate");
     private final DatePicker dateAtField = new DatePicker("Date at");
@@ -40,7 +42,7 @@ public class OrderCreationForm extends Div {
 
     private final Button saveButton = new Button("Save");
 
-    public OrderCreationForm(Set<String> tickers) {
+    public OrderCreationForm(StockPriceDataProvider stockPriceDataProvider) {
         addClassName("order-form");
 
         content = new VerticalLayout();
@@ -48,12 +50,12 @@ public class OrderCreationForm extends Div {
         content.addClassName("order-form-content");
         add(content);
 
-        setupTickerComboBox(tickers);
+        setupTickerComboBox(stockPriceDataProvider);
         setupFields();
 
         Component buttonLayout = buttonLayout(saveButton);
 
-        setupBinder();
+        setupBinder(stockPriceDataProvider);
 
         HorizontalLayout horizontalLayout = new HorizontalLayout(quantityField, rateField);
         horizontalLayout.setWidth("100%");
@@ -63,14 +65,15 @@ public class OrderCreationForm extends Div {
                 .forEach(content::add);
     }
 
-    private void setupTickerComboBox(Set<String> tickers) {
-        tickerComboBox.setItems(tickers);
+    private void setupTickerComboBox(StockPriceDataProvider dataProvider) {
+        tickerComboBox.setItems(dataProvider);
         tickerComboBox.setRequired(true);
         tickerComboBox.setAllowCustomValue(true);
         tickerComboBox.setAllowedCharPattern("[A-Z]");
+        tickerComboBox.setItemLabelGenerator(StockPriceDto::getTicker);
         tickerComboBox.addCustomValueSetListener(e -> {
             String customValue = e.getDetail();
-            fireEvent(new OrderFormEvent.SaveTickerEvent(this, orderDtoBinder.getBean(), customValue));
+            dataProvider.saveNewTicker(customValue);
         });
     }
 
@@ -113,8 +116,10 @@ public class OrderCreationForm extends Div {
         totalUsdField.setValue(totalUsd);
     }
 
-    private void setupBinder() {
-        orderDtoBinder.bind(tickerComboBox, OrderViewModel::getTicker, OrderViewModel::setTicker);
+    private void setupBinder(StockPriceDataProvider stockPriceDataProvider) {
+        orderDtoBinder.bind(tickerComboBox,
+                order -> stockPriceDataProvider.getByTicker(order.getTicker()),
+                (orderViewModel, stockPriceDto) -> orderViewModel.setTicker(stockPriceDto.getTicker()));
         orderDtoBinder.forField(quantityField).bind(OrderViewModel::getQuantity, OrderViewModel::setQuantity);
         orderDtoBinder.forField(rateField).bind(OrderViewModel::getRate, OrderViewModel::setRate);
         orderDtoBinder.bind(dateAtField, OrderViewModel::getDateAt, OrderViewModel::setDateAt);
@@ -125,13 +130,8 @@ public class OrderCreationForm extends Div {
         orderDtoBinder.addStatusChangeListener(event -> saveButton.setEnabled(orderDtoBinder.isValid()));
     }
 
-    public void setOrder(OrderViewModel orderDto) {
+    public void setOrder(UUID portfolioId, OrderViewModel orderDto) {
         orderDtoBinder.setBean(orderDto);
-    }
-
-    public void setTickerValues(Set<String> tickers, String ticker) {
-        tickerComboBox.setItems(tickers);
-        tickerComboBox.setValue(ticker);
     }
 
     @Override

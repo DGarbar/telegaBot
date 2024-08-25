@@ -33,7 +33,7 @@ public class PositionViewLogic {
                 .dateAt(LocalDate.now())
                 .build();
 
-        view.showOrderForm(order);
+        view.showOrderForm(position.getPortfolioId(), order);
     }
 
     public void viewNewBuyOrder() {
@@ -43,7 +43,7 @@ public class PositionViewLogic {
                 .dateAt(LocalDate.now())
                 .build();
 
-        view.showOrderForm(order);
+        view.showOrderForm(null, order);
     }
 
     public void viewSellAllOrder(PositionViewModel position) {
@@ -57,7 +57,7 @@ public class PositionViewLogic {
                 .dateAt(LocalDate.now())
                 .build();
 
-        view.showOrderForm(order);
+        view.showOrderForm(position.getPortfolioId(), order);
     }
 
     public void saveOrder(OrderFormEvent.SaveOrderEvent event) {

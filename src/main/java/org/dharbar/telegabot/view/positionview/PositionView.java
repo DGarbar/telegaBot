@@ -9,7 +9,6 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
@@ -22,7 +21,6 @@ import com.vaadin.flow.router.RouteAlias;
 import org.dharbar.telegabot.controller.PortfolioController;
 import org.dharbar.telegabot.controller.PositionController;
 import org.dharbar.telegabot.controller.StockPriceController;
-import org.dharbar.telegabot.service.stockprice.dto.StockPriceDto;
 import org.dharbar.telegabot.view.MainLayout;
 import org.dharbar.telegabot.view.events.OrderFormEvent;
 import org.dharbar.telegabot.view.mapper.PortfolioViewMapper;
@@ -32,12 +30,9 @@ import org.dharbar.telegabot.view.model.PortfolioViewModel;
 import org.dharbar.telegabot.view.model.PositionViewModel;
 import org.dharbar.telegabot.view.positionview.portfolio.PortfolioCreationDialog;
 import org.dharbar.telegabot.view.positionview.portfolio.PortfolioDataProvider;
+import org.dharbar.telegabot.view.positionview.ticker.StockPriceDataProvider;
 
-import java.math.BigDecimal;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Route(value = "positions", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
@@ -54,11 +49,10 @@ public class PositionView extends HorizontalLayout implements HasUrlParameter<St
     private final Select<PortfolioViewModel> portfolioSelect = new Select<>();
 
     private final PositionViewLogic viewLogic;
-    private final Map<String, BigDecimal> tickerToPrice;
-    private final StockPriceController stockPriceController;
 
     private final PositionDataProvider positionDataProvider;
     private final PortfolioDataProvider portfolioDataProvider;
+    private final StockPriceDataProvider stockPriceDataProvider;
 
     private TextField filter;
     private Button newPostitionButton;
@@ -71,9 +65,9 @@ public class PositionView extends HorizontalLayout implements HasUrlParameter<St
         addClassName("position-view");
         setSizeFull();
 
-        this.stockPriceController = stockPriceController;
         positionDataProvider = new PositionDataProvider(positionController, positionViewMapper, portfolioSelect, isShowClosedCheckbox);
         portfolioDataProvider = new PortfolioDataProvider(portfolioController, portfolioViewMapper);
+        stockPriceDataProvider = new StockPriceDataProvider(stockPriceController);
         viewLogic = new PositionViewLogic(this, positionDataProvider);
 
         portfolioCreationDialog = new PortfolioCreationDialog(portfolioDataProvider);
@@ -85,14 +79,9 @@ public class PositionView extends HorizontalLayout implements HasUrlParameter<St
         // Allows user to select a single row in the grid.
         // grid.asSingleSelect().addValueChangeListener(event -> viewLogic.rowSelected(event.getValue()));
 
-        tickerToPrice = stockPriceController.getStockPrices().stream()
-                .collect(Collectors.toMap(StockPriceDto::getTicker, StockPriceDto::getPrice));
-        Set<String> tickers = tickerToPrice.keySet();
-        orderDetailsForm = new OrderCreationForm(tickers);
+        orderDetailsForm = new OrderCreationForm(stockPriceDataProvider);
         orderDetailsForm.addListener(OrderFormEvent.SaveOrderEvent.class, viewLogic::saveOrder);
         orderDetailsForm.addListener(OrderFormEvent.CloseEvent.class, e -> viewLogic.closeEditor());
-        orderDetailsForm.addListener(OrderFormEvent.SaveTickerEvent.class, this::addNewTicker);
-
 
         VerticalLayout barAndGridLayout = new VerticalLayout();
         barAndGridLayout.add(gridToolbar);
@@ -134,6 +123,7 @@ public class PositionView extends HorizontalLayout implements HasUrlParameter<St
         filter.addFocusShortcut(Key.KEY_F, KeyModifier.CONTROL);
 
         newPostitionButton = new Button("New position", VaadinIcon.PLUS_CIRCLE.create());
+        newPostitionButton.setEnabled(false);
         // Setting theme variant of new production button to LUMO_PRIMARY that
         // changes its background color to blue and its text color to white
         newPostitionButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -167,22 +157,6 @@ public class PositionView extends HorizontalLayout implements HasUrlParameter<St
         positionDataProvider.refreshAll();
     }
 
-    // TODO to dataProvider ?
-    public void addNewTicker(OrderFormEvent.SaveTickerEvent event) {
-        String ticker = event.getTicker();
-        try {
-            StockPriceDto stockPrice = stockPriceController.createStockPrice(ticker);
-            tickerToPrice.put(ticker, stockPrice.getPrice());
-        } catch (Exception e) {
-            Notification notification = new Notification("Failed to add new ticker " + ticker, 5000, Notification.Position.TOP_END);
-            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            notification.open();
-            return;
-        }
-
-        orderDetailsForm.setTickerValues(tickerToPrice.keySet(), ticker);
-    }
-
     // public void selectRow(PositionViewModel row) {
     //     grid.getSelectionModel().select(row);
     // }
@@ -191,12 +165,12 @@ public class PositionView extends HorizontalLayout implements HasUrlParameter<St
         return portfolioSelect.getValue() != null ? portfolioSelect.getValue().getId() : null;
     }
 
-    public void showOrderForm(OrderViewModel order) {
+    public void showOrderForm(UUID portfolioId, OrderViewModel order) {
         if (order != null && order.getId() == null) {
             clearSelection();
         }
 
-        orderDetailsForm.setOrder(order);
+        orderDetailsForm.setOrder(portfolioId, order);
         showForm(true);
     }
 
