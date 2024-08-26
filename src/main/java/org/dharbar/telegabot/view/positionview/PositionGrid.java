@@ -18,7 +18,7 @@ import java.util.List;
 
 public class PositionGrid extends Grid<PositionViewModel> {
 
-    public PositionGrid(PositionViewLogic viewLogic) {
+    public PositionGrid(PositionForm positionForm) {
         addClassName("position-grid");
         setSizeFull();
 
@@ -55,7 +55,7 @@ public class PositionGrid extends Grid<PositionViewModel> {
                 Button::new,
                 (button, position) -> {
                     button.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
-                    button.addClickListener(e -> viewLogic.viewPositionBuyOrder(position));
+                    button.addClickListener(e -> positionForm.showPositionBuyOrder(position));
                     button.setIcon(VaadinIcon.DOLLAR.create());
                     button.setEnabled(!position.getIsClosed());
                 }))
@@ -65,7 +65,7 @@ public class PositionGrid extends Grid<PositionViewModel> {
                 Button::new,
                 (button, position) -> {
                     button.addThemeVariants(ButtonVariant.LUMO_ERROR);
-                    button.addClickListener(e -> viewLogic.viewSellAllOrder(position));
+                    button.addClickListener(e -> positionForm.showSellAllOrder(position));
                     button.setIcon(VaadinIcon.CLOSE_CIRCLE.create());
                     button.setEnabled(!position.getIsClosed());
                 }))

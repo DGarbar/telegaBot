@@ -32,5 +32,9 @@ public interface PositionViewMapper {
     @Mapping(target = "comment", ignore = true)
     CreatePositionRequest toCreatePositionRequest(String ticker, UUID portfolioId, List<OrderViewModel> orders);
 
+    @Mapping(target = "orders", source = "orderRequests")
+    CreatePositionRequest toCreatePositionRequest(PositionViewModel position, List<CreateOrderRequest> orderRequests);
+
     CreateOrderRequest toCreateOrderRequest(OrderViewModel order);
+    List<CreateOrderRequest> toCreateOrderRequests(List<OrderViewModel> orders);
 }

@@ -62,16 +62,17 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
                 VaadinSpringDataHelpers.toSpringPageRequest(query));
     }
 
-    public void saveNewPosition(UUID portfolioId, OrderViewModel order) {
-        CreatePositionRequest createPositionRequest = positionViewMapper.toCreatePositionRequest(order.getTicker(), portfolioId, List.of(order));
+    public void saveNewPosition(PositionViewModel position) {
+        List<CreateOrderRequest> createOrderRequests = positionViewMapper.toCreateOrderRequests(position.getOrders());
+        CreatePositionRequest createPositionRequest = positionViewMapper.toCreatePositionRequest(position, createOrderRequests);
         positionController.createPosition(createPositionRequest);
 
         refreshAll();
     }
 
-    public void addOrderToPosition(UUID positionId, OrderViewModel order) {
+    public void addOrderToPosition(PositionViewModel position, OrderViewModel order) {
         CreateOrderRequest createOrderRequest = positionViewMapper.toCreateOrderRequest(order);
-        PositionResponse positionResponse = positionController.addOrderToPosition(positionId, createOrderRequest);
+        PositionResponse positionResponse = positionController.addOrderToPosition(position.getId(), createOrderRequest);
         PositionViewModel model = toModel(positionResponse);
 
         refreshItem(model);

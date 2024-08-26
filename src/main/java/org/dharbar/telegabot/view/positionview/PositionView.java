@@ -8,24 +8,18 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import org.dharbar.telegabot.controller.PortfolioController;
 import org.dharbar.telegabot.controller.PositionController;
 import org.dharbar.telegabot.controller.StockPriceController;
 import org.dharbar.telegabot.view.MainLayout;
-import org.dharbar.telegabot.view.events.OrderFormEvent;
 import org.dharbar.telegabot.view.mapper.PortfolioViewMapper;
 import org.dharbar.telegabot.view.mapper.PositionViewMapper;
-import org.dharbar.telegabot.view.model.OrderViewModel;
 import org.dharbar.telegabot.view.model.PortfolioViewModel;
 import org.dharbar.telegabot.view.model.PositionViewModel;
 import org.dharbar.telegabot.view.positionview.portfolio.PortfolioCreationDialog;
@@ -37,18 +31,16 @@ import java.util.UUID;
 @Route(value = "positions", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
 @CssImport(value = "./styles/grid.css", themeFor = "vaadin-grid")
-public class PositionView extends HorizontalLayout implements HasUrlParameter<String> {
+public class PositionView extends HorizontalLayout {
 
     public static final String VIEW_NAME = "Positions";
 
     private final Grid<PositionViewModel> grid;
-    private final OrderCreationForm orderDetailsForm;
+    private final PositionForm positionForm;
     private final PortfolioCreationDialog portfolioCreationDialog;
 
     private final Checkbox isShowClosedCheckbox = new Checkbox("Show Closed", false);
     private final Select<PortfolioViewModel> portfolioSelect = new Select<>();
-
-    private final PositionViewLogic viewLogic;
 
     private final PositionDataProvider positionDataProvider;
     private final PortfolioDataProvider portfolioDataProvider;
@@ -68,20 +60,17 @@ public class PositionView extends HorizontalLayout implements HasUrlParameter<St
         positionDataProvider = new PositionDataProvider(positionController, positionViewMapper, portfolioSelect, isShowClosedCheckbox);
         portfolioDataProvider = new PortfolioDataProvider(portfolioController, portfolioViewMapper);
         stockPriceDataProvider = new StockPriceDataProvider(stockPriceController);
-        viewLogic = new PositionViewLogic(this, positionDataProvider);
 
         portfolioCreationDialog = new PortfolioCreationDialog(portfolioDataProvider);
 
         HorizontalLayout gridToolbar = setupGridToolbar(portfolioDataProvider);
 
-        grid = new PositionGrid(viewLogic);
+        positionForm = new PositionForm(positionDataProvider, stockPriceDataProvider);
+
+        grid = new PositionGrid(positionForm);
         grid.setDataProvider(positionDataProvider);
         // Allows user to select a single row in the grid.
         // grid.asSingleSelect().addValueChangeListener(event -> viewLogic.rowSelected(event.getValue()));
-
-        orderDetailsForm = new OrderCreationForm(stockPriceDataProvider);
-        orderDetailsForm.addListener(OrderFormEvent.SaveOrderEvent.class, viewLogic::saveOrder);
-        orderDetailsForm.addListener(OrderFormEvent.CloseEvent.class, e -> viewLogic.closeEditor());
 
         VerticalLayout barAndGridLayout = new VerticalLayout();
         barAndGridLayout.add(gridToolbar);
@@ -92,10 +81,9 @@ public class PositionView extends HorizontalLayout implements HasUrlParameter<St
         barAndGridLayout.expand(grid);
 
         add(barAndGridLayout);
-        add(orderDetailsForm);
+        add(positionForm);
 
         listPositions();
-        showForm(false);
     }
 
     private HorizontalLayout setupGridToolbar(PortfolioDataProvider portfolioDataProvider) {
@@ -127,7 +115,7 @@ public class PositionView extends HorizontalLayout implements HasUrlParameter<St
         // Setting theme variant of new production button to LUMO_PRIMARY that
         // changes its background color to blue and its text color to white
         newPostitionButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        newPostitionButton.addClickListener(click -> viewLogic.viewNewBuyOrder());
+        newPostitionButton.addClickListener(click -> positionForm.showNewPosition(getSelectedPortfolioId()));
         // A shortcut to click the new product button by pressing ALT + N
         newPostitionButton.addClickShortcut(Key.KEY_N, KeyModifier.ALT);
 
@@ -157,39 +145,11 @@ public class PositionView extends HorizontalLayout implements HasUrlParameter<St
         positionDataProvider.refreshAll();
     }
 
-    // public void selectRow(PositionViewModel row) {
-    //     grid.getSelectionModel().select(row);
-    // }
-
     public UUID getSelectedPortfolioId() {
         return portfolioSelect.getValue() != null ? portfolioSelect.getValue().getId() : null;
     }
 
-    public void showOrderForm(UUID portfolioId, OrderViewModel order) {
-        if (order != null && order.getId() == null) {
-            clearSelection();
-        }
-
-        orderDetailsForm.setOrder(portfolioId, order);
-        showForm(true);
-    }
-
     public void clearSelection() {
         grid.getSelectionModel().deselectAll();
-    }
-
-    public void showForm(boolean show) {
-        orderDetailsForm.setVisible(show);
-        orderDetailsForm.setEnabled(show);
-    }
-
-    public void showNotification(String msg) {
-        Notification.show(msg);
-    }
-
-    @Override
-    public void setParameter(BeforeEvent event,
-                             @OptionalParameter String parameter) {
-        // viewLogic.enter(parameter);
     }
 }

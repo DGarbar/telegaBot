@@ -24,7 +24,7 @@ body {
 
 @media (max-width: 550px) {
 
-    .order-form {
+    .right-form {
         width: 100%;
 
         /* Prevent text-fields from overflowing on narrow screens */
@@ -67,7 +67,7 @@ body {
 }
 
 
-.order-form {
+.right-form {
     position: absolute;
     right: 0;
     bottom: 0;
@@ -77,7 +77,7 @@ body {
     box-shadow: var(--overlay-box-shadow);
 }
 
-.order-form-content {
+.right-form-content {
     margin-top: var(--_vaadin-app-layout-navbar-offset-size);
 }
 
