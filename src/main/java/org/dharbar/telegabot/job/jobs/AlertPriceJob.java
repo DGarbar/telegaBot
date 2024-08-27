@@ -21,6 +21,7 @@ import java.util.Map;
 public class AlertPriceJob extends BotJob {
 
     public static final String TARGET_PRICE_PARAMETER = "targetPrice";
+    public static final String MIN_AMOUNT_PARAMETER = "minAmount";
 
     private final RateFacadeService rateService;
     private final TelegramBot telegramBot;
@@ -32,6 +33,7 @@ public class AlertPriceJob extends BotJob {
         Map<RateProvider, List<RateDto>> cryptoRates = rateService.getCryptoRates();
         cryptoRates.get(RateProvider.BINANCE).stream()
                 .filter(rateDto -> rateDto.getRateSell() <= data.targetPrice)
+                .filter(rateDto -> rateDto.getAmount() >= data.minAmount)
                 .findFirst()
                 .ifPresent(rateDto -> sendMessage(rateDto, data));
     }
@@ -46,17 +48,20 @@ public class AlertPriceJob extends BotJob {
     public static class AlertPriceJobData {
         long chatId;
         double targetPrice;
+        double minAmount;
 
         public static AlertPriceJobData from(JobDataMap jobDataMap) {
             return new AlertPriceJobData(
                     jobDataMap.getLongValue(CHAT_ID_PARAMETER),
-                    jobDataMap.getDouble(TARGET_PRICE_PARAMETER));
+                    jobDataMap.getDouble(TARGET_PRICE_PARAMETER),
+                    jobDataMap.getDouble(MIN_AMOUNT_PARAMETER));
         }
 
         public JobDataMap toDataMap() {
             JobDataMap jobDataMap = new JobDataMap();
             jobDataMap.put(CHAT_ID_PARAMETER, getChatId());
             jobDataMap.put(TARGET_PRICE_PARAMETER, getTargetPrice());
+            jobDataMap.put(MIN_AMOUNT_PARAMETER, getMinAmount());
             return jobDataMap;
         }
     }

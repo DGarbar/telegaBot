@@ -13,4 +13,6 @@ public class RateDto {
     double rateBuy;
     double rateSell;
     RateProvider rateProvider;
+
+    double amount;
 }

@@ -21,7 +21,7 @@ public class BinanceRateService {
         BinanceP2pOrderRequest request = BinanceP2pOrderRequest.builder()
                 .fiat(currencyTo.getCurrencyCode())
                 .page(1)
-                .rows(10)
+                .rows(15)
                 .tradeType("BUY")
                 .asset("USDT")
                 .filterType("ALL")
@@ -40,6 +40,7 @@ public class BinanceRateService {
                         .currencyTo(Currency.getInstance(advertise.getFiatUnit()))
                         .rateSell(advertise.getPrice().doubleValue())
                         .rateProvider(rateProvider())
+                        .amount(advertise.getMaxSingleTransAmount().doubleValue())
                         .build())
                 .toList();
     }

@@ -26,6 +26,7 @@ public class WatchScenario implements CommandScenario {
     public static final String WATCH_MODIFY_DEFAULT_COMMAND = "/watchModifyDefault";
     public static final String WATCH_END_COMMAND = "/watchEnd";
     public static final String WATCH_CUSTOM_COMMAND = "/watchCustom";
+    public static final int MIN_AMOUNT = 10000;
 
     private final JobService jobService;
 
@@ -42,9 +43,9 @@ public class WatchScenario implements CommandScenario {
             return ScenarioResult.of("Watch disabled");
 
         } else if (WATCH_DEFAULT_COMMAND.equals(messageText)) {
-            watchTargetPrice(chatId, defaultPrice, secondsRetry);
+            watchTargetPrice(chatId, defaultPrice, secondsRetry, MIN_AMOUNT);
 
-            return ScenarioResult.of("Watch configured with target price: %s and retry time: %d seconds.".formatted(defaultPrice, secondsRetry));
+            return ScenarioResult.of("Watch configured with target price: %s and retry time: %d seconds. and amount more than %s".formatted(defaultPrice, secondsRetry, MIN_AMOUNT));
 
         } else if (WATCH_DEFAULT_INFO_COMMAND.equals(messageText)) {
             return ScenarioResult.of("Default price: %s and retry time: %d seconds.".formatted(defaultPrice, secondsRetry));
@@ -56,7 +57,7 @@ public class WatchScenario implements CommandScenario {
             String[] splitedMessage = messageText.split(" ");
             double targetPrice = Double.parseDouble(splitedMessage[1]);
             int secondsRetry = Integer.parseInt(splitedMessage[2]);
-            watchTargetPrice(chatId, targetPrice, secondsRetry);
+            watchTargetPrice(chatId, targetPrice, secondsRetry, MIN_AMOUNT);
 
             return ScenarioResult.of("Watch configured with target price: %s and retry time: %d seconds.".formatted(targetPrice, secondsRetry));
 
@@ -70,10 +71,11 @@ public class WatchScenario implements CommandScenario {
         return ScenarioResult.of("Unknown command: " + messageText);
     }
 
-    private void watchTargetPrice(Long chatId, double targetPrice, int secondsRetry) {
+    private void watchTargetPrice(Long chatId, double targetPrice, int secondsRetry, double minAmount) {
         AlertPriceJobData alertPriceJobData = AlertPriceJobData.builder()
                 .chatId(chatId)
                 .targetPrice(targetPrice)
+                .minAmount(minAmount)
                 .build();
         jobService.watchTargetPrice(alertPriceJobData, secondsRetry);
     }

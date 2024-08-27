@@ -51,6 +51,7 @@ public class PositionGrid extends Grid<PositionViewModel> {
         addColumn(PositionViewModel::getComment).setHeader("Comment").setFlexGrow(10);
         // getColumns().forEach(column -> column.setAutoWidth(true));
 
+        // TODO into single column with buttons
         addColumn(new ComponentRenderer<>(
                 Button::new,
                 (button, position) -> {
