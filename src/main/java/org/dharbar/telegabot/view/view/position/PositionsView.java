@@ -1,4 +1,4 @@
-package org.dharbar.telegabot.view.positionview;
+package org.dharbar.telegabot.view.view.position;
 
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
@@ -22,16 +22,16 @@ import org.dharbar.telegabot.view.mapper.PortfolioViewMapper;
 import org.dharbar.telegabot.view.mapper.PositionViewMapper;
 import org.dharbar.telegabot.view.model.PortfolioViewModel;
 import org.dharbar.telegabot.view.model.PositionViewModel;
-import org.dharbar.telegabot.view.positionview.portfolio.PortfolioCreationDialog;
-import org.dharbar.telegabot.view.positionview.portfolio.PortfolioDataProvider;
-import org.dharbar.telegabot.view.positionview.ticker.StockPriceDataProvider;
+import org.dharbar.telegabot.view.view.portfolio.PortfolioCreationDialog;
+import org.dharbar.telegabot.view.view.portfolio.PortfolioDataProvider;
+import org.dharbar.telegabot.view.view.stockprice.StockPriceDataProvider;
 
 import java.util.UUID;
 
 @Route(value = "positions", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
 @CssImport(value = "./styles/grid.css", themeFor = "vaadin-grid")
-public class PositionView extends HorizontalLayout {
+public class PositionsView extends HorizontalLayout {
 
     public static final String VIEW_NAME = "Positions";
 
@@ -49,11 +49,11 @@ public class PositionView extends HorizontalLayout {
     private TextField filter;
     private Button newPostitionButton;
 
-    public PositionView(StockPriceController stockPriceController,
-                        PortfolioController portfolioController,
-                        PortfolioViewMapper portfolioViewMapper,
-                        PositionController positionController,
-                        PositionViewMapper positionViewMapper) {
+    public PositionsView(StockPriceController stockPriceController,
+                         PortfolioController portfolioController,
+                         PortfolioViewMapper portfolioViewMapper,
+                         PositionController positionController,
+                         PositionViewMapper positionViewMapper) {
         addClassName("position-view");
         setSizeFull();
 
@@ -67,7 +67,7 @@ public class PositionView extends HorizontalLayout {
 
         positionForm = new PositionForm(positionDataProvider, stockPriceDataProvider);
 
-        grid = new PositionGrid(positionForm);
+        grid = new PositionGrid(positionForm, positionDataProvider);
         grid.setDataProvider(positionDataProvider);
         // Allows user to select a single row in the grid.
         // grid.asSingleSelect().addValueChangeListener(event -> viewLogic.rowSelected(event.getValue()));
@@ -105,10 +105,9 @@ public class PositionView extends HorizontalLayout {
         filter = new TextField();
         filter.setPlaceholder("(TODO) Filter name, availability or category");
         // Apply the filter to grid's data provider. TextField value is never
-        // TODO ?
         // filter.addValueChangeListener(event -> dataProvider.setFilter(event.getValue()));
         // A shortcut to focus on the textField by pressing ctrl + F
-        filter.addFocusShortcut(Key.KEY_F, KeyModifier.CONTROL);
+        // filter.addFocusShortcut(Key.KEY_F, KeyModifier.CONTROL);
 
         newPostitionButton = new Button("New position", VaadinIcon.PLUS_CIRCLE.create());
         newPostitionButton.setEnabled(false);

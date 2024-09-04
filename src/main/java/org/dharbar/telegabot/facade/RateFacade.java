@@ -7,6 +7,7 @@ import org.dharbar.telegabot.service.rate.dto.RateProvider;
 import org.dharbar.telegabot.service.rate.mono.MonoRateService;
 import org.dharbar.telegabot.service.rate.nbu.NbuService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Currency;
 import java.util.List;
@@ -18,7 +19,7 @@ import static org.dharbar.telegabot.service.rate.dto.RateProvider.NBU;
 
 @Service
 @RequiredArgsConstructor
-public class RateFacadeService {
+public class RateFacade {
 
     public static final Currency UAH = Currency.getInstance("UAH");
     public static final List<Currency> CURRENCY_FROM = List.of(Currency.getInstance("USD"), Currency.getInstance("EUR"));
@@ -27,6 +28,7 @@ public class RateFacadeService {
     private final MonoRateService monoRateService;
     private final BinanceRateService binanceRateService;
 
+    @Transactional(readOnly = true)
     public Map<RateProvider, List<RateDto>> getFiatCurrencyRates() {
         List<RateDto> nbuRates = nbuRateService.getRates(CURRENCY_FROM, UAH);
         List<RateDto> monoRates = monoRateService.getRates(CURRENCY_FROM, UAH);

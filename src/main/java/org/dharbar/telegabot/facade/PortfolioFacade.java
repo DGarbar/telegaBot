@@ -18,6 +18,7 @@ public class PortfolioFacade {
 
     private final PortfolioFacadeMapper portfolioFacadeMapper;
 
+    @Transactional(readOnly = true)
     public List<PortfolioResponse> getPortfolios() {
         return portfolioService.getPortfolios().stream()
                 .map(portfolioFacadeMapper::toResponse)

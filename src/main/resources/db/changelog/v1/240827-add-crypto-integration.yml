@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - changeSet:
+      id: 240827-add-crypto-integration
+      author: dgarbar
+      changes:
+        - tagDatabase:
+            tag: 240827-add-crypto-integration
+
+        - createTable:
+            tableName: crypto_price
+            columns:
+              - column:
+                  name: ticker
+                  type: varchar(20)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: price
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+
+        - addColumn:
+            tableName: portfolio
+            columns:
+              - column:
+                  name: type
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    defaultValue: 'STOCK'

@@ -30,7 +30,7 @@ public class StonksCsvServiceMapper {
     // }
     //
     // public void toPosition(StonkRowBean stonkRowBean) {
-    //     // TODO update stockPrice.
+    //
     //
     //     OrderDto buy = OrderDto.builder()
     //             .id(UUID.randomUUID())

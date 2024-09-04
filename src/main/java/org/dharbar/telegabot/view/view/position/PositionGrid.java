@@ -1,24 +1,26 @@
-package org.dharbar.telegabot.view.positionview;
+package org.dharbar.telegabot.view.view.position;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.dharbar.telegabot.view.model.PositionViewModel;
 import org.dharbar.telegabot.view.utils.StyleUtils;
+import org.dharbar.telegabot.view.view.order.OrderDialog;
+import org.dharbar.telegabot.view.view.order.OrderView;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.UUID;
 
 public class PositionGrid extends Grid<PositionViewModel> {
 
-    public PositionGrid(PositionForm positionForm) {
+    public PositionGrid(PositionForm positionForm,
+                        PositionDataProvider positionDataProvider) {
         addClassName("position-grid");
         setSizeFull();
 
@@ -36,9 +38,11 @@ public class PositionGrid extends Grid<PositionViewModel> {
         addColumn(PositionViewModel::getBuyAveragePrice).setHeader("Buy Rate").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
 
         addColumn(PositionViewModel::getSellAveragePrice).setHeader("Sell Rate").setKey("sellRate").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
-        addColumn(PositionViewModel::getNetProfitAmount).setHeader("Profit $").setKey("netProfitAmount").setTextAlign(ColumnTextAlign.END).setFlexGrow(3)
+        addColumn(PositionViewModel::getNetProfitAmount).setHeader("Profit $").setKey("netProfitAmount").setTextAlign(ColumnTextAlign.END).setFlexGrow(
+                        3)
                 .setClassNameGenerator(dto -> StyleUtils.toProfitStyle(dto.getProfitPercentage()));
-        addColumn(PositionViewModel::getProfitPercentage).setHeader("Profit %").setKey("profitPercentage").setTextAlign(ColumnTextAlign.END).setFlexGrow(3)
+        addColumn(PositionViewModel::getProfitPercentage).setHeader("Profit %").setKey("profitPercentage").setTextAlign(ColumnTextAlign.END).setFlexGrow(
+                        3)
                 .setClassNameGenerator(dto -> StyleUtils.toProfitStyle(dto.getProfitPercentage()));
 
         addColumn(PositionViewModel::getCurrentRatePrice).setHeader("Current Rate").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
@@ -51,34 +55,40 @@ public class PositionGrid extends Grid<PositionViewModel> {
         addColumn(PositionViewModel::getComment).setHeader("Comment").setFlexGrow(10);
         // getColumns().forEach(column -> column.setAutoWidth(true));
 
-        // TODO into single column with buttons
+        OrderDialog orderDialog = new OrderDialog();
         addColumn(new ComponentRenderer<>(
-                Button::new,
-                (button, position) -> {
-                    button.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
-                    button.addClickListener(e -> positionForm.showPositionBuyOrder(position));
-                    button.setIcon(VaadinIcon.DOLLAR.create());
-                    button.setEnabled(!position.getIsClosed());
-                }))
-                .setHeader("Add").setFlexGrow(5);
+                ButtonTools::new,
+                (tools, position) -> {
+                    tools.setupAddOrderButton(e -> {
+                        UUID positionId = position.getId();
+                        orderDialog.showNewOrder(
+                                position.getTicker(),
+                                BigDecimal.ZERO,
+                                positionId,
+                                order -> positionDataProvider.addOrderToPosition(positionId, order));
+                    });
 
-        addColumn(new ComponentRenderer<>(
-                Button::new,
-                (button, position) -> {
-                    button.addThemeVariants(ButtonVariant.LUMO_ERROR);
-                    button.addClickListener(e -> positionForm.showSellAllOrder(position));
-                    button.setIcon(VaadinIcon.CLOSE_CIRCLE.create());
-                    button.setEnabled(!position.getIsClosed());
+                    tools.setupSellAllButton(e -> {
+                        BigDecimal quantity = position.getBuyQuantity().subtract(position.getSellQuantity());
+                        UUID positionId = position.getId();
+                        orderDialog.showSellAllOrder(
+                                position.getTicker(),
+                                position.getCurrentRatePrice(),
+                                quantity,
+                                positionId,
+                                order -> positionDataProvider.addOrderToPosition(positionId, order));
+                    });
+                    tools.setupEditButton(e -> positionForm.showPosition(position));
+                    tools.setupShowOrdersButton(e -> setDetailsVisible(position, !isDetailsVisible(position)));
                 }))
-                .setHeader("Sell All").setFlexGrow(5);
+                .setHeader("Tools").setFlexGrow(5);
 
-        // If the browser window size changes, check if all columns fit on screen
-        // (e.g. switching from portrait to landscape mode)
         sort(List.of(new GridSortOrder<>(openAtColumn, SortDirection.DESCENDING)));
 
-        // UI.getCurrent().getPage().addBrowserWindowResizeListener(
-        //         e -> setColumnVisibility(e.getWidth()));
-        // grid.setItemDetailsRenderer(new ComponentRenderer<>(PositionsDetailForm::new, PositionsDetailForm::setPositions));
+        setDetailsVisibleOnClick(false);
+        setItemDetailsRenderer(new ComponentRenderer<>(() -> new OrderView(positionDataProvider), (orderView, positionViewModel) -> {
+            orderView.setOrders(positionViewModel.getOrders());
+        }));
     }
 
     @Override

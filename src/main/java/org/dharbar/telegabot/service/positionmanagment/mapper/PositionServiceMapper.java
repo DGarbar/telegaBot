@@ -38,6 +38,7 @@ public interface PositionServiceMapper {
     @Mapping(target = "createdAt", ignore = true)
     void updateEntity(@MappingTarget PositionEntity position, Set<OrderEntity> orders, PositionCalculation calculation);
 
+
     OrderDto toDto(OrderEntity orders);
 
     Set<OrderDto> toDtos(Set<OrderEntity> orders);
@@ -47,4 +48,8 @@ public interface PositionServiceMapper {
     OrderEntity toEntity(OrderDto orderDtos);
 
     Set<OrderEntity> toEntities(Collection<OrderDto> orderDtos);
+
+    @Mapping(target = "position", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    void updateEntity(@MappingTarget OrderEntity order, OrderDto orderDto);
 }

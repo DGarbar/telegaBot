@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.log4j.Log4j2;
 import org.dharbar.telegabot.bot.TelegramBot;
-import org.dharbar.telegabot.facade.RateFacadeService;
+import org.dharbar.telegabot.facade.RateFacade;
 import org.dharbar.telegabot.service.rate.dto.RateDto;
 import org.dharbar.telegabot.service.rate.dto.RateProvider;
 import org.quartz.JobDataMap;
@@ -23,7 +23,7 @@ public class AlertPriceJob extends BotJob {
     public static final String TARGET_PRICE_PARAMETER = "targetPrice";
     public static final String MIN_AMOUNT_PARAMETER = "minAmount";
 
-    private final RateFacadeService rateService;
+    private final RateFacade rateService;
     private final TelegramBot telegramBot;
 
     @Override

@@ -7,13 +7,13 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
-public class CreatePositionRequest {
+public class UpdatePositionRequest {
 
     String ticker;
 
     UUID portfolioId;
 
-    Set<CreateOrderRequest> orders = new HashSet<>();
+    Set<UpdateOrderRequest> orders = new HashSet<>();
 
     String comment;
 }

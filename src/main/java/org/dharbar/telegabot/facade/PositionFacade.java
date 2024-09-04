@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.dharbar.telegabot.controller.filter.PositionFilter;
 import org.dharbar.telegabot.controller.request.CreateOrderRequest;
 import org.dharbar.telegabot.controller.request.CreatePositionRequest;
+import org.dharbar.telegabot.controller.request.UpdatePositionRequest;
 import org.dharbar.telegabot.controller.response.PositionResponse;
 import org.dharbar.telegabot.facade.mapper.PositionFacadeMapper;
 import org.dharbar.telegabot.service.positionmanagment.PositionService;
@@ -18,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -29,6 +30,7 @@ public class PositionFacade {
 
     private final PositionFacadeMapper positionFacadeMapper;
 
+    @Transactional(readOnly = true)
     public Page<PositionResponse> getPositions(PositionFilter filter, Pageable pageRequest) {
         return positionService.getPositions(filter, pageRequest)
                 .map(positionFacadeMapper::toResponse)
@@ -37,17 +39,34 @@ public class PositionFacade {
 
     @Transactional
     public PositionResponse createPosition(CreatePositionRequest request) {
-        List<OrderDto> orderDtos = positionFacadeMapper.toDtos(request.getOrders());
+        Set<OrderDto> orderDtos = positionFacadeMapper.toDtos(request.getOrders());
         PositionDto savedPositionDto = positionService.cretePosition(request.getTicker(), request.getPortfolioId(), request.getComment(), orderDtos);
         PositionResponse response = positionFacadeMapper.toResponse(savedPositionDto);
         return populateWithAnalytic(response);
     }
 
-    // TODO (later) for update for position
+    @Transactional
+    public PositionResponse updatePosition(UUID id, UpdatePositionRequest request) {
+        Set<OrderDto> orderDtos = positionFacadeMapper.toIdDtos(request.getOrders());
+        PositionDto positionDto = positionFacadeMapper.toDto(id, request, orderDtos);
+
+        PositionDto savedPositionDto = positionService.updatePosition(positionDto);
+        PositionResponse response = positionFacadeMapper.toResponse(savedPositionDto);
+        return populateWithAnalytic(response);
+    }
+
     @Transactional
     public PositionResponse addPositionNewOrder(UUID positionId, CreateOrderRequest order) {
         OrderDto orderDto = positionFacadeMapper.toDto(order);
         PositionDto positionDto = positionService.addOrder(positionId, orderDto);
+        PositionResponse mappedDto = positionFacadeMapper.toResponse(positionDto);
+        return populateWithAnalytic(mappedDto);
+    }
+
+    @Transactional
+    public PositionResponse updatePositionOrder(UUID positionId, UUID orderId, CreateOrderRequest request) {
+        OrderDto orderDto = positionFacadeMapper.toDto(orderId, request);
+        PositionDto positionDto = positionService.updatePositionOrder(positionId, orderDto);
         PositionResponse mappedDto = positionFacadeMapper.toResponse(positionDto);
         return populateWithAnalytic(mappedDto);
     }
@@ -61,7 +80,7 @@ public class PositionFacade {
     private static PositionResponse populatePositionWithCurrentValues(PositionResponse positionResponse, StockPriceDto stockPriceDto) {
         BigDecimal currentRate = stockPriceDto.getPrice();
         positionResponse.setCurrentRatePrice(currentRate);
-        if (positionResponse.getIsClosed()) {
+        if (positionResponse.getIsClosed() || positionResponse.getOrders().isEmpty()) {
             positionResponse.setCurrentNetProfitAmount(BigDecimal.ZERO);
             positionResponse.setCurrentProfitPercentage(BigDecimal.ZERO);
             return positionResponse;
@@ -82,6 +101,4 @@ public class PositionFacade {
 
         return positionResponse;
     }
-
-
 }

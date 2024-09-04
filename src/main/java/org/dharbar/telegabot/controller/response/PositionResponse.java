@@ -5,7 +5,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -20,7 +20,7 @@ public class PositionResponse {
 
     UUID portfolioId;
 
-    List<OrderResponse> orders;
+    Set<OrderResponse> orders;
 
     Boolean isClosed;
 

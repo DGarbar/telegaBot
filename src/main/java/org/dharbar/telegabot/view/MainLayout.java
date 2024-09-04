@@ -11,7 +11,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.router.RouterLink;
-import org.dharbar.telegabot.view.positionview.PositionView;
+import org.dharbar.telegabot.view.view.position.PositionsView;
 
 /**
  * The main layout. Contains the navigation menu.
@@ -34,7 +34,7 @@ public class MainLayout extends AppLayout implements RouterLayout {
         addToNavbar(top);
 
         // Navigation items
-        addToDrawer(createMenuLink(PositionView.class, PositionView.VIEW_NAME, VaadinIcon.DOLLAR.create()));
+        addToDrawer(createMenuLink(PositionsView.class, PositionsView.VIEW_NAME, VaadinIcon.DOLLAR.create()));
         addToDrawer(createMenuLink(AboutView.class, AboutView.VIEW_NAME, VaadinIcon.INFO_CIRCLE.create()));
 
         setDrawerOpened(false);

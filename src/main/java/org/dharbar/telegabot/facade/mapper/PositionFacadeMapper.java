@@ -1,6 +1,8 @@
 package org.dharbar.telegabot.facade.mapper;
 
 import org.dharbar.telegabot.controller.request.CreateOrderRequest;
+import org.dharbar.telegabot.controller.request.UpdateOrderRequest;
+import org.dharbar.telegabot.controller.request.UpdatePositionRequest;
 import org.dharbar.telegabot.controller.response.OrderResponse;
 import org.dharbar.telegabot.controller.response.PositionResponse;
 import org.dharbar.telegabot.repository.entity.OrderType;
@@ -9,7 +11,8 @@ import org.dharbar.telegabot.service.positionmanagment.dto.PositionDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Mapper(componentModel = "spring", imports = {OrderType.class})
 public interface PositionFacadeMapper {
@@ -21,8 +24,27 @@ public interface PositionFacadeMapper {
 
     OrderResponse toResponse(OrderDto orderDto);
 
-    List<OrderDto> toDtos(List<CreateOrderRequest> orders);
+    Set<OrderDto> toDtos(Set<CreateOrderRequest> orders);
 
     @Mapping(target = "id", ignore = true)
     OrderDto toDto(CreateOrderRequest orders);
+
+    OrderDto toDto(UUID id, CreateOrderRequest orders);
+
+    Set<OrderDto> toIdDtos(Set<UpdateOrderRequest> orders);
+    OrderDto toDto(UpdateOrderRequest orders);
+
+    @Mapping(target = "sellTotalAmount", ignore = true)
+    @Mapping(target = "sellQuantity", ignore = true)
+    @Mapping(target = "sellAveragePrice", ignore = true)
+    @Mapping(target = "profitPercentage", ignore = true)
+    @Mapping(target = "openAt", ignore = true)
+    @Mapping(target = "netProfitAmount", ignore = true)
+    @Mapping(target = "isClosed", ignore = true)
+    @Mapping(target = "commissionTotalAmount", ignore = true)
+    @Mapping(target = "closedAt", ignore = true)
+    @Mapping(target = "buyTotalAmount", ignore = true)
+    @Mapping(target = "buyQuantity", ignore = true)
+    @Mapping(target = "buyAveragePrice", ignore = true)
+    PositionDto toDto(UUID id, UpdatePositionRequest request, Set<OrderDto> orders);
 }

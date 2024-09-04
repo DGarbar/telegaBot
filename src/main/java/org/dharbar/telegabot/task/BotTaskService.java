@@ -3,7 +3,7 @@ package org.dharbar.telegabot.task;
 import lombok.RequiredArgsConstructor;
 import org.dharbar.telegabot.bot.MessageHelper;
 import org.dharbar.telegabot.bot.TelegramBot;
-import org.dharbar.telegabot.facade.RateFacadeService;
+import org.dharbar.telegabot.facade.RateFacade;
 import org.dharbar.telegabot.service.rate.dto.RateDto;
 import org.dharbar.telegabot.service.rate.dto.RateProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class BotTaskService {
 
     private final TelegramBot telegramBot;
-    private final RateFacadeService rateService;
+    private final RateFacade rateService;
 
     @Value("${telegram.my.chat-id}")
     private Long chatId;

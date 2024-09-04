@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.dharbar.telegabot.controller.filter.PositionFilter;
 import org.dharbar.telegabot.controller.request.CreateOrderRequest;
 import org.dharbar.telegabot.controller.request.CreatePositionRequest;
+import org.dharbar.telegabot.controller.request.UpdatePositionRequest;
 import org.dharbar.telegabot.controller.response.PositionResponse;
 import org.dharbar.telegabot.facade.PositionFacade;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,8 +47,20 @@ public class PositionController {
         return positionsFacade.createPosition(request);
     }
 
+    @PutMapping("/api/positions/{id}")
+    public PositionResponse updatePosition(@PathVariable UUID id, @RequestBody UpdatePositionRequest request) {
+        return positionsFacade.updatePosition(id, request);
+    }
+
     @PostMapping("/api/positions/{id}/orders")
     public PositionResponse addOrderToPosition(@PathVariable UUID id, CreateOrderRequest request) {
         return positionsFacade.addPositionNewOrder(id, request);
+    }
+
+    @PutMapping("/api/positions/{id}/orders/{orderId}")
+    public PositionResponse updatePositionOrder(@PathVariable UUID id,
+                                               @PathVariable UUID orderId,
+                                               CreateOrderRequest request) {
+        return positionsFacade.updatePositionOrder(id, orderId, request);
     }
 }

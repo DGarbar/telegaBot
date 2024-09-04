@@ -1,4 +1,4 @@
-package org.dharbar.telegabot.view.model;
+package org.dharbar.telegabot.controller.request;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,12 +10,9 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class OrderViewModel {
+public class UpdateOrderRequest {
 
     UUID id;
-
-    UUID positionId;
-
     OrderType type;
     String ticker;
     BigDecimal quantity;
@@ -24,6 +21,5 @@ public class OrderViewModel {
     BigDecimal totalUsd;
     BigDecimal totalUah;
     BigDecimal commissionAmount;
-
     String comment;
 }

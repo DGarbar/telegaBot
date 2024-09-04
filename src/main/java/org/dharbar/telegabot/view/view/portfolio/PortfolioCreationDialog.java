@@ -1,4 +1,4 @@
-package org.dharbar.telegabot.view.positionview.portfolio;
+package org.dharbar.telegabot.view.view.portfolio;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;

@@ -72,3 +72,7 @@ telegram:
 task:
   rate-message: 0 0 7,10 * * ?
   stock-price-update: 0 7 0 * * 1-5
+
+vaadin:
+  frontend:
+    hotdeploy: false

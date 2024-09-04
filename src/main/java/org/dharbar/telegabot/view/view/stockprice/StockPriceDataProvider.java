@@ -1,4 +1,4 @@
-package org.dharbar.telegabot.view.positionview.ticker;
+package org.dharbar.telegabot.view.view.stockprice;
 
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;

@@ -41,7 +41,7 @@ public class PositionService {
                 .orElseThrow();
     }
 
-    public PositionDto cretePosition(String ticker, UUID portfolioId, String comment, List<OrderDto> orderDtos) {
+    public PositionDto cretePosition(String ticker, UUID portfolioId, String comment, Set<OrderDto> orderDtos) {
         PositionCalculation positionCalculation = calculatePositionValues(orderDtos);
         Set<OrderEntity> orders = positionMapper.toEntities(orderDtos);
         PositionEntity position = positionMapper.toNewEntity(ticker, portfolioId, comment, positionCalculation, orders);
@@ -51,12 +51,41 @@ public class PositionService {
         return positionMapper.toDto(savedPosition);
     }
 
+    public PositionDto updatePosition(PositionDto positionDto) {
+        PositionEntity position = positionRepository.findByIdForUpdate(positionDto.getId()).orElseThrow();
+
+        List<OrderDto> orderDtos = positionDto.getOrders();
+        PositionCalculation positionCalculation = calculatePositionValues(orderDtos);
+        Set<OrderEntity> orders = positionMapper.toEntities(orderDtos);
+
+        positionMapper.updateEntity(position, orders, positionCalculation);
+        PositionEntity savedPosition = positionRepository.save(position);
+
+        return positionMapper.toDto(savedPosition);
+    }
+
     public PositionDto addOrder(UUID positionId, OrderDto orderDto) {
-        PositionEntity position = positionRepository.findById(positionId).orElseThrow();
+        PositionEntity position = positionRepository.findByIdForUpdate(positionId).orElseThrow();
+        return updateAndSavePosition(orderDto, position);
+    }
+
+    public PositionDto updatePositionOrder(UUID positionId, OrderDto orderDto) {
+        PositionEntity position = positionRepository.findByIdForUpdate(positionId).orElseThrow();
+        OrderEntity savedOrder = position.getOrders().stream()
+                .filter(order -> order.getId().equals(orderDto.getId()))
+                .findFirst()
+                .orElseThrow();
+
+        positionMapper.updateEntity(savedOrder, orderDto);
+
+        return updateAndSavePosition(orderDto, position);
+    }
+
+    private PositionDto updateAndSavePosition(OrderDto orderDto, PositionEntity position) {
         Set<OrderDto> orderDtos = positionMapper.toDtos(position.getOrders());
         orderDtos.add(orderDto);
 
-        // (optimization)TODO can calculate based only on new order + existing value
+        // (optimization)TODO can calculate based only on new order + existing values
         PositionCalculation positionCalculation = calculatePositionValues(orderDtos);
         Set<OrderEntity> orders = positionMapper.toEntities(orderDtos);
 

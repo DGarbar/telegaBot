@@ -6,6 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 @FeignClient(name = "binance-client", url = "${api.binance.url}", configuration = BinanceFeignConfig.class)
 public interface BinanceClient {
 
-    // @GetMapping(value = "/sapi/v1/c2c/orderMatch/listUserOrderHistory")
-    // List<BinanceP2pBuy> getTransactions(@PathVariable TradeType tradeType);
+    // BTCUSDT
+    // @GetMapping(value = "/api/v3/ticker/price")
+    // List<BinanceP2pBuy> getTransactions(@RequestBody String symbol);
 }

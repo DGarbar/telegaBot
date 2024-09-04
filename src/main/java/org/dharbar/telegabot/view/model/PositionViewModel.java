@@ -5,7 +5,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -23,7 +23,7 @@ public class PositionViewModel {
     LocalDate openAt;
     LocalDate closedAt;
 
-    List<OrderViewModel> orders;
+    Set<OrderViewModel> orders;
 
     Boolean isClosed;
 

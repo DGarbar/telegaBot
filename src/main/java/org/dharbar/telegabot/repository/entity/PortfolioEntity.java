@@ -40,6 +40,10 @@ public class PortfolioEntity {
     @Column(nullable = false)
     private String description;
 
+    // @Enumerated(EnumType.STRING)
+    // @Column(nullable = false)
+    // private PortfolioType type;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
