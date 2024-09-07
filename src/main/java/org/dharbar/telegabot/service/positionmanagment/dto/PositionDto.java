@@ -5,7 +5,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -21,7 +21,9 @@ public class PositionDto {
     LocalDate openAt;
     LocalDate closedAt;
 
-    List<OrderDto> orders;
+    Set<OrderDto> orders;
+
+    Set<PriceTriggerDto> priceTriggers;
 
     Boolean isClosed;
 

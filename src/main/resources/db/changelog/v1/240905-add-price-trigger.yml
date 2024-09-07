@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: 240905-add-price-trigger
+      author: dgarbar
+      changes:
+        - tagDatabase:
+            tag: 240905-add-price-trigger
+
+        - createTable:
+            tableName: price_trigger
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: position_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_price_trigger_position
+                    references: position(id)
+              - column:
+                  name: type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: trigger_price
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+#              - column:
+#                  name: action
+#                  type: VARCHAR(20)
+#                  constraints:
+#                    nullable: false
+#              - column:
+#                  name: is_enabled
+#                  type:
+#                  defaultValueBoolean: true
+#                  constraints:
+#                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false

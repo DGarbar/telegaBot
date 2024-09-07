@@ -21,6 +21,7 @@ public class PositionResponse {
     UUID portfolioId;
 
     Set<OrderResponse> orders;
+    Set<PriceTriggerResponse> priceTriggers;
 
     Boolean isClosed;
 

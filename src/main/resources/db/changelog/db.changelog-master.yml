@@ -11,4 +11,6 @@ databaseChangeLog:
       file: classpath:db/changelog/v1/240808-refactoring-columns.yml
   - include:
       file: classpath:db/changelog/v1/240823-add-portfolio.yml
+  - include:
+      file: classpath:db/changelog/v1/240905-add-price-trigger.yml
 

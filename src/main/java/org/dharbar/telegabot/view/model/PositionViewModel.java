@@ -24,6 +24,7 @@ public class PositionViewModel {
     LocalDate closedAt;
 
     Set<OrderViewModel> orders;
+    Set<PriceTriggerViewModel> priceTriggers;
 
     Boolean isClosed;
 

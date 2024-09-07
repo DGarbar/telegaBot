@@ -8,13 +8,16 @@ import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import org.dharbar.telegabot.controller.PositionController;
 import org.dharbar.telegabot.controller.request.CreateOrderRequest;
 import org.dharbar.telegabot.controller.request.CreatePositionRequest;
+import org.dharbar.telegabot.controller.request.CreatePriceTriggerRequest;
 import org.dharbar.telegabot.controller.request.UpdateOrderRequest;
 import org.dharbar.telegabot.controller.request.UpdatePositionRequest;
+import org.dharbar.telegabot.controller.request.UpdatePriceTriggerRequest;
 import org.dharbar.telegabot.controller.response.PositionResponse;
 import org.dharbar.telegabot.view.mapper.PositionViewMapper;
 import org.dharbar.telegabot.view.model.OrderViewModel;
 import org.dharbar.telegabot.view.model.PortfolioViewModel;
 import org.dharbar.telegabot.view.model.PositionViewModel;
+import org.dharbar.telegabot.view.model.PriceTriggerViewModel;
 import org.springframework.data.domain.Page;
 
 import java.util.Set;
@@ -66,7 +69,9 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
 
     public void saveNewPosition(PositionViewModel position) {
         Set<CreateOrderRequest> createOrderRequests = positionViewMapper.toCreateOrderRequests(position.getOrders());
-        CreatePositionRequest createPositionRequest = positionViewMapper.toCreatePositionRequest(position, createOrderRequests);
+        Set<CreatePriceTriggerRequest> createPriceTriggerRequests = positionViewMapper.toCreatePriceTriggerRequests(position.getPriceTriggers());
+
+        CreatePositionRequest createPositionRequest = positionViewMapper.toCreatePositionRequest(position, createOrderRequests, createPriceTriggerRequests);
         positionController.createPosition(createPositionRequest);
 
         refreshAll();
@@ -74,7 +79,9 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
 
     public void updatePosition(PositionViewModel position) {
         Set<UpdateOrderRequest> updateOrderRequests = positionViewMapper.toUpdateOrderRequests(position.getOrders());
-        UpdatePositionRequest updatePositionRequest = positionViewMapper.toUpdatePositionRequest(position, updateOrderRequests);
+        Set<UpdatePriceTriggerRequest> updatePriceTriggerRequests = positionViewMapper.toUpdatePriceTriggerRequests(position.getPriceTriggers());
+
+        UpdatePositionRequest updatePositionRequest = positionViewMapper.toUpdatePositionRequest(position, updateOrderRequests, updatePriceTriggerRequests);
         PositionResponse positionResponse = positionController.updatePosition(position.getId(), updatePositionRequest);
         PositionViewModel model = toModel(positionResponse);
 
@@ -103,7 +110,9 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
     }
 
     private PositionViewModel toModel(PositionResponse positionResponse) {
-        Set<OrderViewModel> orders = positionViewMapper.toModels(positionResponse.getOrders(), positionResponse.getId());
-        return positionViewMapper.toModel(positionResponse, orders);
+        Set<OrderViewModel> orders = positionViewMapper.toOrderModels(positionResponse.getOrders(), positionResponse.getId());
+        Set<PriceTriggerViewModel> priceTriggers = positionViewMapper.toPriceTriggerModels(positionResponse.getPriceTriggers(), positionResponse.getId());
+
+        return positionViewMapper.toModel(positionResponse, orders, priceTriggers);
     }
 }

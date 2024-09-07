@@ -66,12 +66,13 @@ public class OrderDialog extends Dialog {
     }
 
     private void setupFields() {
-        tickerField.setEnabled(false);
+        tickerField.setReadOnly(true);
 
         rateField.setSuffixComponent(VaadinIcon.DOLLAR.create());
         rateField.addValueChangeListener(e -> recalculateTotalField());
         quantityField.addValueChangeListener(e -> recalculateTotalField());
         totalUsdField.setSuffixComponent(VaadinIcon.DOLLAR.create());
+        totalUsdField.setReadOnly(true);
         commissionAmountField.setSuffixComponent(VaadinIcon.DOLLAR.create());
     }
 

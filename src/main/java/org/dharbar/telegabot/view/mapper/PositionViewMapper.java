@@ -2,13 +2,17 @@ package org.dharbar.telegabot.view.mapper;
 
 import org.dharbar.telegabot.controller.request.CreateOrderRequest;
 import org.dharbar.telegabot.controller.request.CreatePositionRequest;
+import org.dharbar.telegabot.controller.request.CreatePriceTriggerRequest;
 import org.dharbar.telegabot.controller.request.UpdateOrderRequest;
 import org.dharbar.telegabot.controller.request.UpdatePositionRequest;
+import org.dharbar.telegabot.controller.request.UpdatePriceTriggerRequest;
 import org.dharbar.telegabot.controller.response.OrderResponse;
 import org.dharbar.telegabot.controller.response.PositionResponse;
+import org.dharbar.telegabot.controller.response.PriceTriggerResponse;
 import org.dharbar.telegabot.repository.entity.OrderType;
 import org.dharbar.telegabot.view.model.OrderViewModel;
 import org.dharbar.telegabot.view.model.PositionViewModel;
+import org.dharbar.telegabot.view.model.PriceTriggerViewModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -22,28 +26,46 @@ public interface PositionViewMapper {
     @Mapping(target = "positionId", source = "positionId")
     OrderViewModel toModel(OrderResponse response, UUID positionId);
 
-    default Set<OrderViewModel> toModels(Set<OrderResponse> responses, UUID positionId) {
+    @Mapping(target = "positionId", source = "positionId")
+    PriceTriggerViewModel toModel(PriceTriggerResponse response, UUID positionId);
+
+    default Set<OrderViewModel> toOrderModels(Set<OrderResponse> responses, UUID positionId) {
+        return responses.stream()
+                .map(response -> toModel(response, positionId))
+                .collect(Collectors.toSet());
+    }
+
+    default Set<PriceTriggerViewModel> toPriceTriggerModels(Set<PriceTriggerResponse> responses, UUID positionId) {
         return responses.stream()
                 .map(response -> toModel(response, positionId))
                 .collect(Collectors.toSet());
     }
 
     @Mapping(target = "orders", source = "orders")
-    PositionViewModel toModel(PositionResponse response, Set<OrderViewModel> orders);
+    @Mapping(target = "priceTriggers", source = "priceTriggers")
+    PositionViewModel toModel(PositionResponse response, Set<OrderViewModel> orders, Set<PriceTriggerViewModel> priceTriggers);
 
     @Mapping(target = "comment", ignore = true)
-    CreatePositionRequest toCreatePositionRequest(String ticker, UUID portfolioId, Set<OrderViewModel> orders);
+    CreatePositionRequest toCreatePositionRequest(String ticker, UUID portfolioId, Set<OrderViewModel> orders, Set<PriceTriggerViewModel> priceTriggers);
 
     @Mapping(target = "orders", source = "orderRequests")
-    CreatePositionRequest toCreatePositionRequest(PositionViewModel position, Set<CreateOrderRequest> orderRequests);
+    @Mapping(target = "priceTriggers", source = "priceTriggers")
+    CreatePositionRequest toCreatePositionRequest(PositionViewModel position, Set<CreateOrderRequest> orderRequests, Set<CreatePriceTriggerRequest> priceTriggers);
 
     @Mapping(target = "orders", source = "orderRequests")
-    UpdatePositionRequest toUpdatePositionRequest(PositionViewModel position, Set<UpdateOrderRequest> orderRequests);
+    @Mapping(target = "priceTriggers", source = "priceTriggers")
+    UpdatePositionRequest toUpdatePositionRequest(PositionViewModel position, Set<UpdateOrderRequest> orderRequests, Set<UpdatePriceTriggerRequest> priceTriggers);
 
-    CreateOrderRequest toCreateOrderRequest(OrderViewModel order);
-    Set<CreateOrderRequest> toCreateOrderRequests(Set<OrderViewModel> orders);
+    CreateOrderRequest toCreateOrderRequest(OrderViewModel model);
+    Set<CreateOrderRequest> toCreateOrderRequests(Set<OrderViewModel> models);
 
-    UpdateOrderRequest toUpdateOrderRequest(OrderViewModel order);
-    Set<UpdateOrderRequest> toUpdateOrderRequests(Set<OrderViewModel> orders);
+    UpdateOrderRequest toUpdateOrderRequest(OrderViewModel model);
+    Set<UpdateOrderRequest> toUpdateOrderRequests(Set<OrderViewModel> models);
+
+    CreatePriceTriggerRequest toCreatePriceTriggerRequest(PriceTriggerViewModel model);
+    Set<CreatePriceTriggerRequest> toCreatePriceTriggerRequests(Set<PriceTriggerViewModel> models);
+
+    UpdatePriceTriggerRequest toUpdatePriceTriggerRequest(PriceTriggerViewModel model);
+    Set<UpdatePriceTriggerRequest> toUpdatePriceTriggerRequests(Set<PriceTriggerViewModel> models);
 
 }

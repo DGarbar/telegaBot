@@ -5,17 +5,20 @@ import org.dharbar.telegabot.controller.filter.PositionFilter;
 import org.dharbar.telegabot.repository.PositionRepository;
 import org.dharbar.telegabot.repository.entity.OrderEntity;
 import org.dharbar.telegabot.repository.entity.PositionEntity;
+import org.dharbar.telegabot.repository.entity.PriceTriggerEntity;
 import org.dharbar.telegabot.repository.specification.PositionSpec;
+import org.dharbar.telegabot.repository.util.ChangeComparator;
+import org.dharbar.telegabot.repository.util.ChangeResult;
 import org.dharbar.telegabot.service.positionmanagment.PositionCalculationService.PositionCalculation;
 import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
 import org.dharbar.telegabot.service.positionmanagment.dto.PositionDto;
+import org.dharbar.telegabot.service.positionmanagment.dto.PriceTriggerDto;
 import org.dharbar.telegabot.service.positionmanagment.mapper.PositionServiceMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,10 +44,15 @@ public class PositionService {
                 .orElseThrow();
     }
 
-    public PositionDto cretePosition(String ticker, UUID portfolioId, String comment, Set<OrderDto> orderDtos) {
+    public PositionDto cretePosition(String ticker,
+                                     UUID portfolioId,
+                                     String comment,
+                                     Set<OrderDto> orderDtos,
+                                     Set<PriceTriggerDto> priceTriggerDtos) {
         PositionCalculation positionCalculation = calculatePositionValues(orderDtos);
-        Set<OrderEntity> orders = positionMapper.toEntities(orderDtos);
-        PositionEntity position = positionMapper.toNewEntity(ticker, portfolioId, comment, positionCalculation, orders);
+        Set<OrderEntity> orders = positionMapper.toEntityOrders(orderDtos);
+        Set<PriceTriggerEntity> priceTriggers = positionMapper.toEntityPriceTriggers(priceTriggerDtos);
+        PositionEntity position = positionMapper.toNewEntity(ticker, portfolioId, comment, positionCalculation, orders, priceTriggers);
 
         PositionEntity savedPosition = positionRepository.save(position);
 
@@ -54,11 +62,20 @@ public class PositionService {
     public PositionDto updatePosition(PositionDto positionDto) {
         PositionEntity position = positionRepository.findByIdForUpdate(positionDto.getId()).orElseThrow();
 
-        List<OrderDto> orderDtos = positionDto.getOrders();
+        Set<OrderDto> orderDtos = positionDto.getOrders();
         PositionCalculation positionCalculation = calculatePositionValues(orderDtos);
-        Set<OrderEntity> orders = positionMapper.toEntities(orderDtos);
 
-        positionMapper.updateEntity(position, orders, positionCalculation);
+        Set<OrderEntity> orders = positionMapper.toEntityOrders(orderDtos);
+        ChangeResult<OrderEntity> orderChange = ChangeComparator.compare(position.getOrders(), orders);
+        orderChange.getRemoved().forEach(position::removeOrder);
+        orderChange.getPresent().forEach(positionMapper::updateEntity);
+
+        Set<PriceTriggerEntity> priceTriggers = positionMapper.toEntityPriceTriggers(positionDto.getPriceTriggers());
+        ChangeResult<PriceTriggerEntity> priceTriggerChange = ChangeComparator.compare(position.getPriceTriggers(), priceTriggers);
+        priceTriggerChange.getRemoved().forEach(position::removePriceTrigger);
+        priceTriggerChange.getPresent().forEach(positionMapper::updateEntity);
+
+        positionMapper.updateEntity(position, orderChange.getAdded(), priceTriggerChange.getAdded(), positionCalculation);
         PositionEntity savedPosition = positionRepository.save(position);
 
         return positionMapper.toDto(savedPosition);
@@ -87,9 +104,9 @@ public class PositionService {
 
         // (optimization)TODO can calculate based only on new order + existing values
         PositionCalculation positionCalculation = calculatePositionValues(orderDtos);
-        Set<OrderEntity> orders = positionMapper.toEntities(orderDtos);
+        Set<OrderEntity> orders = positionMapper.toEntityOrders(orderDtos);
 
-        positionMapper.updateEntity(position, orders, positionCalculation);
+        positionMapper.updateEntity(position, orders, position.getPriceTriggers(), positionCalculation);
         PositionEntity savedPosition = positionRepository.save(position);
 
         return positionMapper.toDto(savedPosition);

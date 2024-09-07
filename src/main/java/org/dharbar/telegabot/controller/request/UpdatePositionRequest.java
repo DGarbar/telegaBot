@@ -14,6 +14,7 @@ public class UpdatePositionRequest {
     UUID portfolioId;
 
     Set<UpdateOrderRequest> orders = new HashSet<>();
+    Set<UpdatePriceTriggerRequest> priceTriggers = new HashSet<>();
 
     String comment;
 }

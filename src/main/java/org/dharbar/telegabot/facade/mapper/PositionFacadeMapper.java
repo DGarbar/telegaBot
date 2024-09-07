@@ -1,13 +1,17 @@
 package org.dharbar.telegabot.facade.mapper;
 
 import org.dharbar.telegabot.controller.request.CreateOrderRequest;
+import org.dharbar.telegabot.controller.request.CreatePriceTriggerRequest;
 import org.dharbar.telegabot.controller.request.UpdateOrderRequest;
 import org.dharbar.telegabot.controller.request.UpdatePositionRequest;
+import org.dharbar.telegabot.controller.request.UpdatePriceTriggerRequest;
 import org.dharbar.telegabot.controller.response.OrderResponse;
 import org.dharbar.telegabot.controller.response.PositionResponse;
+import org.dharbar.telegabot.controller.response.PriceTriggerResponse;
 import org.dharbar.telegabot.repository.entity.OrderType;
 import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
 import org.dharbar.telegabot.service.positionmanagment.dto.PositionDto;
+import org.dharbar.telegabot.service.positionmanagment.dto.PriceTriggerDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -22,17 +26,24 @@ public interface PositionFacadeMapper {
     @Mapping(target = "currentProfitPercentage", ignore = true)
     PositionResponse toResponse(PositionDto positionDto);
 
-    OrderResponse toResponse(OrderDto orderDto);
+    OrderResponse toResponse(OrderDto dto);
+    PriceTriggerResponse toResponse(PriceTriggerDto dto);
 
-    Set<OrderDto> toDtos(Set<CreateOrderRequest> orders);
+    @Mapping(target = "id", ignore = true)
+    PriceTriggerDto toDto(CreatePriceTriggerRequest request);
+    Set<PriceTriggerDto> toDtoPriceTriggers(Set<CreatePriceTriggerRequest> requests);
 
     @Mapping(target = "id", ignore = true)
     OrderDto toDto(CreateOrderRequest orders);
+    Set<OrderDto> toDtoOrders(Set<CreateOrderRequest> orders);
 
     OrderDto toDto(UUID id, CreateOrderRequest orders);
 
-    Set<OrderDto> toIdDtos(Set<UpdateOrderRequest> orders);
+    Set<OrderDto> toDtoUpdateOrders(Set<UpdateOrderRequest> orders);
     OrderDto toDto(UpdateOrderRequest orders);
+
+    Set<PriceTriggerDto> toDtoUpdatePriceTriggers(Set<UpdatePriceTriggerRequest> requests);
+    PriceTriggerDto toDto(UpdatePriceTriggerRequest request);
 
     @Mapping(target = "sellTotalAmount", ignore = true)
     @Mapping(target = "sellQuantity", ignore = true)
@@ -46,5 +57,5 @@ public interface PositionFacadeMapper {
     @Mapping(target = "buyTotalAmount", ignore = true)
     @Mapping(target = "buyQuantity", ignore = true)
     @Mapping(target = "buyAveragePrice", ignore = true)
-    PositionDto toDto(UUID id, UpdatePositionRequest request, Set<OrderDto> orders);
+    PositionDto toDto(UUID id, UpdatePositionRequest request, Set<OrderDto> orders, Set<PriceTriggerDto> priceTriggerDtos);
 }

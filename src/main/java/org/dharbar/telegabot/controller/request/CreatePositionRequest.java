@@ -15,5 +15,7 @@ public class CreatePositionRequest {
 
     Set<CreateOrderRequest> orders = new HashSet<>();
 
+    Set<CreatePriceTriggerRequest> priceTriggers= new HashSet<>();
+
     String comment;
 }
