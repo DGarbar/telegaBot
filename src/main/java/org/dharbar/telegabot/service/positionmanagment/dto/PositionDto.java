@@ -25,6 +25,8 @@ public class PositionDto {
 
     Set<PriceTriggerDto> priceTriggers;
 
+    Set<AlarmDto> alarms;
+
     Boolean isClosed;
 
     BigDecimal buyTotalAmount;

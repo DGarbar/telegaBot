@@ -25,6 +25,7 @@ public class PositionViewModel {
 
     Set<OrderViewModel> orders;
     Set<PriceTriggerViewModel> priceTriggers;
+    Set<AlarmViewModel> alarms;
 
     Boolean isClosed;
 

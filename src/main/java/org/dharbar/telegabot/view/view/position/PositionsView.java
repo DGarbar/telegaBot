@@ -134,12 +134,10 @@ public class PositionsView extends HorizontalLayout {
         Boolean isShowClosed = isShowClosedCheckbox.getValue();
         if (isShowClosed) {
             grid.getColumnByKey("sellRate").setVisible(true);
-            grid.getColumnByKey("netProfitAmount").setVisible(true);
-            grid.getColumnByKey("profitPercentage").setVisible(true);
+            grid.getColumnByKey("profit").setVisible(true);
         } else {
             grid.getColumnByKey("sellRate").setVisible(false);
-            grid.getColumnByKey("netProfitAmount").setVisible(false);
-            grid.getColumnByKey("profitPercentage").setVisible(false);
+            grid.getColumnByKey("profit").setVisible(false);
         }
         positionDataProvider.refreshAll();
     }

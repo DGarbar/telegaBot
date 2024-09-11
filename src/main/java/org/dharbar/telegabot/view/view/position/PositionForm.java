@@ -10,21 +10,17 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.binder.Binder;
 import lombok.extern.slf4j.Slf4j;
-import org.dharbar.telegabot.repository.entity.TriggerType;
 import org.dharbar.telegabot.service.stockprice.dto.StockPriceDto;
 import org.dharbar.telegabot.view.model.PositionViewModel;
-import org.dharbar.telegabot.view.model.PriceTriggerViewModel;
+import org.dharbar.telegabot.view.view.alarm.AlarmListCustomField;
 import org.dharbar.telegabot.view.view.order.OrderDialog;
 import org.dharbar.telegabot.view.view.stockprice.StockPriceDataProvider;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -36,8 +32,8 @@ public class PositionForm extends Div {
     private final TextArea commentArea = new TextArea("Comment");
     private final ComboBox<StockPriceDto> tickerComboBox = new ComboBox<>("Ticker");
 
-    private final BigDecimalField stopLossAmountField = new BigDecimalField("Stop Loss");
-    private final BigDecimalField takeProfitTextField = new BigDecimalField("Take Profit");
+    private final PriceTriggersCustomField priceTriggersCustomField = new PriceTriggersCustomField();
+    private final AlarmListCustomField alarmListComponent;
 
     private final Binder<PositionViewModel> positionViewBinder = new Binder<>(PositionViewModel.class);
 
@@ -51,6 +47,7 @@ public class PositionForm extends Div {
     public PositionForm(PositionDataProvider positionDataProvider,
                         StockPriceDataProvider stockPriceDataProvider) {
         this.positionDataProvider = positionDataProvider;
+        alarmListComponent = new AlarmListCustomField(positionDataProvider);
 
         addClassName("right-form");
 
@@ -60,7 +57,7 @@ public class PositionForm extends Div {
         add(content);
 
         setupTickerComboBox(stockPriceDataProvider);
-        Component priceSettingsLayout = setupPriceSettings();
+        // Component priceSettingsLayout = setupPriceSettings();
 
         Component orderButtonLayout = setupOrderButtonLayout();
         Component positionButtonLayout = setupFunctionalButtonLayout();
@@ -69,7 +66,7 @@ public class PositionForm extends Div {
 
         orderDialog = new OrderDialog();
 
-        Stream.of(tickerComboBox, commentArea, priceSettingsLayout, orderButtonLayout, positionButtonLayout)
+        Stream.of(tickerComboBox, commentArea, priceTriggersCustomField, alarmListComponent, orderButtonLayout, positionButtonLayout)
                 .forEach(content::add);
 
         showForm(false);
@@ -85,56 +82,6 @@ public class PositionForm extends Div {
             String customValue = e.getDetail();
             dataProvider.saveNewTicker(customValue);
         });
-    }
-
-    private Component setupPriceSettings() {
-        stopLossAmountField.setSuffixComponent(VaadinIcon.DOLLAR.create());
-        stopLossAmountField.setClearButtonVisible(true);
-        stopLossAmountField.addValueChangeListener(event -> {
-            BigDecimal value = event.getValue();
-            if (value != null && !value.equals(BigDecimal.ZERO)) {
-                addPositionPriceTrigger(TriggerType.STOP_LOSS, stopLossAmountField.getValue());
-            } else {
-                removePositionPriceTrigger(TriggerType.STOP_LOSS);
-            }
-        });
-
-        takeProfitTextField.setSuffixComponent(VaadinIcon.DOLLAR.create());
-        takeProfitTextField.setClearButtonVisible(true);
-        takeProfitTextField.addValueChangeListener(event -> {
-            BigDecimal value = event.getValue();
-            if (value != null && !value.equals(BigDecimal.ZERO)) {
-                addPositionPriceTrigger(TriggerType.TAKE_PROFIT, takeProfitTextField.getValue());
-            } else {
-                removePositionPriceTrigger(TriggerType.TAKE_PROFIT);
-            }
-        });
-
-        return new HorizontalLayout(stopLossAmountField, takeProfitTextField);
-    }
-
-    private void addPositionPriceTrigger(TriggerType triggerType, BigDecimal triggerPrice) {
-        PositionViewModel currentPosition = positionViewBinder.getBean();
-        Set<PriceTriggerViewModel> priceTriggers = currentPosition.getPriceTriggers();
-        Optional<PriceTriggerViewModel> trigger = priceTriggers.stream()
-                .filter(priceTrigger -> priceTrigger.getType().equals(triggerType))
-                .findFirst();
-
-        if (trigger.isPresent()) {
-            trigger.get().setTriggerPrice(triggerPrice);
-        } else {
-            priceTriggers.add(PriceTriggerViewModel.builder()
-                    .type(triggerType)
-                    .triggerPrice(triggerPrice)
-                    .positionId(currentPosition.getId())
-                    .build());
-        }
-    }
-
-    private void removePositionPriceTrigger(TriggerType triggerType) {
-        PositionViewModel currentPosition = positionViewBinder.getBean();
-        Set<PriceTriggerViewModel> priceTriggers = currentPosition.getPriceTriggers();
-        priceTriggers.removeIf(priceTrigger -> priceTrigger.getType().equals(triggerType));
     }
 
     private Component setupOrderButtonLayout() {
@@ -190,29 +137,9 @@ public class PositionForm extends Div {
                 position -> stockPriceDataProvider.getByTicker(position.getTicker()),
                 (position, stockPriceDto) -> position.setTicker(stockPriceDto.getTicker()));
 
-        positionViewBinder.bind(stopLossAmountField, positionViewModel ->
-                        positionViewModel.getPriceTriggers().stream()
-                                .filter(priceTrigger -> priceTrigger.getType().equals(TriggerType.STOP_LOSS))
-                                .findFirst()
-                                .map(PriceTriggerViewModel::getTriggerPrice)
-                                .orElse(null),
-                (positionViewModel, value) -> positionViewModel.getPriceTriggers().stream()
-                        .filter(priceTrigger -> priceTrigger.getType().equals(TriggerType.STOP_LOSS))
-                        .findFirst()
-                        .ifPresent(priceTriggerViewModel -> priceTriggerViewModel.setTriggerPrice(value))
-        );
+        positionViewBinder.bind(priceTriggersCustomField, PositionViewModel::getPriceTriggers, PositionViewModel::setPriceTriggers);
 
-        positionViewBinder.bind(takeProfitTextField, positionViewModel ->
-                        positionViewModel.getPriceTriggers().stream()
-                                .filter(priceTrigger -> priceTrigger.getType().equals(TriggerType.TAKE_PROFIT))
-                                .findFirst()
-                                .map(PriceTriggerViewModel::getTriggerPrice)
-                                .orElse(null),
-                (positionViewModel, value) -> positionViewModel.getPriceTriggers().stream()
-                        .filter(priceTrigger -> priceTrigger.getType().equals(TriggerType.TAKE_PROFIT))
-                        .findFirst()
-                        .ifPresent(priceTriggerViewModel -> priceTriggerViewModel.setTriggerPrice(value))
-        );
+        positionViewBinder.bind(alarmListComponent, PositionViewModel::getAlarms, PositionViewModel::setAlarms);
     }
 
     public void showNewPosition(UUID portfolioId) {

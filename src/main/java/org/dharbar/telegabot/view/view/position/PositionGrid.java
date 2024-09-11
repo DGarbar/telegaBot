@@ -13,6 +13,7 @@ import org.dharbar.telegabot.view.view.order.OrderDialog;
 import org.dharbar.telegabot.view.view.order.OrderView;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +23,7 @@ public class PositionGrid extends Grid<PositionViewModel> {
     public PositionGrid(PositionForm positionForm,
                         PositionDataProvider positionDataProvider) {
         addClassName("position-grid");
-        setSizeFull();
+        // setSizeFull();
 
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setMaximumFractionDigits(2);
@@ -31,28 +32,23 @@ public class PositionGrid extends Grid<PositionViewModel> {
         addColumn(PositionViewModel::getTicker).setHeader("Ticker").setKey("ticker").setFlexGrow(5)
                 .setSortable(true)
                 .setClassNameGenerator(positionAnalyticDto -> StyleUtils.toTickerStyle(positionAnalyticDto.getTicker()));
-        Grid.Column<PositionViewModel> openAtColumn = addColumn(PositionViewModel::getOpenAt).setHeader("Date").setKey("openAt").setSortable(true).setFlexGrow(5);
+        Grid.Column<PositionViewModel> openAtColumn = addColumn(PositionViewModel::getOpenAt).setHeader("Date").setKey("openAt").setSortable(true).setFlexGrow(2);
         // TODO
         // product -> decimalFormat.format(product.getPrice()) + " $")
-        addColumn(PositionViewModel::getBuyTotalAmount).setHeader("Invested").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
-        addColumn(PositionViewModel::getBuyAveragePrice).setHeader("Buy Rate").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
+        // addColumn(PositionViewModel::getBuyTotalAmount).setHeader("Invested").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
+        addColumn(PositionViewModel::getBuyAveragePrice).setHeader("Buy Rate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
 
-        addColumn(PositionViewModel::getSellAveragePrice).setHeader("Sell Rate").setKey("sellRate").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
-        addColumn(PositionViewModel::getNetProfitAmount).setHeader("Profit $").setKey("netProfitAmount").setTextAlign(ColumnTextAlign.END).setFlexGrow(
-                        3)
-                .setClassNameGenerator(dto -> StyleUtils.toProfitStyle(dto.getProfitPercentage()));
-        addColumn(PositionViewModel::getProfitPercentage).setHeader("Profit %").setKey("profitPercentage").setTextAlign(ColumnTextAlign.END).setFlexGrow(
-                        3)
+        addColumn(PositionViewModel::getSellAveragePrice).setHeader("Sell Rate").setKey("sellRate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
+        addColumn(pos -> toAmountAndPercentage(pos.getNetProfitAmount(), pos.getProfitPercentage())).setHeader("Profit").setKey("profit").setTextAlign(ColumnTextAlign.CENTER)
+                .setFlexGrow(3)
                 .setClassNameGenerator(dto -> StyleUtils.toProfitStyle(dto.getProfitPercentage()));
 
-        addColumn(PositionViewModel::getCurrentRatePrice).setHeader("Current Rate").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
-        addColumn(PositionViewModel::getCurrentNetProfitAmount).setHeader("Current Profit $").setTextAlign(ColumnTextAlign.END).setFlexGrow(3)
+        addColumn(PositionViewModel::getCurrentRatePrice).setHeader("Current Rate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
+        addColumn(pos -> toAmountAndPercentage(pos.getCurrentNetProfitAmount(), pos.getCurrentProfitPercentage())).setHeader("Unreal. Profit").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3)
                 .setClassNameGenerator(dto -> StyleUtils.toProfitStyle(dto.getCurrentProfitPercentage()));
-        addColumn(PositionViewModel::getCurrentProfitPercentage).setHeader("Current Profit %").setTextAlign(ColumnTextAlign.END).setFlexGrow(3)
-                .setClassNameGenerator(dto -> StyleUtils.toProfitStyle(dto.getCurrentProfitPercentage()));
-        addColumn(PositionViewModel::dealDurationDays).setHeader("Deal days").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
+        // addColumn(PositionViewModel::dealDurationDays).setHeader("Deal days").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
 
-        addColumn(PositionViewModel::getComment).setHeader("Comment").setFlexGrow(10);
+        addColumn(PositionViewModel::getComment).setHeader("Comment").setFlexGrow(5);
         // getColumns().forEach(column -> column.setAutoWidth(true));
 
         OrderDialog orderDialog = new OrderDialog();
@@ -68,7 +64,7 @@ public class PositionGrid extends Grid<PositionViewModel> {
                                 order -> positionDataProvider.addOrderToPosition(positionId, order));
                     });
 
-                    tools.setupSellAllButton(e -> {
+                    tools.setupSellAllButton(position, e -> {
                         BigDecimal quantity = position.getBuyQuantity().subtract(position.getSellQuantity());
                         UUID positionId = position.getId();
                         orderDialog.showSellAllOrder(
@@ -81,7 +77,7 @@ public class PositionGrid extends Grid<PositionViewModel> {
                     tools.setupEditButton(e -> positionForm.showPosition(position));
                     tools.setupShowOrdersButton(e -> setDetailsVisible(position, !isDetailsVisible(position)));
                 }))
-                .setHeader("Tools").setFlexGrow(5);
+                .setHeader("Tools").setFlexGrow(7);
 
         sort(List.of(new GridSortOrder<>(openAtColumn, SortDirection.DESCENDING)));
 
@@ -89,6 +85,10 @@ public class PositionGrid extends Grid<PositionViewModel> {
         setItemDetailsRenderer(new ComponentRenderer<>(() -> new OrderView(positionDataProvider), (orderView, positionViewModel) -> {
             orderView.setOrders(positionViewModel.getOrders());
         }));
+    }
+
+    private static String toAmountAndPercentage(BigDecimal amount, BigDecimal percentage) {
+        return percentage.setScale(1, RoundingMode.HALF_UP) + "% (" + amount.setScale(1, RoundingMode.HALF_UP) + "$)";
     }
 
     @Override

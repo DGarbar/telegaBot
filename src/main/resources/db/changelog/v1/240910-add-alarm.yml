@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 240910-add-alarm
+      author: dgarbar
+      changes:
+        - tagDatabase:
+            tag: 240910-add-alarm
+
+        - createTable:
+            tableName: alarm
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: position_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_alarm_position
+                    references: position(id)
+              - column:
+                  name: type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false

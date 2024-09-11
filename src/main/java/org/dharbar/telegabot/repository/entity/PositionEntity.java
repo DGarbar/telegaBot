@@ -55,6 +55,10 @@ public class PositionEntity {
     @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PriceTriggerEntity> priceTriggers = new HashSet<>();
 
+    @Setter(AccessLevel.PRIVATE)
+    @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<AlarmEntity> alarms = new HashSet<>();
+
     @Column(nullable = false)
     private LocalDate openAt;
     private LocalDate closedAt;

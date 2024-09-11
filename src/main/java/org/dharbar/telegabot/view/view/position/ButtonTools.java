@@ -6,6 +6,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import org.dharbar.telegabot.view.model.PositionViewModel;
 
 public class ButtonTools extends HorizontalLayout {
 
@@ -24,7 +25,8 @@ public class ButtonTools extends HorizontalLayout {
         addBuyOrderButton.setIcon(VaadinIcon.DOLLAR.create());
     }
 
-    public void setupSellAllButton(ComponentEventListener<ClickEvent<Button>> listener)  {
+    public void setupSellAllButton(PositionViewModel position, ComponentEventListener<ClickEvent<Button>> listener)  {
+        sellAllButton.setEnabled(!position.getIsClosed());
         sellAllButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
         sellAllButton.addClickListener(listener);
         sellAllButton.setIcon(VaadinIcon.CASH.create());

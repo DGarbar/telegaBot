@@ -25,10 +25,10 @@ public class OrderGrid extends Grid<OrderViewModel> {
         decimalFormat.setMinimumFractionDigits(2);
 
         Column<OrderViewModel> date = addColumn(OrderViewModel::getDateAt).setHeader("Date").setKey("dateAt").setSortable(true).setFlexGrow(5);
-        addColumn(OrderViewModel::getRate).setHeader("Rate").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
-        addColumn(OrderViewModel::getQuantity).setHeader("Quantity").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
-        addColumn(OrderViewModel::getTotalUsd).setHeader("Total Buy").setKey("sellRate").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
-        addColumn(OrderViewModel::getType).setHeader("Type").setKey("type").setTextAlign(ColumnTextAlign.END).setFlexGrow(3);
+        addColumn(OrderViewModel::getRate).setHeader("Rate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
+        addColumn(OrderViewModel::getQuantity).setHeader("Quantity").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
+        addColumn(OrderViewModel::getTotalUsd).setHeader("Total Buy").setKey("sellRate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
+        addColumn(OrderViewModel::getType).setHeader("Type").setKey("type").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
         addColumn(OrderViewModel::getComment).setHeader("Comment").setFlexGrow(10);
 
 

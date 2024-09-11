@@ -1,17 +1,18 @@
 package org.dharbar.telegabot.view.model;
 
-import lombok.Builder;
-import lombok.Data;
 import org.dharbar.telegabot.repository.entity.TriggerType;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import lombok.Builder;
+import lombok.Data;
+
 @Data
 @Builder
-public class PriceTriggerViewModel {
+public class AlarmViewModel {
     UUID id;
     TriggerType type;
-    BigDecimal triggerPrice;
-    Boolean isEnabled;
+
+    UUID positionId;
 }

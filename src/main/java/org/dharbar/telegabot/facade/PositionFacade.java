@@ -7,6 +7,7 @@ import org.dharbar.telegabot.controller.request.CreatePositionRequest;
 import org.dharbar.telegabot.controller.request.UpdatePositionRequest;
 import org.dharbar.telegabot.controller.response.PositionResponse;
 import org.dharbar.telegabot.facade.mapper.PositionFacadeMapper;
+import org.dharbar.telegabot.service.positionmanagment.AlarmService;
 import org.dharbar.telegabot.service.positionmanagment.PositionService;
 import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
 import org.dharbar.telegabot.service.positionmanagment.dto.PositionDto;
@@ -28,6 +29,7 @@ import java.util.UUID;
 public class PositionFacade {
     private final PositionService positionService;
     private final StockPriceService stockPriceService;
+    private final AlarmService alarmService;
 
     private final PositionFacadeMapper positionFacadeMapper;
 
@@ -109,5 +111,10 @@ public class PositionFacade {
         positionResponse.setCurrentProfitPercentage(currentProfitPercentage);
 
         return positionResponse;
+    }
+
+    @Transactional
+    public void deletePositionAlarm(UUID positionId, UUID alarmId) {
+        alarmService.deleteAlarm(alarmId, positionId);
     }
 }

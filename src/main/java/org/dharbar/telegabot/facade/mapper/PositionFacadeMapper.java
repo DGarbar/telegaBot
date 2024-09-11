@@ -5,10 +5,12 @@ import org.dharbar.telegabot.controller.request.CreatePriceTriggerRequest;
 import org.dharbar.telegabot.controller.request.UpdateOrderRequest;
 import org.dharbar.telegabot.controller.request.UpdatePositionRequest;
 import org.dharbar.telegabot.controller.request.UpdatePriceTriggerRequest;
+import org.dharbar.telegabot.controller.response.AlarmResponse;
 import org.dharbar.telegabot.controller.response.OrderResponse;
 import org.dharbar.telegabot.controller.response.PositionResponse;
 import org.dharbar.telegabot.controller.response.PriceTriggerResponse;
 import org.dharbar.telegabot.repository.entity.OrderType;
+import org.dharbar.telegabot.service.positionmanagment.dto.AlarmDto;
 import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
 import org.dharbar.telegabot.service.positionmanagment.dto.PositionDto;
 import org.dharbar.telegabot.service.positionmanagment.dto.PriceTriggerDto;
@@ -28,6 +30,7 @@ public interface PositionFacadeMapper {
 
     OrderResponse toResponse(OrderDto dto);
     PriceTriggerResponse toResponse(PriceTriggerDto dto);
+    AlarmResponse toResponse(AlarmDto dto);
 
     @Mapping(target = "id", ignore = true)
     PriceTriggerDto toDto(CreatePriceTriggerRequest request);

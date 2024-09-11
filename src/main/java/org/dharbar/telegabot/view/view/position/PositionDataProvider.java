@@ -14,6 +14,7 @@ import org.dharbar.telegabot.controller.request.UpdatePositionRequest;
 import org.dharbar.telegabot.controller.request.UpdatePriceTriggerRequest;
 import org.dharbar.telegabot.controller.response.PositionResponse;
 import org.dharbar.telegabot.view.mapper.PositionViewMapper;
+import org.dharbar.telegabot.view.model.AlarmViewModel;
 import org.dharbar.telegabot.view.model.OrderViewModel;
 import org.dharbar.telegabot.view.model.PortfolioViewModel;
 import org.dharbar.telegabot.view.model.PositionViewModel;
@@ -104,15 +105,21 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
         refreshItem(model);
     }
 
+    public void deleteAlarm(UUID positionId, UUID alarmId) {
+        positionController.deleteAlarm(positionId, alarmId);
+    }
+
     @Override
     public UUID getId(PositionViewModel item) {
         return item.getId();
     }
 
     private PositionViewModel toModel(PositionResponse positionResponse) {
-        Set<OrderViewModel> orders = positionViewMapper.toOrderModels(positionResponse.getOrders(), positionResponse.getId());
-        Set<PriceTriggerViewModel> priceTriggers = positionViewMapper.toPriceTriggerModels(positionResponse.getPriceTriggers(), positionResponse.getId());
+        UUID positionId = positionResponse.getId();
+        Set<OrderViewModel> orders = positionViewMapper.toOrderModels(positionResponse.getOrders(), positionId);
+        Set<PriceTriggerViewModel> priceTriggers = positionViewMapper.toPriceTriggerModels(positionResponse.getPriceTriggers(), positionId);
+        Set<AlarmViewModel> alarms = positionViewMapper.toAlarmModels(positionResponse.getAlarms(), positionId);
 
-        return positionViewMapper.toModel(positionResponse, orders, priceTriggers);
+        return positionViewMapper.toModel(positionResponse, orders, priceTriggers, alarms);
     }
 }
