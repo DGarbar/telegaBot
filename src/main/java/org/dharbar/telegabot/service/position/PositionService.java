@@ -1,4 +1,4 @@
-package org.dharbar.telegabot.service.positionmanagment;
+package org.dharbar.telegabot.service.position;
 
 import lombok.RequiredArgsConstructor;
 import org.dharbar.telegabot.controller.filter.PositionFilter;
@@ -9,11 +9,11 @@ import org.dharbar.telegabot.repository.entity.PriceTriggerEntity;
 import org.dharbar.telegabot.repository.specification.PositionSpec;
 import org.dharbar.telegabot.repository.util.ChangeComparator;
 import org.dharbar.telegabot.repository.util.ChangeResult;
-import org.dharbar.telegabot.service.positionmanagment.PositionCalculationService.PositionCalculation;
-import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
-import org.dharbar.telegabot.service.positionmanagment.dto.PositionDto;
-import org.dharbar.telegabot.service.positionmanagment.dto.PriceTriggerDto;
-import org.dharbar.telegabot.service.positionmanagment.mapper.PositionServiceMapper;
+import org.dharbar.telegabot.service.position.PositionCalculationService.PositionCalculation;
+import org.dharbar.telegabot.service.position.dto.OrderDto;
+import org.dharbar.telegabot.service.position.dto.PositionDto;
+import org.dharbar.telegabot.service.position.dto.PriceTriggerDto;
+import org.dharbar.telegabot.service.position.mapper.PositionServiceMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.dharbar.telegabot.service.positionmanagment.PositionCalculationService.calculatePositionValues;
+import static org.dharbar.telegabot.service.position.PositionCalculationService.calculatePositionValues;
 
 @Service
 @RequiredArgsConstructor

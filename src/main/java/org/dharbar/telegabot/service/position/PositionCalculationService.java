@@ -1,8 +1,8 @@
-package org.dharbar.telegabot.service.positionmanagment;
+package org.dharbar.telegabot.service.position;
 
 import lombok.RequiredArgsConstructor;
 import org.dharbar.telegabot.repository.entity.OrderType;
-import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
+import org.dharbar.telegabot.service.position.dto.OrderDto;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

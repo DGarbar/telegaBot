@@ -1,10 +1,9 @@
-package org.dharbar.telegabot.service.rate.nbu;
+package org.dharbar.telegabot.service.rate.provider.nbu;
 
 import lombok.RequiredArgsConstructor;
 import org.dharbar.telegabot.client.nbu.NbuApi;
-import org.dharbar.telegabot.client.nbu.dto.RateNbuResponse;
 import org.dharbar.telegabot.service.rate.dto.RateDto;
-import org.dharbar.telegabot.service.rate.dto.RateProvider;
+import org.dharbar.telegabot.service.rate.mapper.RateServiceMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Currency;
@@ -15,6 +14,7 @@ import java.util.List;
 public class NbuService {
 
     private final NbuApi nbuApi;
+    private final RateServiceMapper rateServiceMapper;
 
     public List<RateDto> getRates(List<Currency> currencyFrom, Currency currencyTo) {
         return getRates().stream()
@@ -25,20 +25,7 @@ public class NbuService {
 
     public List<RateDto> getRates() {
         return nbuApi.getCurrentRates().stream()
-                .map(this::toRate)
+                .map(rateServiceMapper::toDto)
                 .toList();
-    }
-
-    private RateDto toRate(RateNbuResponse rate) {
-        return RateDto.builder()
-                .currencyFrom(rate.getCurrency())
-                .currencyTo(Currency.getInstance("UAH"))
-                .rateBuy(rate.getRate())
-                .rateProvider(rateProvider())
-                .build();
-    }
-
-    private RateProvider rateProvider() {
-        return RateProvider.NBU;
     }
 }

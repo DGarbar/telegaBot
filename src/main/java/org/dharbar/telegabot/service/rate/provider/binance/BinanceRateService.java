@@ -1,11 +1,11 @@
-package org.dharbar.telegabot.service.rate.binance;
+package org.dharbar.telegabot.service.rate.provider.binance;
 
 import lombok.RequiredArgsConstructor;
 import org.dharbar.telegabot.client.binance.BinanceP2pClient;
 import org.dharbar.telegabot.client.binance.request.BinanceP2pOrderRequest;
 import org.dharbar.telegabot.client.binance.response.BinanceP2pResult;
 import org.dharbar.telegabot.service.rate.dto.RateDto;
-import org.dharbar.telegabot.service.rate.dto.RateProvider;
+import org.dharbar.telegabot.service.rate.mapper.RateServiceMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Currency;
@@ -16,6 +16,7 @@ import java.util.List;
 public class BinanceRateService {
 
     private final BinanceP2pClient binanceP2pClient;
+    private final RateServiceMapper rateServiceMapper;
 
     public List<RateDto> getRates(List<Currency> currencyFrom, Currency currencyTo) {
         BinanceP2pOrderRequest request = BinanceP2pOrderRequest.builder()
@@ -35,17 +36,7 @@ public class BinanceRateService {
         return result.getData().stream()
                 .limit(5)
                 .map(BinanceP2pResult.P2pOrder::getAdv)
-                .map(advertise -> RateDto.builder()
-                        .currencyFrom(Currency.getInstance("USD"))
-                        .currencyTo(Currency.getInstance(advertise.getFiatUnit()))
-                        .rateSell(advertise.getPrice().doubleValue())
-                        .rateProvider(rateProvider())
-                        .amount(advertise.getMaxSingleTransAmount().doubleValue())
-                        .build())
+                .map(rateServiceMapper::toDto)
                 .toList();
-    }
-
-    private RateProvider rateProvider() {
-        return RateProvider.BINANCE;
     }
 }

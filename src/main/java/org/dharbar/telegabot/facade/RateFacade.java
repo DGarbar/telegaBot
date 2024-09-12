@@ -1,11 +1,11 @@
 package org.dharbar.telegabot.facade;
 
 import lombok.RequiredArgsConstructor;
-import org.dharbar.telegabot.service.rate.binance.BinanceRateService;
 import org.dharbar.telegabot.service.rate.dto.RateDto;
 import org.dharbar.telegabot.service.rate.dto.RateProvider;
-import org.dharbar.telegabot.service.rate.mono.MonoRateService;
-import org.dharbar.telegabot.service.rate.nbu.NbuService;
+import org.dharbar.telegabot.service.rate.provider.binance.BinanceRateService;
+import org.dharbar.telegabot.service.rate.provider.mono.MonoRateService;
+import org.dharbar.telegabot.service.rate.provider.nbu.NbuService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

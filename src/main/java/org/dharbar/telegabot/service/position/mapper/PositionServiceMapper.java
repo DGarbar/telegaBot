@@ -1,12 +1,12 @@
-package org.dharbar.telegabot.service.positionmanagment.mapper;
+package org.dharbar.telegabot.service.position.mapper;
 
 import org.dharbar.telegabot.repository.entity.OrderEntity;
 import org.dharbar.telegabot.repository.entity.OrderType;
 import org.dharbar.telegabot.repository.entity.PositionEntity;
 import org.dharbar.telegabot.repository.entity.PriceTriggerEntity;
-import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
-import org.dharbar.telegabot.service.positionmanagment.dto.PositionDto;
-import org.dharbar.telegabot.service.positionmanagment.dto.PriceTriggerDto;
+import org.dharbar.telegabot.service.position.dto.OrderDto;
+import org.dharbar.telegabot.service.position.dto.PositionDto;
+import org.dharbar.telegabot.service.position.dto.PriceTriggerDto;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.dharbar.telegabot.service.positionmanagment.PositionCalculationService.PositionCalculation;
+import static org.dharbar.telegabot.service.position.PositionCalculationService.PositionCalculation;
 
 @Mapper(componentModel = "spring", collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED, imports = {OrderType.class})
 public interface PositionServiceMapper {

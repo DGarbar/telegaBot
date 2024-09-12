@@ -10,10 +10,10 @@ import org.dharbar.telegabot.controller.response.OrderResponse;
 import org.dharbar.telegabot.controller.response.PositionResponse;
 import org.dharbar.telegabot.controller.response.PriceTriggerResponse;
 import org.dharbar.telegabot.repository.entity.OrderType;
-import org.dharbar.telegabot.service.positionmanagment.dto.AlarmDto;
-import org.dharbar.telegabot.service.positionmanagment.dto.OrderDto;
-import org.dharbar.telegabot.service.positionmanagment.dto.PositionDto;
-import org.dharbar.telegabot.service.positionmanagment.dto.PriceTriggerDto;
+import org.dharbar.telegabot.service.position.dto.AlarmDto;
+import org.dharbar.telegabot.service.position.dto.OrderDto;
+import org.dharbar.telegabot.service.position.dto.PositionDto;
+import org.dharbar.telegabot.service.position.dto.PriceTriggerDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
