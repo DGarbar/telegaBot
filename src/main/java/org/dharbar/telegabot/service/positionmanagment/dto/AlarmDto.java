@@ -2,7 +2,7 @@ package org.dharbar.telegabot.service.positionmanagment.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import org.dharbar.telegabot.repository.entity.AlarmType;
+import org.dharbar.telegabot.repository.entity.TriggerType;
 
 import java.util.UUID;
 
@@ -12,5 +12,5 @@ public class AlarmDto {
 
     UUID id;
 
-    AlarmType type;
+    TriggerType type;
 }

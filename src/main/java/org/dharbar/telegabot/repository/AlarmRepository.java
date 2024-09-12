@@ -1,7 +1,6 @@
 package org.dharbar.telegabot.repository;
 
 import org.dharbar.telegabot.repository.entity.AlarmEntity;
-import org.dharbar.telegabot.repository.entity.PortfolioEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

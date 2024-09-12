@@ -1,16 +1,5 @@
 package org.dharbar.telegabot.repository.entity;
 
-import org.hibernate.proxy.HibernateProxy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.UUID;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -28,6 +17,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.proxy.HibernateProxy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -49,7 +46,7 @@ public class AlarmEntity {
     private PositionEntity position;
 
     @Enumerated(EnumType.STRING)
-    private AlarmType type;
+    private TriggerType type;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

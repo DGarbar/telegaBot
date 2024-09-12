@@ -111,4 +111,11 @@ public class PositionService {
 
         return positionMapper.toDto(savedPosition);
     }
+
+
+    public void deleteAlarm(UUID alarmId, UUID positionId) {
+        PositionEntity position = positionRepository.findByIdForUpdate(positionId).orElseThrow();
+        position.getAlarms().removeIf(alarm -> alarm.getId().equals(alarmId));
+        positionRepository.save(position);
+    }
 }
