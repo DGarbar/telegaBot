@@ -10,6 +10,11 @@ databaseChangeLog:
             oldTableName: stock_price
             newTableName: ticker
 
+        - renameColumn:
+            tableName: ticker
+            oldColumnName: updated_at
+            newColumnName: price_updated_at
+
         - addColumn:
             tableName: ticker
             columns:
@@ -30,3 +35,9 @@ databaseChangeLog:
               - column:
                   name: price_sell
                   type: decimal(10,2)
+
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false

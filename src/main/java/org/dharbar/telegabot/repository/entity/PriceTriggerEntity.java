@@ -57,8 +57,8 @@ public class PriceTriggerEntity {
     // @Enumerated(EnumType.STRING)
     // private String action;  // E.g., 'SELL', 'NOTIFY', etc.
 
-    // @Column(name = "is_enabled", nullable = false)
-    // private Boolean isEnabled;
+    @Column(name = "is_triggered", nullable = false)
+    private Boolean isTriggered;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

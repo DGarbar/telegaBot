@@ -7,11 +7,11 @@ import org.dharbar.telegabot.client.ttingo.dto.TiingoQuoteResponse;
 import org.dharbar.telegabot.repository.TickerRepository;
 import org.dharbar.telegabot.repository.entity.TickerEntity;
 import org.dharbar.telegabot.repository.entity.TickerType;
+import org.dharbar.telegabot.service.pricetrigger.PriceTriggerService;
 import org.dharbar.telegabot.service.ticker.dto.TickerDto;
 import org.dharbar.telegabot.service.ticker.mapper.TickerMapper;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Set;
@@ -21,12 +21,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TickerService {
 
-    private final TiingoClient exchangeQuoteProvider;
+    private final PriceTriggerService priceTriggerService;
+
+    private final TiingoClient stockExchangeQuoteProvider;
+
     private final TickerRepository tickerRepository;
 
     private final TickerMapper tickerMapper;
 
-    @Cacheable("ticker")
     public Optional<TickerDto> find(String name) {
         return tickerRepository.findById(name)
                 .map(tickerMapper::toDto);
@@ -38,13 +40,6 @@ public class TickerService {
                 .collect(Collectors.toSet());
     }
 
-    // TODO maybe ignore that has same EOD
-    public void updateEndOfDayTickerPricesFromProvider() {
-        tickerRepository.findAll()
-                .forEach(this::updateTickerPriceFromProvider);
-    }
-
-    @CachePut("ticker")
     public TickerDto createTicker(String name, TickerType type) {
         if (type == TickerType.STOCK) {
             TiingoQuoteResponse response = getProviderResponse(name);
@@ -56,16 +51,27 @@ public class TickerService {
         throw new NotSupportedException();
     }
 
+    // TODO maybe ignore that has same EOD
+    @Transactional
+    public void updateEndOfDayTickerPricesFromProvider() {
+        tickerRepository.findAll()
+                .forEach(this::updateTickerPriceFromProvider);
+    }
+
     private void updateTickerPriceFromProvider(TickerEntity tickerEntity) {
         if (tickerEntity.getType() == TickerType.STOCK) {
-            TiingoQuoteResponse response = getProviderResponse(tickerEntity.getTicker());
+            String tickerName = tickerEntity.getTicker();
+            TiingoQuoteResponse response = getProviderResponse(tickerName);
             TickerEntity updatedEntity = tickerMapper.toEntity(response, tickerEntity);
             tickerRepository.save(updatedEntity);
+
+            priceTriggerService.checkEndOfDay(tickerName, response.getLow(), response.getHigh(), updatedEntity.getPriceUpdatedAt());
         }
     }
 
     private TiingoQuoteResponse getProviderResponse(String ticker) {
-        return exchangeQuoteProvider.getLatestPrice(ticker).stream()
+        // EOD price only
+        return stockExchangeQuoteProvider.getLatestPrice(ticker).stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No quote found for " + ticker));
     }

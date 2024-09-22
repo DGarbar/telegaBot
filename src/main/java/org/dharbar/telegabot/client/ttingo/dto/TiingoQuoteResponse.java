@@ -3,6 +3,7 @@ package org.dharbar.telegabot.client.ttingo.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 @Data
@@ -14,14 +15,14 @@ public class TiingoQuoteResponse {
     private double adjOpen;
     private long adjVolume;
 
-    private double close;
+    private BigDecimal close;
 
     private ZonedDateTime date;
 
     private double divCash;
 
-    private double high;
-    private double low;
+    private BigDecimal high;
+    private BigDecimal low;
     private double open;
 
     @JsonProperty("splitFactor")
