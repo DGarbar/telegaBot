@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 240922-add-is-triggered
+      author: dgarbar
+      changes:
+        - tagDatabase:
+            tag: 240922-add-is-triggered
+
+        - addColumn:
+            tableName: price_trigger
+            columns:
+              - column:
+                  name: is_triggered
+                  type: boolean
+                  constraints:
+                    nullable: false
+                  defaultValueBoolean: false
