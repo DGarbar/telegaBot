@@ -41,3 +41,5 @@ databaseChangeLog:
                   type: timestamp
                   constraints:
                     nullable: false
+                  valueComputed: CURRENT_TIMESTAMP
+
