@@ -19,14 +19,14 @@ public class ButtonTools extends HorizontalLayout {
         add(addBuyOrderButton, sellAllButton, editButton, showOrdersButton);
     }
 
-    public void setupAddOrderButton(ComponentEventListener<ClickEvent<Button>> listener)  {
+    public void setupAddOrderButton(ComponentEventListener<ClickEvent<Button>> listener) {
         addBuyOrderButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         addBuyOrderButton.setTooltipText("Add buy order");
         addBuyOrderButton.addClickListener(listener);
         addBuyOrderButton.setIcon(VaadinIcon.DOLLAR.create());
     }
 
-    public void setupSellAllButton(PositionViewModel position, ComponentEventListener<ClickEvent<Button>> listener)  {
+    public void setupSellAllButton(PositionViewModel position, ComponentEventListener<ClickEvent<Button>> listener) {
         sellAllButton.setEnabled(!position.getIsClosed());
         sellAllButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
         sellAllButton.setTooltipText("Sell all");
@@ -34,11 +34,18 @@ public class ButtonTools extends HorizontalLayout {
         sellAllButton.setIcon(VaadinIcon.CASH.create());
     }
 
-    public void setupEditButton(ComponentEventListener<ClickEvent<Button>> listener)  {
-        editButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        editButton.setTooltipText("Edit");
+    public void setupEditButton(PositionViewModel position, ComponentEventListener<ClickEvent<Button>> listener) {
+        if (!position.getAlarms().isEmpty()) {
+            editButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+            editButton.setIcon(VaadinIcon.WARNING.create());
+            editButton.setTooltipText("Alarms");
+        } else {
+            editButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+            editButton.setIcon(VaadinIcon.EDIT.create());
+            editButton.setTooltipText("Edit");
+        }
+
         editButton.addClickListener(listener);
-        editButton.setIcon(VaadinIcon.EDIT.create());
     }
 
     public Button setupShowOrdersButton(ComponentEventListener<ClickEvent<Button>> listener) {

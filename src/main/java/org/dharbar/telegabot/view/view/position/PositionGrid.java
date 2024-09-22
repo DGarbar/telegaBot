@@ -29,22 +29,35 @@ public class PositionGrid extends Grid<PositionViewModel> {
         decimalFormat.setMaximumFractionDigits(2);
         decimalFormat.setMinimumFractionDigits(2);
 
-        addColumn(PositionViewModel::getTicker).setHeader("Ticker").setKey("ticker").setFlexGrow(5)
+        // addComponentColumn(model -> {
+        //     if (!model.getAlarms().isEmpty()) {
+        //         Icon icon = VaadinIcon.CHECK_CIRCLE.create();
+        //         icon.setColor("red");
+        //         return icon;
+        //     }
+        //     return null;
+        // }).setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
+
+        addColumn(PositionViewModel::getTicker).setHeader("Ticker").setKey("ticker").setFlexGrow(2)
                 .setSortable(true)
                 .setClassNameGenerator(positionAnalyticDto -> StyleUtils.toTickerStyle(positionAnalyticDto.getTicker()));
-        Grid.Column<PositionViewModel> openAtColumn = addColumn(PositionViewModel::getOpenAt).setHeader("Date").setKey("openAt").setSortable(true).setFlexGrow(2);
+
+        Grid.Column<PositionViewModel> openAtColumn = addColumn(PositionViewModel::getOpenAt).setHeader("Date").setKey("openAt").setSortable(true).setFlexGrow(
+                2);
         // TODO
         // product -> decimalFormat.format(product.getPrice()) + " $")
-        // addColumn(PositionViewModel::getBuyTotalAmount).setHeader("Invested").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
+        addColumn(PositionViewModel::getBuyTotalAmount).setHeader("Invested").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
         addColumn(PositionViewModel::getBuyAveragePrice).setHeader("Buy Rate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
 
         addColumn(PositionViewModel::getSellAveragePrice).setHeader("Sell Rate").setKey("sellRate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
-        addColumn(pos -> toAmountAndPercentage(pos.getNetProfitAmount(), pos.getProfitPercentage())).setHeader("Profit").setKey("profit").setTextAlign(ColumnTextAlign.CENTER)
+        addColumn(pos -> toAmountAndPercentage(pos.getNetProfitAmount(),
+                pos.getProfitPercentage())).setHeader("Profit").setKey("profit").setTextAlign(ColumnTextAlign.CENTER)
                 .setFlexGrow(3)
                 .setClassNameGenerator(dto -> StyleUtils.toProfitStyle(dto.getProfitPercentage()));
 
         addColumn(PositionViewModel::getCurrentRatePrice).setHeader("Current Rate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
-        addColumn(pos -> toAmountAndPercentage(pos.getCurrentNetProfitAmount(), pos.getCurrentProfitPercentage())).setHeader("Unreal. Profit").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3)
+        addColumn(pos -> toAmountAndPercentage(pos.getCurrentNetProfitAmount(),
+                pos.getCurrentProfitPercentage())).setHeader("Unreal. Profit").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3)
                 .setClassNameGenerator(dto -> StyleUtils.toProfitStyle(dto.getCurrentProfitPercentage()));
         // addColumn(PositionViewModel::dealDurationDays).setHeader("Deal days").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
 
@@ -52,7 +65,25 @@ public class PositionGrid extends Grid<PositionViewModel> {
         // getColumns().forEach(column -> column.setAutoWidth(true));
 
         OrderDialog orderDialog = new OrderDialog();
-        addColumn(new ComponentRenderer<>(
+        addColumn(getToolButtonRenderer(positionForm, positionDataProvider, orderDialog))
+                .setHeader("Tools").setFlexGrow(7);
+
+        sort(List.of(new GridSortOrder<>(openAtColumn, SortDirection.DESCENDING)));
+
+        setDetailsVisibleOnClick(false);
+        setItemDetailsRenderer(new ComponentRenderer<>(() -> new OrderView(positionDataProvider), (orderView, positionViewModel) -> {
+            orderView.setOrders(positionViewModel.getOrders());
+        }));
+    }
+
+    private static String toAmountAndPercentage(BigDecimal amount, BigDecimal percentage) {
+        return percentage.setScale(1, RoundingMode.HALF_UP) + "% (" + amount.setScale(1, RoundingMode.HALF_UP) + "$)";
+    }
+
+    private ComponentRenderer<ButtonTools, PositionViewModel> getToolButtonRenderer(PositionForm positionForm,
+                                                                                    PositionDataProvider positionDataProvider,
+                                                                                    OrderDialog orderDialog) {
+        return new ComponentRenderer<>(
                 ButtonTools::new,
                 (tools, position) -> {
                     tools.setupAddOrderButton(e -> {
@@ -74,21 +105,9 @@ public class PositionGrid extends Grid<PositionViewModel> {
                                 positionId,
                                 order -> positionDataProvider.addOrderToPosition(positionId, order));
                     });
-                    tools.setupEditButton(e -> positionForm.showPosition(position));
+                    tools.setupEditButton(position, e -> positionForm.showPosition(position));
                     tools.setupShowOrdersButton(e -> setDetailsVisible(position, !isDetailsVisible(position)));
-                }))
-                .setHeader("Tools").setFlexGrow(7);
-
-        sort(List.of(new GridSortOrder<>(openAtColumn, SortDirection.DESCENDING)));
-
-        setDetailsVisibleOnClick(false);
-        setItemDetailsRenderer(new ComponentRenderer<>(() -> new OrderView(positionDataProvider), (orderView, positionViewModel) -> {
-            orderView.setOrders(positionViewModel.getOrders());
-        }));
-    }
-
-    private static String toAmountAndPercentage(BigDecimal amount, BigDecimal percentage) {
-        return percentage.setScale(1, RoundingMode.HALF_UP) + "% (" + amount.setScale(1, RoundingMode.HALF_UP) + "$)";
+                });
     }
 
     @Override
