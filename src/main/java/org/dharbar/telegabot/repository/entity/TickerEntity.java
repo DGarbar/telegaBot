@@ -2,6 +2,7 @@ package org.dharbar.telegabot.repository.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
@@ -12,6 +13,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,6 +25,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "ticker")
 @Entity
 public class TickerEntity {
@@ -43,6 +47,10 @@ public class TickerEntity {
     private BigDecimal priceBuy;
     private BigDecimal priceSell;
 
+    @Column(nullable = false)
+    private LocalDateTime priceUpdatedAt;
+
+    @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 

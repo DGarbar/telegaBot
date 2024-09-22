@@ -60,8 +60,8 @@ public class PositionController {
 
     @PutMapping("/api/positions/{id}/orders/{orderId}")
     public PositionResponse updatePositionOrder(@PathVariable UUID id,
-                                               @PathVariable UUID orderId,
-                                               CreateOrderRequest request) {
+                                                @PathVariable UUID orderId,
+                                                CreateOrderRequest request) {
         return positionsFacade.updatePositionOrder(id, orderId, request);
     }
 

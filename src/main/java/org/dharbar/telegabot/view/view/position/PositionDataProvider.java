@@ -107,6 +107,7 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
 
     public void deleteAlarm(UUID positionId, UUID alarmId) {
         positionController.deleteAlarm(positionId, alarmId);
+        // refreshItem();
     }
 
     @Override

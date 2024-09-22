@@ -13,11 +13,20 @@ public interface TickerMapper {
 
     @Mapping(target = "ticker", source = "ticker")
     @Mapping(target = "price", source = "response.close")
-    @Mapping(target = "updatedAt", source = "response.date")
+    @Mapping(target = "priceUpdatedAt", source = "response.date")
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "priceSell", ignore = true)
+    @Mapping(target = "priceBuy", ignore = true)
+    @Mapping(target = "emaDay200Price", ignore = true)
     TickerEntity toNewEntity(String ticker, TickerType type, TiingoQuoteResponse response);
 
     @Mapping(target = "price", source = "response.close")
-    @Mapping(target = "updatedAt", source = "response.date")
+    @Mapping(target = "priceUpdatedAt", source = "response.date")
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "type", ignore = true)
+    @Mapping(target = "priceSell", ignore = true)
+    @Mapping(target = "priceBuy", ignore = true)
+    @Mapping(target = "emaDay200Price", ignore = true)
     @Mapping(target = "ticker", ignore = true)
     TickerEntity toEntity(TiingoQuoteResponse response, @MappingTarget TickerEntity tickerEntity);
 

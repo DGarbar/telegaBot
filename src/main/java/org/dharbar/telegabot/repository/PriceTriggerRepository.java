@@ -6,12 +6,19 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface PriceTriggerRepository extends CrudRepository<PriceTriggerEntity, UUID> {
 
-    @Query("SELECT p FROM PriceTriggerEntity p WHERE p.position.ticker = :ticker and p.type = :type")
-    List<PriceTriggerEntity> findAllByTickerAndType(String ticker, TriggerType type);
+    @Query("SELECT p FROM PriceTriggerEntity p "
+            + "WHERE p.position.ticker = :ticker "
+            + "and p.triggerPrice BETWEEN :low and :high "
+            + "and p.type = :type and p.isTriggered = false")
+    List<PriceTriggerEntity> findAllByTickerAndTypeAndPriceIn(String ticker,
+                                                              TriggerType type,
+                                                              BigDecimal low,
+                                                              BigDecimal high);
 }
