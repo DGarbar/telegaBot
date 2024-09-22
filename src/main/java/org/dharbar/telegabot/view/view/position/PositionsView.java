@@ -16,15 +16,16 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import org.dharbar.telegabot.controller.PortfolioController;
 import org.dharbar.telegabot.controller.PositionController;
-import org.dharbar.telegabot.controller.StockPriceController;
+import org.dharbar.telegabot.controller.TickerController;
 import org.dharbar.telegabot.view.MainLayout;
 import org.dharbar.telegabot.view.mapper.PortfolioViewMapper;
 import org.dharbar.telegabot.view.mapper.PositionViewMapper;
+import org.dharbar.telegabot.view.mapper.TickerViewMapper;
 import org.dharbar.telegabot.view.model.PortfolioViewModel;
 import org.dharbar.telegabot.view.model.PositionViewModel;
 import org.dharbar.telegabot.view.view.portfolio.PortfolioCreationDialog;
 import org.dharbar.telegabot.view.view.portfolio.PortfolioDataProvider;
-import org.dharbar.telegabot.view.view.stockprice.StockPriceDataProvider;
+import org.dharbar.telegabot.view.view.ticker.TickerDataProvider;
 
 import java.util.UUID;
 
@@ -44,12 +45,13 @@ public class PositionsView extends HorizontalLayout {
 
     private final PositionDataProvider positionDataProvider;
     private final PortfolioDataProvider portfolioDataProvider;
-    private final StockPriceDataProvider stockPriceDataProvider;
+    private final TickerDataProvider tickerDataProvider;
 
     private TextField filter;
     private Button newPostitionButton;
 
-    public PositionsView(StockPriceController stockPriceController,
+    public PositionsView(TickerController tickerController,
+                         TickerViewMapper tickerViewMapper,
                          PortfolioController portfolioController,
                          PortfolioViewMapper portfolioViewMapper,
                          PositionController positionController,
@@ -59,13 +61,13 @@ public class PositionsView extends HorizontalLayout {
 
         positionDataProvider = new PositionDataProvider(positionController, positionViewMapper, portfolioSelect, isShowClosedCheckbox);
         portfolioDataProvider = new PortfolioDataProvider(portfolioController, portfolioViewMapper);
-        stockPriceDataProvider = new StockPriceDataProvider(stockPriceController);
+        tickerDataProvider = new TickerDataProvider(tickerController, tickerViewMapper);
 
         portfolioCreationDialog = new PortfolioCreationDialog(portfolioDataProvider);
 
         HorizontalLayout gridToolbar = setupGridToolbar(portfolioDataProvider);
 
-        positionForm = new PositionForm(positionDataProvider, stockPriceDataProvider);
+        positionForm = new PositionForm(positionDataProvider, tickerDataProvider);
 
         grid = new PositionGrid(positionForm, positionDataProvider);
         grid.setDataProvider(positionDataProvider);

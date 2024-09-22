@@ -21,6 +21,7 @@ public class ButtonTools extends HorizontalLayout {
 
     public void setupAddOrderButton(ComponentEventListener<ClickEvent<Button>> listener)  {
         addBuyOrderButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        addBuyOrderButton.setTooltipText("Add buy order");
         addBuyOrderButton.addClickListener(listener);
         addBuyOrderButton.setIcon(VaadinIcon.DOLLAR.create());
     }
@@ -28,18 +29,21 @@ public class ButtonTools extends HorizontalLayout {
     public void setupSellAllButton(PositionViewModel position, ComponentEventListener<ClickEvent<Button>> listener)  {
         sellAllButton.setEnabled(!position.getIsClosed());
         sellAllButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        sellAllButton.setTooltipText("Sell all");
         sellAllButton.addClickListener(listener);
         sellAllButton.setIcon(VaadinIcon.CASH.create());
     }
 
     public void setupEditButton(ComponentEventListener<ClickEvent<Button>> listener)  {
         editButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        editButton.setTooltipText("Edit");
         editButton.addClickListener(listener);
         editButton.setIcon(VaadinIcon.EDIT.create());
     }
 
     public Button setupShowOrdersButton(ComponentEventListener<ClickEvent<Button>> listener) {
         showOrdersButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+        showOrdersButton.setTooltipText("Show orders");
         showOrdersButton.addClickListener(listener);
         showOrdersButton.setIcon(VaadinIcon.CLIPBOARD.create());
         return editButton;

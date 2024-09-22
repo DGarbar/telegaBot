@@ -13,11 +13,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.binder.Binder;
 import lombok.extern.slf4j.Slf4j;
-import org.dharbar.telegabot.service.stockprice.dto.StockPriceDto;
+import org.dharbar.telegabot.repository.entity.TickerType;
+import org.dharbar.telegabot.service.ticker.dto.TickerDto;
 import org.dharbar.telegabot.view.model.PositionViewModel;
 import org.dharbar.telegabot.view.view.alarm.AlarmListCustomField;
 import org.dharbar.telegabot.view.view.order.OrderDialog;
-import org.dharbar.telegabot.view.view.stockprice.StockPriceDataProvider;
+import org.dharbar.telegabot.view.view.ticker.TickerDataProvider;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -30,7 +31,7 @@ public class PositionForm extends Div {
     private final VerticalLayout content;
 
     private final TextArea commentArea = new TextArea("Comment");
-    private final ComboBox<StockPriceDto> tickerComboBox = new ComboBox<>("Ticker");
+    private final ComboBox<TickerDto> tickerComboBox = new ComboBox<>("Ticker");
 
     private final PriceTriggersCustomField priceTriggersCustomField = new PriceTriggersCustomField();
     private final AlarmListCustomField alarmListComponent;
@@ -45,7 +46,7 @@ public class PositionForm extends Div {
     private final OrderDialog orderDialog;
 
     public PositionForm(PositionDataProvider positionDataProvider,
-                        StockPriceDataProvider stockPriceDataProvider) {
+                        TickerDataProvider tickerDataProvider) {
         this.positionDataProvider = positionDataProvider;
         alarmListComponent = new AlarmListCustomField(positionDataProvider);
 
@@ -56,13 +57,13 @@ public class PositionForm extends Div {
         content.addClassName("right-form-content");
         add(content);
 
-        setupTickerComboBox(stockPriceDataProvider);
+        setupTickerComboBox(tickerDataProvider);
         // Component priceSettingsLayout = setupPriceSettings();
 
         Component orderButtonLayout = setupOrderButtonLayout();
         Component positionButtonLayout = setupFunctionalButtonLayout();
 
-        setupBinder(stockPriceDataProvider);
+        setupBinder(tickerDataProvider);
 
         orderDialog = new OrderDialog();
 
@@ -72,15 +73,21 @@ public class PositionForm extends Div {
         showForm(false);
     }
 
-    private void setupTickerComboBox(StockPriceDataProvider dataProvider) {
-        tickerComboBox.setItems(dataProvider);
+    private void setupTickerComboBox(TickerDataProvider dataProvider) {
+        tickerComboBox.setItems(dataProvider.getItems());
         tickerComboBox.setRequired(true);
         tickerComboBox.setAllowCustomValue(true);
         tickerComboBox.setAllowedCharPattern("[A-Z]");
-        tickerComboBox.setItemLabelGenerator(StockPriceDto::getTicker);
+        tickerComboBox.setItemLabelGenerator(TickerDto::getTicker);
         tickerComboBox.addCustomValueSetListener(e -> {
-            String customValue = e.getDetail();
-            dataProvider.saveNewTicker(customValue);
+            String newTickerValue = e.getDetail();
+            // TODO make type from position ??? for crypto
+            boolean isSaved = dataProvider.saveNewTicker(newTickerValue, TickerType.STOCK);
+            if (isSaved) {
+                tickerComboBox.setItems(dataProvider.getItems());
+                tickerComboBox.setValue(dataProvider.getByTicker(newTickerValue));
+            }
+
         });
     }
 
@@ -131,11 +138,11 @@ public class PositionForm extends Div {
         showForm(false);
     }
 
-    private void setupBinder(StockPriceDataProvider stockPriceDataProvider) {
+    private void setupBinder(TickerDataProvider tickerDataProvider) {
         positionViewBinder.bind(commentArea, PositionViewModel::getComment, PositionViewModel::setComment);
         positionViewBinder.bind(tickerComboBox,
-                position -> stockPriceDataProvider.getByTicker(position.getTicker()),
-                (position, stockPriceDto) -> position.setTicker(stockPriceDto.getTicker()));
+                position -> tickerDataProvider.getByTicker(position.getTicker()),
+                (position, tickerDto) -> position.setTicker(tickerDto.getTicker()));
 
         positionViewBinder.bind(priceTriggersCustomField, PositionViewModel::getPriceTriggers, PositionViewModel::setPriceTriggers);
 

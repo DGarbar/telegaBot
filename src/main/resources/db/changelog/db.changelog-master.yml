@@ -15,4 +15,6 @@ databaseChangeLog:
       file: classpath:db/changelog/v1/240905-add-price-trigger.yml
   - include:
       file: classpath:db/changelog/v1/240910-add-alarm.yml
+  - include:
+      file: classpath:db/changelog/v1/240922-rename-to-ticker.yml
 

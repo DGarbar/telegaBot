@@ -11,8 +11,8 @@ import org.dharbar.telegabot.service.position.PositionService;
 import org.dharbar.telegabot.service.position.dto.OrderDto;
 import org.dharbar.telegabot.service.position.dto.PositionDto;
 import org.dharbar.telegabot.service.position.dto.PriceTriggerDto;
-import org.dharbar.telegabot.service.stockprice.StockPriceService;
-import org.dharbar.telegabot.service.stockprice.dto.StockPriceDto;
+import org.dharbar.telegabot.service.ticker.TickerService;
+import org.dharbar.telegabot.service.ticker.dto.TickerDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PositionFacade {
     private final PositionService positionService;
-    private final StockPriceService stockPriceService;
+    private final TickerService tickerService;
 
     private final PositionFacadeMapper positionFacadeMapper;
 
@@ -80,13 +80,13 @@ public class PositionFacade {
     }
 
     private PositionResponse populateWithAnalytic(PositionResponse positionAnalyticDto) {
-        return stockPriceService.find(positionAnalyticDto.getTicker())
-                .map(stockPriceDto -> populatePositionWithCurrentValues(positionAnalyticDto, stockPriceDto))
+        return tickerService.find(positionAnalyticDto.getTicker())
+                .map(tickerDto -> populatePositionWithCurrentValues(positionAnalyticDto, tickerDto))
                 .orElse(positionAnalyticDto);
     }
 
-    private static PositionResponse populatePositionWithCurrentValues(PositionResponse positionResponse, StockPriceDto stockPriceDto) {
-        BigDecimal currentRate = stockPriceDto.getPrice();
+    private static PositionResponse populatePositionWithCurrentValues(PositionResponse positionResponse, TickerDto tickerDto) {
+        BigDecimal currentRate = tickerDto.getPrice();
         positionResponse.setCurrentRatePrice(currentRate);
         if (positionResponse.getIsClosed() || positionResponse.getOrders().isEmpty()) {
             positionResponse.setCurrentNetProfitAmount(BigDecimal.ZERO);

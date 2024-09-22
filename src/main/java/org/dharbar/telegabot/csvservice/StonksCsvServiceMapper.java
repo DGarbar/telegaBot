@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class StonksCsvServiceMapper {
 
     // private final PositionFacade positionAnalyticFacade;
-    // // private final StockPriceService
+    // // private final PriceService
     //
     // @Transactional
     // public void readStronkFile() throws URISyntaxException, IOException {

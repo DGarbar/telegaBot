@@ -2,6 +2,8 @@ package org.dharbar.telegabot.repository.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -20,15 +22,26 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-@Table(name = "stock_price")
+@Table(name = "ticker")
 @Entity
-public class StockPriceEntity  {
+public class TickerEntity {
 
     @Id
     private String ticker;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TickerType type;
+
     @Column(nullable = false)
     private BigDecimal price;
+
+    @Column(name = "ema_day_200_price")
+    private BigDecimal emaDay200Price;
+
+    // Maybe to user specific table later
+    private BigDecimal priceBuy;
+    private BigDecimal priceSell;
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
@@ -44,7 +57,7 @@ public class StockPriceEntity  {
                 ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() :
                 this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        StockPriceEntity that = (StockPriceEntity) o;
+        TickerEntity that = (TickerEntity) o;
         return getTicker() != null && Objects.equals(getTicker(), that.getTicker());
     }
 

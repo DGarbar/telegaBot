@@ -87,7 +87,6 @@ public class OrderDialog extends Dialog {
     }
 
     private Component setupFunctionalButtonLayout() {
-        saveButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         saveButton.addClickListener(e -> processOrderSave());
 
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
@@ -122,6 +121,9 @@ public class OrderDialog extends Dialog {
                 .dateAt(LocalDate.now())
                 .build();
 
+        saveButton.setText("Save Buy order");
+        saveButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+
         orderViewBinder.setBean(order);
 
         open();
@@ -138,6 +140,9 @@ public class OrderDialog extends Dialog {
                 .commissionAmount(BigDecimal.ZERO)
                 .dateAt(LocalDate.now())
                 .build();
+
+        saveButton.setText("Save Sell order");
+        saveButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
         orderViewBinder.setBean(order);
 

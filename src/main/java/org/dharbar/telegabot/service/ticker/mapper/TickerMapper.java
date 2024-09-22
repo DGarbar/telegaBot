@@ -1,24 +1,25 @@
-package org.dharbar.telegabot.service.stockprice.mapper;
+package org.dharbar.telegabot.service.ticker.mapper;
 
 import org.dharbar.telegabot.client.ttingo.dto.TiingoQuoteResponse;
-import org.dharbar.telegabot.repository.entity.StockPriceEntity;
-import org.dharbar.telegabot.service.stockprice.dto.StockPriceDto;
+import org.dharbar.telegabot.repository.entity.TickerEntity;
+import org.dharbar.telegabot.repository.entity.TickerType;
+import org.dharbar.telegabot.service.ticker.dto.TickerDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
-public interface StockPriceMapper {
+public interface TickerMapper {
 
     @Mapping(target = "ticker", source = "ticker")
     @Mapping(target = "price", source = "response.close")
     @Mapping(target = "updatedAt", source = "response.date")
-    StockPriceEntity toNewEntity(String ticker, TiingoQuoteResponse response);
+    TickerEntity toNewEntity(String ticker, TickerType type, TiingoQuoteResponse response);
 
     @Mapping(target = "price", source = "response.close")
     @Mapping(target = "updatedAt", source = "response.date")
     @Mapping(target = "ticker", ignore = true)
-    StockPriceEntity toEntity(TiingoQuoteResponse response, @MappingTarget StockPriceEntity stockPriceEntity);
+    TickerEntity toEntity(TiingoQuoteResponse response, @MappingTarget TickerEntity tickerEntity);
 
-    StockPriceDto toDto(StockPriceEntity entity);
+    TickerDto toDto(TickerEntity entity);
 }
