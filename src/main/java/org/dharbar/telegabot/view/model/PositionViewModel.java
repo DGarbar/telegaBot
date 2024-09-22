@@ -2,6 +2,7 @@ package org.dharbar.telegabot.view.model;
 
 import lombok.Builder;
 import lombok.Data;
+import org.dharbar.telegabot.repository.entity.PositionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,6 +19,8 @@ public class PositionViewModel {
 
     String ticker;
 
+    PositionType type;
+
     UUID portfolioId;
 
     LocalDate openAt;
@@ -27,6 +30,7 @@ public class PositionViewModel {
     Set<PriceTriggerViewModel> priceTriggers;
     Set<AlarmViewModel> alarms;
 
+    // Calculated fields
     Boolean isClosed;
 
     BigDecimal buyTotalAmount;

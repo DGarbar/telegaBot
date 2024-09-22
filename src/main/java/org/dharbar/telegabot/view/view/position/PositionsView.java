@@ -25,6 +25,7 @@ import org.dharbar.telegabot.view.model.PortfolioViewModel;
 import org.dharbar.telegabot.view.model.PositionViewModel;
 import org.dharbar.telegabot.view.view.portfolio.PortfolioCreationDialog;
 import org.dharbar.telegabot.view.view.portfolio.PortfolioDataProvider;
+import org.dharbar.telegabot.view.view.position.form.PositionForm;
 import org.dharbar.telegabot.view.view.ticker.TickerDataProvider;
 
 import java.util.UUID;

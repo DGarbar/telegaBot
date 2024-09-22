@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: 240922-add-is-triggered
+      id: 240922-add-is-triggered-enabled
       author: dgarbar
       changes:
         - tagDatabase:
-            tag: 240922-add-is-triggered
+            tag: 240922-add-is-triggered-enabled
 
         - addColumn:
             tableName: price_trigger
@@ -15,3 +15,9 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   defaultValueBoolean: false
+              - column:
+                  name: is_enabled
+                  type: boolean
+                  constraints:
+                    nullable: true
+                  defaultValueBoolean: true

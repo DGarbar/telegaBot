@@ -3,6 +3,7 @@ package org.dharbar.telegabot.service.position.mapper;
 import org.dharbar.telegabot.repository.entity.OrderEntity;
 import org.dharbar.telegabot.repository.entity.OrderType;
 import org.dharbar.telegabot.repository.entity.PositionEntity;
+import org.dharbar.telegabot.repository.entity.PositionType;
 import org.dharbar.telegabot.repository.entity.PriceTriggerEntity;
 import org.dharbar.telegabot.service.position.dto.OrderDto;
 import org.dharbar.telegabot.service.position.dto.PositionDto;
@@ -21,20 +22,25 @@ import static org.dharbar.telegabot.service.position.PositionCalculationService.
 @Mapper(componentModel = "spring", collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED, imports = {OrderType.class})
 public interface PositionServiceMapper {
 
-    PositionDto toDto(PositionEntity positions);
-
     @Mapping(target = "openAt", expression = "java(java.time.LocalDate.now())")
+    @Mapping(target = "alarms", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "closedAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     PositionEntity toNewEntity(String ticker,
+                               PositionType type,
                                UUID portfolioId,
                                String comment,
                                PositionCalculation calculation,
                                Set<OrderEntity> orders,
                                Set<PriceTriggerEntity> priceTriggers);
 
+    PositionDto toDto(PositionEntity positions);
+
+    @Mapping(target = "type", ignore = true)
+    @Mapping(target = "portfolioId", ignore = true)
+    @Mapping(target = "alarms", ignore = true)
     @Mapping(target = "isClosed", source = "calculation.isClosed")
     @Mapping(target = "closedAt", expression = "java(calculation.isClosed() ? java.time.LocalDate.now() : null)")
     @Mapping(target = "id", ignore = true)
@@ -61,7 +67,7 @@ public interface PositionServiceMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "position", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    void updateEntity(@MappingTarget OrderEntity order, OrderEntity from);
+    void updateEntity(@MappingTarget OrderEntity to, OrderEntity from);
 
     @Mapping(target = "position", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
@@ -71,7 +77,8 @@ public interface PositionServiceMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "position", ignore = true)
+    @Mapping(target = "isTriggered", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    void updateEntity(@MappingTarget PriceTriggerEntity order, PriceTriggerEntity from);
+    void updateEntity(@MappingTarget PriceTriggerEntity to, PriceTriggerEntity from);
 }

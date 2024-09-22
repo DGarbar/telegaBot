@@ -60,6 +60,9 @@ public class PriceTriggerEntity {
     @Column(name = "is_triggered", nullable = false)
     private Boolean isTriggered;
 
+    @Column(name = "is_enabled", nullable = false)
+    private Boolean isEnabled;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

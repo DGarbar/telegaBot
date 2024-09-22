@@ -32,6 +32,7 @@ public interface PositionFacadeMapper {
     PriceTriggerResponse toResponse(PriceTriggerDto dto);
     AlarmResponse toResponse(AlarmDto dto);
 
+    @Mapping(target = "isTriggered", constant = "false")
     @Mapping(target = "id", ignore = true)
     PriceTriggerDto toDto(CreatePriceTriggerRequest request);
     Set<PriceTriggerDto> toDtoPriceTriggers(Set<CreatePriceTriggerRequest> requests);
@@ -45,9 +46,12 @@ public interface PositionFacadeMapper {
     Set<OrderDto> toDtoUpdateOrders(Set<UpdateOrderRequest> orders);
     OrderDto toDto(UpdateOrderRequest orders);
 
-    Set<PriceTriggerDto> toDtoUpdatePriceTriggers(Set<UpdatePriceTriggerRequest> requests);
+    @Mapping(target = "isTriggered", constant = "false")
     PriceTriggerDto toDto(UpdatePriceTriggerRequest request);
+    Set<PriceTriggerDto> toDtoUpdatePriceTriggers(Set<UpdatePriceTriggerRequest> requests);
 
+    @Mapping(target = "type", ignore = true)
+    @Mapping(target = "alarms", ignore = true)
     @Mapping(target = "sellTotalAmount", ignore = true)
     @Mapping(target = "sellQuantity", ignore = true)
     @Mapping(target = "sellAveragePrice", ignore = true)

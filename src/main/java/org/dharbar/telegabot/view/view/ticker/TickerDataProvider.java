@@ -31,8 +31,6 @@ public class TickerDataProvider extends ListDataProvider<TickerDto> {
     //     return getTickersResponse(query).stream()
     //             .map(this::toModel);
     // }
-    //
-    // // TODO fix double request
     // @Override
     // protected int sizeInBackEnd(Query<TickerDto, String> query) {
     //     log.info("Get tickers size");

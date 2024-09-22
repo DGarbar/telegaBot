@@ -5,6 +5,7 @@ import org.dharbar.telegabot.controller.filter.PositionFilter;
 import org.dharbar.telegabot.repository.PositionRepository;
 import org.dharbar.telegabot.repository.entity.OrderEntity;
 import org.dharbar.telegabot.repository.entity.PositionEntity;
+import org.dharbar.telegabot.repository.entity.PositionType;
 import org.dharbar.telegabot.repository.entity.PriceTriggerEntity;
 import org.dharbar.telegabot.repository.specification.PositionSpec;
 import org.dharbar.telegabot.repository.util.ChangeComparator;
@@ -45,14 +46,15 @@ public class PositionService {
     }
 
     public PositionDto cretePosition(String ticker,
+                                     PositionType positionType,
                                      UUID portfolioId,
                                      String comment,
                                      Set<OrderDto> orderDtos,
                                      Set<PriceTriggerDto> priceTriggerDtos) {
-        PositionCalculation positionCalculation = calculatePositionValues(orderDtos);
+        PositionCalculation positionCalculation = calculatePositionValues(positionType, orderDtos);
         Set<OrderEntity> orders = positionMapper.toEntityOrders(orderDtos);
         Set<PriceTriggerEntity> priceTriggers = positionMapper.toEntityPriceTriggers(priceTriggerDtos);
-        PositionEntity position = positionMapper.toNewEntity(ticker, portfolioId, comment, positionCalculation, orders, priceTriggers);
+        PositionEntity position = positionMapper.toNewEntity(ticker, positionType, portfolioId, comment, positionCalculation, orders, priceTriggers);
 
         PositionEntity savedPosition = positionRepository.save(position);
 
@@ -63,7 +65,7 @@ public class PositionService {
         PositionEntity position = positionRepository.findByIdForUpdate(positionDto.getId()).orElseThrow();
 
         Set<OrderDto> orderDtos = positionDto.getOrders();
-        PositionCalculation positionCalculation = calculatePositionValues(orderDtos);
+        PositionCalculation positionCalculation = calculatePositionValues(position.getType(), orderDtos);
 
         Set<OrderEntity> orders = positionMapper.toEntityOrders(orderDtos);
         ChangeResult<OrderEntity> orderChange = ChangeComparator.compare(position.getOrders(), orders);
@@ -103,7 +105,7 @@ public class PositionService {
         orderDtos.add(orderDto);
 
         // (optimization)TODO can calculate based only on new order + existing values
-        PositionCalculation positionCalculation = calculatePositionValues(orderDtos);
+        PositionCalculation positionCalculation = calculatePositionValues(position.getType(), orderDtos);
         Set<OrderEntity> orders = positionMapper.toEntityOrders(orderDtos);
 
         positionMapper.updateEntity(position, orders, position.getPriceTriggers(), positionCalculation);

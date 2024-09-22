@@ -2,7 +2,6 @@ package org.dharbar.telegabot.service.portfolio.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import org.dharbar.telegabot.repository.entity.PortfolioType;
 
 import java.util.UUID;
 
@@ -15,5 +14,5 @@ public class PortfolioDto {
     String name;
     String description;
 
-    PortfolioType type;
+    // PortfolioType type;
 }

@@ -2,6 +2,7 @@ package org.dharbar.telegabot.controller.response;
 
 import lombok.Builder;
 import lombok.Data;
+import org.dharbar.telegabot.repository.entity.PositionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ public class PositionResponse {
     UUID id;
 
     String ticker;
+    PositionType type;
     LocalDate openAt;
     LocalDate closedAt;
 

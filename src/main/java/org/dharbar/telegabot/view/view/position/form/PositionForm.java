@@ -1,4 +1,4 @@
-package org.dharbar.telegabot.view.view.position;
+package org.dharbar.telegabot.view.view.position.form;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
@@ -13,11 +13,13 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.binder.Binder;
 import lombok.extern.slf4j.Slf4j;
+import org.dharbar.telegabot.repository.entity.PositionType;
 import org.dharbar.telegabot.repository.entity.TickerType;
 import org.dharbar.telegabot.service.ticker.dto.TickerDto;
 import org.dharbar.telegabot.view.model.PositionViewModel;
 import org.dharbar.telegabot.view.view.alarm.AlarmListCustomField;
 import org.dharbar.telegabot.view.view.order.OrderDialog;
+import org.dharbar.telegabot.view.view.position.PositionDataProvider;
 import org.dharbar.telegabot.view.view.ticker.TickerDataProvider;
 
 import java.math.BigDecimal;
@@ -32,6 +34,7 @@ public class PositionForm extends Div {
 
     private final TextArea commentArea = new TextArea("Comment");
     private final ComboBox<TickerDto> tickerComboBox = new ComboBox<>("Ticker");
+    private final ComboBox<PositionType> positionTypeComboBox = new ComboBox<>("Type");
 
     private final PriceTriggersCustomField priceTriggersCustomField = new PriceTriggersCustomField();
     private final AlarmListCustomField alarmListComponent;
@@ -58,6 +61,7 @@ public class PositionForm extends Div {
         add(content);
 
         setupTickerComboBox(tickerDataProvider);
+        setupPositionTypeComboBox();
         // Component priceSettingsLayout = setupPriceSettings();
 
         Component orderButtonLayout = setupOrderButtonLayout();
@@ -67,7 +71,13 @@ public class PositionForm extends Div {
 
         orderDialog = new OrderDialog();
 
-        Stream.of(tickerComboBox, commentArea, priceTriggersCustomField, alarmListComponent, orderButtonLayout, positionButtonLayout)
+        Stream.of(tickerComboBox,
+                        positionTypeComboBox,
+                        commentArea,
+                        priceTriggersCustomField,
+                        alarmListComponent,
+                        orderButtonLayout,
+                        positionButtonLayout)
                 .forEach(content::add);
 
         showForm(false);
@@ -88,6 +98,19 @@ public class PositionForm extends Div {
                 tickerComboBox.setValue(dataProvider.getByTicker(newTickerValue));
             }
 
+        });
+    }
+
+    private void setupPositionTypeComboBox() {
+        positionTypeComboBox.setItems(PositionType.values());
+        positionTypeComboBox.setValue(PositionType.SIMPLE);
+        positionTypeComboBox.setRequired(true);
+        positionTypeComboBox.setAllowCustomValue(false);
+        positionTypeComboBox.setItemLabelGenerator(PositionType::name);
+
+        positionTypeComboBox.addValueChangeListener(event -> {
+            PositionType positionType = event.getValue();
+            priceTriggersCustomField.showGridSettings(positionType == PositionType.GRID);
         });
     }
 
@@ -143,6 +166,8 @@ public class PositionForm extends Div {
         positionViewBinder.bind(tickerComboBox,
                 position -> tickerDataProvider.getByTicker(position.getTicker()),
                 (position, tickerDto) -> position.setTicker(tickerDto.getTicker()));
+
+        positionViewBinder.bind(positionTypeComboBox, PositionViewModel::getType, PositionViewModel::setType);
 
         positionViewBinder.bind(priceTriggersCustomField, PositionViewModel::getPriceTriggers, PositionViewModel::setPriceTriggers);
 

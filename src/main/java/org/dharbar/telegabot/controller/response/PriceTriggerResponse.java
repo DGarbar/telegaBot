@@ -15,5 +15,7 @@ public class PriceTriggerResponse {
 
     TriggerType type;
     BigDecimal triggerPrice;
+
+    Boolean isTriggered;
     Boolean isEnabled;
 }

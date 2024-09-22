@@ -13,5 +13,7 @@ public class PriceTriggerDto {
     UUID id;
     TriggerType type;
     BigDecimal triggerPrice;
+    Boolean isTriggered;
     Boolean isEnabled;
+
 }

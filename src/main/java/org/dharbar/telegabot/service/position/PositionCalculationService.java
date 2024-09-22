@@ -2,6 +2,7 @@ package org.dharbar.telegabot.service.position;
 
 import lombok.RequiredArgsConstructor;
 import org.dharbar.telegabot.repository.entity.OrderType;
+import org.dharbar.telegabot.repository.entity.PositionType;
 import org.dharbar.telegabot.service.position.dto.OrderDto;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class PositionCalculationService {
 
-    public static PositionCalculation calculatePositionValues(Collection<OrderDto> orders) {
+    public static PositionCalculation calculatePositionValues(PositionType type, Collection<OrderDto> orders) {
         BigDecimal buyTotalAmount = BigDecimal.ZERO;
         BigDecimal buyQuantity = BigDecimal.ZERO;
         BigDecimal sellTotalAmount = BigDecimal.ZERO;
@@ -45,6 +46,10 @@ public class PositionCalculationService {
         BigDecimal sellAveragePrice = sellQuantity.equals(BigDecimal.ZERO)
                 ? BigDecimal.ZERO
                 : sellTotalAmount.divide(sellQuantity, 3, RoundingMode.HALF_UP);
+
+        if (type == PositionType.GRID) {
+            isClosed = false;
+        }
 
         return new PositionCalculation(
                 buyTotalAmount,

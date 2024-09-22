@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 240922-add-recurring-position.yml
+      author: dgarbar
+      changes:
+        - tagDatabase:
+            tag: 240922-add-recurring-position.yml
+
+        - addColumn:
+            tableName: position
+            columns:
+              - column:
+                  name: type
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'SIMPLE'

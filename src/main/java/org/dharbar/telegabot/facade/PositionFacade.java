@@ -44,6 +44,7 @@ public class PositionFacade {
         Set<PriceTriggerDto> priceTriggerDtos = positionFacadeMapper.toDtoPriceTriggers(request.getPriceTriggers());
         PositionDto savedPositionDto = positionService.cretePosition(
                 request.getTicker(),
+                request.getType(),
                 request.getPortfolioId(),
                 request.getComment(),
                 orderDtos,

@@ -18,5 +18,7 @@ databaseChangeLog:
   - include:
       file: classpath:db/changelog/v1/240922-rename-to-ticker.yml
   - include:
-      file: classpath:db/changelog/v1/240922-add-is-triggered.yml
+      file: classpath:db/changelog/v1/240922-add-is-triggered-enabled.yml
+  - include:
+      file: classpath:db/changelog/v1/240922-add-recurring-position.yml
 

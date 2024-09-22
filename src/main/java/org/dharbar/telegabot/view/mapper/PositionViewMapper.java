@@ -59,9 +59,6 @@ public interface PositionViewMapper {
                               Set<PriceTriggerViewModel> priceTriggers,
                               Set<AlarmViewModel> alarms);
 
-    @Mapping(target = "comment", ignore = true)
-    CreatePositionRequest toCreatePositionRequest(String ticker, UUID portfolioId, Set<OrderViewModel> orders, Set<PriceTriggerViewModel> priceTriggers);
-
     @Mapping(target = "orders", source = "orderRequests")
     @Mapping(target = "priceTriggers", source = "priceTriggers")
     CreatePositionRequest toCreatePositionRequest(PositionViewModel position, Set<CreateOrderRequest> orderRequests, Set<CreatePriceTriggerRequest> priceTriggers);

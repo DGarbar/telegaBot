@@ -11,6 +11,7 @@ import org.dharbar.telegabot.view.model.PositionViewModel;
 import org.dharbar.telegabot.view.utils.StyleUtils;
 import org.dharbar.telegabot.view.view.order.OrderDialog;
 import org.dharbar.telegabot.view.view.order.OrderView;
+import org.dharbar.telegabot.view.view.position.form.PositionForm;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
