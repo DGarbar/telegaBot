@@ -50,7 +50,6 @@ public interface PositionFacadeMapper {
     PriceTriggerDto toDto(UpdatePriceTriggerRequest request);
     Set<PriceTriggerDto> toDtoUpdatePriceTriggers(Set<UpdatePriceTriggerRequest> requests);
 
-    @Mapping(target = "type", ignore = true)
     @Mapping(target = "alarms", ignore = true)
     @Mapping(target = "sellTotalAmount", ignore = true)
     @Mapping(target = "sellQuantity", ignore = true)

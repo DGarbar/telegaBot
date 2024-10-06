@@ -21,4 +21,6 @@ databaseChangeLog:
       file: classpath:db/changelog/v1/240922-add-is-triggered-enabled.yml
   - include:
       file: classpath:db/changelog/v1/240922-add-recurring-position.yml
+  - include:
+      file: classpath:db/changelog/v1/241006-add-colum-name-position.yml
 

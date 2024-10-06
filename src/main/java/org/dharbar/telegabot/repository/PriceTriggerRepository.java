@@ -16,7 +16,8 @@ public interface PriceTriggerRepository extends CrudRepository<PriceTriggerEntit
     @Query("SELECT p FROM PriceTriggerEntity p "
             + "WHERE p.position.ticker = :ticker "
             + "and p.triggerPrice BETWEEN :low and :high "
-            + "and p.type = :type and p.isTriggered = false")
+            + "and p.type = :type "
+            + "and p.isTriggered = false")
     List<PriceTriggerEntity> findAllByTickerAndTypeAndPriceIn(String ticker,
                                                               TriggerType type,
                                                               BigDecimal low,

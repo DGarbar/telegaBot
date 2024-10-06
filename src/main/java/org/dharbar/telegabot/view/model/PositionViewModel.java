@@ -17,6 +17,8 @@ public class PositionViewModel {
 
     UUID id;
 
+    String name;
+
     String ticker;
 
     PositionType type;

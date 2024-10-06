@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 241006-add-colum-name-position
+      author: dgarbar
+      changes:
+        - tagDatabase:
+            tag: 241006-add-colum-name-position
+
+        - addColumn:
+            tableName: position
+            columns:
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                  valueComputed: ticker

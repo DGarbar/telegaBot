@@ -77,7 +77,12 @@ public class PositionService {
         priceTriggerChange.getRemoved().forEach(position::removePriceTrigger);
         priceTriggerChange.getPresent().forEach(positionMapper::updateEntity);
 
-        positionMapper.updateEntity(position, orderChange.getAdded(), priceTriggerChange.getAdded(), positionCalculation);
+        positionMapper.updateEntity(position,
+                positionDto.getName(),
+                positionDto.getType(),
+                orderChange.getAdded(),
+                priceTriggerChange.getAdded(),
+                positionCalculation);
         PositionEntity savedPosition = positionRepository.save(position);
 
         return positionMapper.toDto(savedPosition);
@@ -102,12 +107,14 @@ public class PositionService {
 
     public PositionDto updatePositionOrder(UUID positionId, OrderDto orderDto) {
         PositionEntity position = positionRepository.findByIdForUpdate(positionId).orElseThrow();
-        OrderEntity savedOrder = position.getOrders().stream()
+        OrderEntity existingPositionOrder = position.getOrders().stream()
                 .filter(order -> order.getId().equals(orderDto.getId()))
                 .findFirst()
+        // TODO make it for another position order and recalculate
                 .orElseThrow();
 
-        positionMapper.updateEntity(savedOrder, orderDto);
+
+        positionMapper.updateEntity(existingPositionOrder, orderDto);
 
         return updateAndSavePosition(orderDto, position);
     }
@@ -120,7 +127,7 @@ public class PositionService {
         PositionCalculation positionCalculation = calculatePositionValues(position.getType(), orderDtos);
         Set<OrderEntity> orders = positionMapper.toEntityOrders(orderDtos);
 
-        positionMapper.updateEntity(position, orders, position.getPriceTriggers(), positionCalculation);
+        positionMapper.updatePositionOrdersEntity(position, orders, positionCalculation);
         PositionEntity savedPosition = positionRepository.save(position);
 
         return positionMapper.toDto(savedPosition);

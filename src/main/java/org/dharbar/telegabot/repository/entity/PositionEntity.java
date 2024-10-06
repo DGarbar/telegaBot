@@ -45,6 +45,9 @@ public class PositionEntity {
     private UUID id;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private String ticker;
 
     @Column(nullable = false)

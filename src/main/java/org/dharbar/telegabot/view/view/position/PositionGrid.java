@@ -39,12 +39,15 @@ public class PositionGrid extends Grid<PositionViewModel> {
         //     return null;
         // }).setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
 
-        addColumn(PositionViewModel::getTicker).setHeader("Ticker").setKey("ticker").setFlexGrow(2)
+        addColumn(PositionViewModel::getTicker).setHeader("Ticker").setKey("ticker").setFlexGrow(0)
                 .setSortable(true)
+                .setTextAlign(ColumnTextAlign.CENTER)
                 .setClassNameGenerator(positionAnalyticDto -> StyleUtils.toTickerStyle(positionAnalyticDto.getTicker()));
 
-        Grid.Column<PositionViewModel> openAtColumn = addColumn(PositionViewModel::getOpenAt).setHeader("Date").setKey("openAt").setSortable(true).setFlexGrow(
-                2);
+        addColumn(PositionViewModel::getName).setHeader("Name").setKey("name").setFlexGrow(2);
+
+        Grid.Column<PositionViewModel> openAtColumn = addColumn(PositionViewModel::getOpenAt).setHeader("Date").setKey("openAt").setSortable(true)
+                .setFlexGrow(2);
         // TODO
         // product -> decimalFormat.format(product.getPrice()) + " $")
         addColumn(PositionViewModel::getBuyTotalAmount).setHeader("Invested").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
@@ -62,7 +65,7 @@ public class PositionGrid extends Grid<PositionViewModel> {
                 .setClassNameGenerator(dto -> StyleUtils.toProfitStyle(dto.getCurrentProfitPercentage()));
         // addColumn(PositionViewModel::dealDurationDays).setHeader("Deal days").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
 
-        addColumn(PositionViewModel::getComment).setHeader("Comment").setFlexGrow(5);
+        // addColumn(PositionViewModel::getComment).setHeader("Comment").setFlexGrow(5);
         // getColumns().forEach(column -> column.setAutoWidth(true));
 
         OrderDialog orderDialog = new OrderDialog();

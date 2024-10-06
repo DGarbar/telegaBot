@@ -15,6 +15,7 @@ public class PositionResponse {
 
     UUID id;
 
+    String name;
     String ticker;
     PositionType type;
     LocalDate openAt;

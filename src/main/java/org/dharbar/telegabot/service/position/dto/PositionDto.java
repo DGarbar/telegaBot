@@ -15,6 +15,7 @@ public class PositionDto {
 
     UUID id;
 
+    String name;
     String ticker;
     PositionType type;
 

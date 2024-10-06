@@ -11,6 +11,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import lombok.extern.slf4j.Slf4j;
 import org.dharbar.telegabot.repository.entity.PositionType;
@@ -32,6 +33,7 @@ public class PositionForm extends Div {
 
     private final VerticalLayout content;
 
+    private final TextField nameField = new TextField("Name");
     private final TextArea commentArea = new TextArea("Comment");
     private final ComboBox<TickerDto> tickerComboBox = new ComboBox<>("Ticker");
     private final ComboBox<PositionType> positionTypeComboBox = new ComboBox<>("Type");
@@ -72,7 +74,8 @@ public class PositionForm extends Div {
 
         orderDialog = new OrderDialog();
 
-        Stream.of(tickerComboBox,
+        Stream.of(nameField,
+                        tickerComboBox,
                         positionTypeComboBox,
                         commentArea,
                         priceTriggersCustomField,
@@ -92,13 +95,15 @@ public class PositionForm extends Div {
         tickerComboBox.setItemLabelGenerator(TickerDto::getTicker);
         tickerComboBox.addCustomValueSetListener(e -> {
             String newTickerValue = e.getDetail();
-            // TODO make type from position ??? for crypto
+            // TODO How to make ticket for crypto. Use type from position ???
             boolean isSaved = dataProvider.saveNewTicker(newTickerValue, TickerType.STOCK);
             if (isSaved) {
                 tickerComboBox.setItems(dataProvider.getItems());
                 tickerComboBox.setValue(dataProvider.getByTicker(newTickerValue));
             }
-
+            if (nameField.isEmpty()) {
+                nameField.setValue(newTickerValue);
+            }
         });
     }
 
@@ -159,22 +164,23 @@ public class PositionForm extends Div {
         boolean isNewPosition = position.getId() == null;
         if (isNewPosition) {
             positionDataProvider.saveNewPosition(position);
-            Notification.show(position.getTicker() + " created");
+            Notification.show(position.getTicker() + " created").setPosition(Notification.Position.TOP_END);
         } else {
             positionDataProvider.updatePosition(position);
-            Notification.show(position.getTicker() + " updated");
+            Notification.show(position.getTicker() + " updated").setPosition(Notification.Position.TOP_END);
         }
 
         showForm(false);
     }
 
     private void setupBinder(TickerDataProvider tickerDataProvider) {
-        positionViewBinder.bind(commentArea, PositionViewModel::getComment, PositionViewModel::setComment);
+        positionViewBinder.bind(nameField, PositionViewModel::getName, PositionViewModel::setName);
         positionViewBinder.bind(tickerComboBox,
                 position -> tickerDataProvider.getByTicker(position.getTicker()),
                 (position, tickerDto) -> position.setTicker(tickerDto.getTicker()));
 
         positionViewBinder.bind(positionTypeComboBox, PositionViewModel::getType, PositionViewModel::setType);
+        positionViewBinder.bind(commentArea, PositionViewModel::getComment, PositionViewModel::setComment);
 
         positionViewBinder.bind(priceTriggersCustomField, PositionViewModel::getPriceTriggers, PositionViewModel::setPriceTriggers);
 

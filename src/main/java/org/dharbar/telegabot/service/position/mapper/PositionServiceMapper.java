@@ -38,7 +38,6 @@ public interface PositionServiceMapper {
 
     PositionDto toDto(PositionEntity positions);
 
-    @Mapping(target = "type", ignore = true)
     @Mapping(target = "portfolioId", ignore = true)
     @Mapping(target = "alarms", ignore = true)
     @Mapping(target = "isClosed", source = "calculation.isClosed")
@@ -49,11 +48,17 @@ public interface PositionServiceMapper {
     @Mapping(target = "ticker", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    void updateEntity(@MappingTarget PositionEntity position, Set<OrderEntity> orders, Set<PriceTriggerEntity> priceTriggers, PositionCalculation calculation);
+    void updateEntity(@MappingTarget PositionEntity position,
+                      String name,
+                      PositionType type,
+                      Set<OrderEntity> orders,
+                      Set<PriceTriggerEntity> priceTriggers,
+                      PositionCalculation calculation);
 
+    @Mapping(target = "name", ignore = true)
+    @Mapping(target = "type", ignore = true)
     @Mapping(target = "priceTriggers", ignore = true)
     @Mapping(target = "orders", ignore = true)
-    @Mapping(target = "type", ignore = true)
     @Mapping(target = "portfolioId", ignore = true)
     @Mapping(target = "alarms", ignore = true)
     @Mapping(target = "isClosed", source = "calculation.isClosed")
@@ -65,6 +70,22 @@ public interface PositionServiceMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     void updateCalculatedEntity(@MappingTarget PositionEntity position, PositionCalculation calculation);
+
+    @Mapping(target = "name", ignore = true)
+    @Mapping(target = "type", ignore = true)
+    @Mapping(target = "priceTriggers", ignore = true)
+    @Mapping(target = "orders", ignore = true)
+    @Mapping(target = "portfolioId", ignore = true)
+    @Mapping(target = "alarms", ignore = true)
+    @Mapping(target = "isClosed", source = "calculation.isClosed")
+    @Mapping(target = "closedAt", expression = "java(calculation.isClosed() ? java.time.LocalDate.now() : null)")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "openAt", ignore = true)
+    @Mapping(target = "comment", ignore = true)
+    @Mapping(target = "ticker", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    void updatePositionOrdersEntity(@MappingTarget PositionEntity position, Set<OrderEntity> orders, PositionCalculation calculation);
 
     OrderDto toDto(OrderEntity orders);
 

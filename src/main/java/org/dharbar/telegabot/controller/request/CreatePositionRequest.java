@@ -10,6 +10,8 @@ import java.util.UUID;
 @Data
 public class CreatePositionRequest {
 
+    String name;
+
     String ticker;
 
     PositionType type;
