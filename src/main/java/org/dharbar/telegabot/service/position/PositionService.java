@@ -83,6 +83,18 @@ public class PositionService {
         return positionMapper.toDto(savedPosition);
     }
 
+    public PositionDto recalculate(UUID id) {
+        PositionEntity position = positionRepository.findByIdForUpdate(id).orElseThrow();
+
+        Set<OrderDto> orderDtos = positionMapper.toDtos(position.getOrders());
+        PositionCalculation positionCalculation = calculatePositionValues(position.getType(), orderDtos);
+
+        positionMapper.updateCalculatedEntity(position, positionCalculation);
+        PositionEntity savedPosition = positionRepository.save(position);
+
+        return positionMapper.toDto(savedPosition);
+    }
+
     public PositionDto addOrder(UUID positionId, OrderDto orderDto) {
         PositionEntity position = positionRepository.findByIdForUpdate(positionId).orElseThrow();
         return updateAndSavePosition(orderDto, position);

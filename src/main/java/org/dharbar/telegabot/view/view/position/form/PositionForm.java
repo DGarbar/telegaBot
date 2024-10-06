@@ -44,6 +44,7 @@ public class PositionForm extends Div {
     private final Button saveButton = new Button("Save Position");
     private final Button addOrderButton = new Button("Add Order", VaadinIcon.DOLLAR.create());
     private final Button sellAllOrderButton = new Button("Sell All Order", VaadinIcon.CLOSE_CIRCLE.create());
+    private final Button recalcualtePositionButton = new Button("Recalc.", VaadinIcon.REFRESH.create());
 
     private final PositionDataProvider positionDataProvider;
     private final OrderDialog orderDialog;
@@ -137,13 +138,19 @@ public class PositionForm extends Div {
         saveButton.addClickShortcut(Key.ENTER);
         saveButton.addClickListener(e -> processPositionOrderCreation());
 
+        recalcualtePositionButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
+        recalcualtePositionButton.addClickListener(e -> {
+            UUID id = positionViewBinder.getBean().getId();
+            positionDataProvider.recalculatePosition(id);
+        });
+
         Button closeButton = new Button("Close");
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         closeButton.addClickShortcut(Key.ESCAPE);
 
         closeButton.addClickListener(e -> showForm(false));
 
-        return new HorizontalLayout(saveButton, closeButton);
+        return new HorizontalLayout(saveButton, recalcualtePositionButton, closeButton);
     }
 
     private void processPositionOrderCreation() {

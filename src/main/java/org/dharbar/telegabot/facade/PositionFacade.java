@@ -65,6 +65,13 @@ public class PositionFacade {
     }
 
     @Transactional
+    public PositionResponse recalculatePosition(UUID id) {
+        PositionDto savedPositionDto = positionService.recalculate(id);
+        PositionResponse response = positionFacadeMapper.toResponse(savedPositionDto);
+        return populateWithAnalytic(response);
+    }
+
+    @Transactional
     public PositionResponse addPositionNewOrder(UUID positionId, CreateOrderRequest order) {
         OrderDto orderDto = positionFacadeMapper.toDto(order);
         PositionDto positionDto = positionService.addOrder(positionId, orderDto);

@@ -89,6 +89,13 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
         refreshItem(model);
     }
 
+    public void recalculatePosition(UUID positionId) {
+        PositionResponse positionResponse = positionController.recalculatePosition(positionId);
+        PositionViewModel model = toModel(positionResponse);
+
+        refreshItem(model);
+    }
+
     public void addOrderToPosition(UUID positionId, OrderViewModel order) {
         CreateOrderRequest createOrderRequest = positionViewMapper.toCreateOrderRequest(order);
         PositionResponse positionResponse = positionController.addOrderToPosition(positionId, createOrderRequest);

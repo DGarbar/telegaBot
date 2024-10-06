@@ -53,6 +53,11 @@ public class PositionController {
         return positionsFacade.updatePosition(id, request);
     }
 
+    @PutMapping("/api/positions/{id}:recalculate")
+    public PositionResponse recalculatePosition(@PathVariable UUID id) {
+        return positionsFacade.recalculatePosition(id);
+    }
+
     @PostMapping("/api/positions/{id}/orders")
     public PositionResponse addOrderToPosition(@PathVariable UUID id, CreateOrderRequest request) {
         return positionsFacade.addPositionNewOrder(id, request);
