@@ -20,9 +20,12 @@ import org.dharbar.telegabot.view.model.PortfolioViewModel;
 import org.dharbar.telegabot.view.model.PositionViewModel;
 import org.dharbar.telegabot.view.model.PriceTriggerViewModel;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PositionDataProvider extends AbstractBackEndDataProvider<PositionViewModel, String> {
@@ -56,6 +59,13 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
         return (int) getPositionsResponse(query).getTotalElements();
     }
 
+    public List<PositionViewModel> positionForOrderWithTicker(String ticker) {
+        return positionController.getPositions(ticker, null, false, Pageable.ofSize(100))
+                .stream()
+                .map(this::toModel)
+                .collect(Collectors.toList());
+    }
+
     private Page<PositionResponse> getPositionsResponse(Query query) {
         Boolean isClosedFilter = isShowClosedCheckbox.getValue() ? null : false;
         PortfolioViewModel portfolioViewModel = portfolioSelect.getValue();
@@ -72,7 +82,9 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
         Set<CreateOrderRequest> createOrderRequests = positionViewMapper.toCreateOrderRequests(position.getOrders());
         Set<CreatePriceTriggerRequest> createPriceTriggerRequests = positionViewMapper.toCreatePriceTriggerRequests(position.getPriceTriggers());
 
-        CreatePositionRequest createPositionRequest = positionViewMapper.toCreatePositionRequest(position, createOrderRequests, createPriceTriggerRequests);
+        CreatePositionRequest createPositionRequest = positionViewMapper.toCreatePositionRequest(position,
+                createOrderRequests,
+                createPriceTriggerRequests);
         positionController.createPosition(createPositionRequest);
 
         refreshAll();
@@ -82,7 +94,9 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
         Set<UpdateOrderRequest> updateOrderRequests = positionViewMapper.toUpdateOrderRequests(position.getOrders());
         Set<UpdatePriceTriggerRequest> updatePriceTriggerRequests = positionViewMapper.toUpdatePriceTriggerRequests(position.getPriceTriggers());
 
-        UpdatePositionRequest updatePositionRequest = positionViewMapper.toUpdatePositionRequest(position, updateOrderRequests, updatePriceTriggerRequests);
+        UpdatePositionRequest updatePositionRequest = positionViewMapper.toUpdatePositionRequest(position,
+                updateOrderRequests,
+                updatePriceTriggerRequests);
         PositionResponse positionResponse = positionController.updatePosition(position.getId(), updatePositionRequest);
         PositionViewModel model = toModel(positionResponse);
 
@@ -104,12 +118,26 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
         refreshItem(model);
     }
 
+    // PositionId in order not updated
     public void updateOrderPosition(UUID positionId, OrderViewModel order) {
         CreateOrderRequest createOrderRequest = positionViewMapper.toCreateOrderRequest(order);
         PositionResponse positionResponse = positionController.updatePositionOrder(positionId, order.getId(), createOrderRequest);
         PositionViewModel model = toModel(positionResponse);
 
         refreshItem(model);
+    }
+
+    // For PositionId order update
+    public void updateOrderNewPosition(UUID positionId, OrderViewModel order) {
+        CreateOrderRequest createOrderRequest = positionViewMapper.toCreateOrderRequest(order);
+        PositionResponse positionResponse = positionController.updatePositionOrder(positionId, order.getId(), createOrderRequest);
+        PositionViewModel model = toModel(positionResponse);
+
+        refreshItem(model);
+
+        PositionResponse position = positionController.getPosition(order.getPositionId());
+        PositionViewModel positionModel = toModel(position);
+        refreshItem(positionModel);
     }
 
     public void deleteAlarm(UUID positionId, UUID alarmId) {

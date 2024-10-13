@@ -57,7 +57,8 @@ public class PositionEntity {
     private UUID portfolioId;
 
     @Setter(AccessLevel.PRIVATE)
-    @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, orphanRemoval = true)
+    // We can't use orphanRemoval = true because order parent can be changed
+    @OneToMany(mappedBy = "position", cascade = CascadeType.ALL)
     private Set<OrderEntity> orders = new HashSet<>();
 
     @Setter(AccessLevel.PRIVATE)

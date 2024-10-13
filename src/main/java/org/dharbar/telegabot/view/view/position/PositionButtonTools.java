@@ -8,14 +8,14 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.dharbar.telegabot.view.model.PositionViewModel;
 
-public class ButtonTools extends HorizontalLayout {
+public class PositionButtonTools extends HorizontalLayout {
 
     private final Button addBuyOrderButton = new Button();
     private final Button sellAllButton = new Button();
     private final Button editButton = new Button();
     private final Button showOrdersButton = new Button();
 
-    public ButtonTools() {
+    public PositionButtonTools() {
         add(addBuyOrderButton, sellAllButton, editButton, showOrdersButton);
     }
 

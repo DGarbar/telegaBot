@@ -28,7 +28,8 @@ public interface PositionServiceMapper {
     @Mapping(target = "closedAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    PositionEntity toNewEntity(String ticker,
+    PositionEntity toNewEntity(String name,
+                               String ticker,
                                PositionType type,
                                UUID portfolioId,
                                String comment,
@@ -58,7 +59,6 @@ public interface PositionServiceMapper {
     @Mapping(target = "name", ignore = true)
     @Mapping(target = "type", ignore = true)
     @Mapping(target = "priceTriggers", ignore = true)
-    @Mapping(target = "orders", ignore = true)
     @Mapping(target = "portfolioId", ignore = true)
     @Mapping(target = "alarms", ignore = true)
     @Mapping(target = "isClosed", source = "calculation.isClosed")
@@ -69,7 +69,7 @@ public interface PositionServiceMapper {
     @Mapping(target = "ticker", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    void updateCalculatedEntity(@MappingTarget PositionEntity position, PositionCalculation calculation);
+    void updatePositionOrdersEntity(@MappingTarget PositionEntity position, Set<OrderEntity> orders, PositionCalculation calculation);
 
     @Mapping(target = "name", ignore = true)
     @Mapping(target = "type", ignore = true)
@@ -85,7 +85,7 @@ public interface PositionServiceMapper {
     @Mapping(target = "ticker", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    void updatePositionOrdersEntity(@MappingTarget PositionEntity position, Set<OrderEntity> orders, PositionCalculation calculation);
+    void updateCalculatedEntity(@MappingTarget PositionEntity position, PositionCalculation calculation);
 
     OrderDto toDto(OrderEntity orders);
 
@@ -94,6 +94,7 @@ public interface PositionServiceMapper {
     @Mapping(target = "position", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     OrderEntity toEntity(OrderDto orderDtos);
+
     Set<OrderEntity> toEntityOrders(Collection<OrderDto> orderDtos);
 
     @Mapping(target = "position", ignore = true)

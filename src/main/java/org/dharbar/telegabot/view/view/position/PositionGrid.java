@@ -84,11 +84,11 @@ public class PositionGrid extends Grid<PositionViewModel> {
         return percentage.setScale(1, RoundingMode.HALF_UP) + "% (" + amount.setScale(1, RoundingMode.HALF_UP) + "$)";
     }
 
-    private ComponentRenderer<ButtonTools, PositionViewModel> getToolButtonRenderer(PositionForm positionForm,
-                                                                                    PositionDataProvider positionDataProvider,
-                                                                                    OrderDialog orderDialog) {
+    private ComponentRenderer<PositionButtonTools, PositionViewModel> getToolButtonRenderer(PositionForm positionForm,
+                                                                                            PositionDataProvider positionDataProvider,
+                                                                                            OrderDialog orderDialog) {
         return new ComponentRenderer<>(
-                ButtonTools::new,
+                PositionButtonTools::new,
                 (tools, position) -> {
                     tools.setupAddOrderButton(e -> {
                         UUID positionId = position.getId();

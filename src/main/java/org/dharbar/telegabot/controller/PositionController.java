@@ -30,6 +30,11 @@ public class PositionController {
 
     private final PositionFacade positionsFacade;
 
+    @GetMapping("/api/positions/{id}")
+    public PositionResponse getPosition(@PathVariable UUID id) {
+        return positionsFacade.getPosition(id);
+    }
+
     @GetMapping("/api/positions")
     public Page<PositionResponse> getPositions(@RequestParam(required = false) String ticker,
                                                @RequestParam(required = false) UUID portfolioId,

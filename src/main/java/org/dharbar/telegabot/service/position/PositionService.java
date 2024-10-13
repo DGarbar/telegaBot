@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,7 +46,8 @@ public class PositionService {
                 .orElseThrow();
     }
 
-    public PositionDto cretePosition(String ticker,
+    public PositionDto cretePosition(String name,
+                                     String ticker,
                                      PositionType positionType,
                                      UUID portfolioId,
                                      String comment,
@@ -54,7 +56,7 @@ public class PositionService {
         PositionCalculation positionCalculation = calculatePositionValues(positionType, orderDtos);
         Set<OrderEntity> orders = positionMapper.toEntityOrders(orderDtos);
         Set<PriceTriggerEntity> priceTriggers = positionMapper.toEntityPriceTriggers(priceTriggerDtos);
-        PositionEntity position = positionMapper.toNewEntity(ticker, positionType, portfolioId, comment, positionCalculation, orders, priceTriggers);
+        PositionEntity position = positionMapper.toNewEntity(name, ticker, positionType, portfolioId, comment, positionCalculation, orders, priceTriggers);
 
         PositionEntity savedPosition = positionRepository.save(position);
 
@@ -91,13 +93,16 @@ public class PositionService {
     public PositionDto recalculate(UUID id) {
         PositionEntity position = positionRepository.findByIdForUpdate(id).orElseThrow();
 
+        PositionEntity savedPosition = recalculate(position);
+        return positionMapper.toDto(savedPosition);
+    }
+
+    private PositionEntity recalculate(PositionEntity position) {
         Set<OrderDto> orderDtos = positionMapper.toDtos(position.getOrders());
         PositionCalculation positionCalculation = calculatePositionValues(position.getType(), orderDtos);
 
         positionMapper.updateCalculatedEntity(position, positionCalculation);
-        PositionEntity savedPosition = positionRepository.save(position);
-
-        return positionMapper.toDto(savedPosition);
+        return positionRepository.save(position);
     }
 
     public PositionDto addOrder(UUID positionId, OrderDto orderDto) {
@@ -107,17 +112,27 @@ public class PositionService {
 
     public PositionDto updatePositionOrder(UUID positionId, OrderDto orderDto) {
         PositionEntity position = positionRepository.findByIdForUpdate(positionId).orElseThrow();
-        OrderEntity existingPositionOrder = position.getOrders().stream()
-                .filter(order -> order.getId().equals(orderDto.getId()))
-                .findFirst()
-        // TODO make it for another position order and recalculate
-                .orElseThrow();
+        Optional<OrderEntity> orderInPassedPosition = position.getOrders().stream()
+                .filter(o -> orderDto.getId().equals(o.getId()))
+                .findFirst();
 
+        // Order stayed in the same position
+        if (orderInPassedPosition.isPresent()) {
+            positionMapper.updateEntity(orderInPassedPosition.get(), orderDto);
 
-        positionMapper.updateEntity(existingPositionOrder, orderDto);
+            return updateAndSavePosition(orderDto, position);
+		} else {
+            // order changing its positions
+            PositionEntity orderOldPosition = positionRepository.findByOrderIdForUpdate(orderDto.getId()).orElseThrow();
+            OrderEntity order = orderOldPosition.getOrders().stream().filter(o -> o.getId().equals(orderDto.getId())).findFirst().orElseThrow();
 
-        return updateAndSavePosition(orderDto, position);
-    }
+            orderOldPosition.removeOrder(order);
+            recalculate(orderOldPosition);
+
+            positionMapper.updateEntity(order, orderDto);
+            return updateAndSavePosition(orderDto, position);
+		}
+	}
 
     private PositionDto updateAndSavePosition(OrderDto orderDto, PositionEntity position) {
         Set<OrderDto> orderDtos = positionMapper.toDtos(position.getOrders());

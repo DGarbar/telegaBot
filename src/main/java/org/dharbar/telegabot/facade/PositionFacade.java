@@ -31,6 +31,12 @@ public class PositionFacade {
 
     private final PositionFacadeMapper positionFacadeMapper;
 
+    public PositionResponse getPosition(UUID id) {
+        PositionDto positionDto = positionService.get(id);
+        PositionResponse response = positionFacadeMapper.toResponse(positionDto);
+        return populateWithAnalytic(response);
+    }
+
     @Transactional(readOnly = true)
     public Page<PositionResponse> getPositions(PositionFilter filter, Pageable pageRequest) {
         return positionService.getPositions(filter, pageRequest)
@@ -43,6 +49,7 @@ public class PositionFacade {
         Set<OrderDto> orderDtos = positionFacadeMapper.toDtoOrders(request.getOrders());
         Set<PriceTriggerDto> priceTriggerDtos = positionFacadeMapper.toDtoPriceTriggers(request.getPriceTriggers());
         PositionDto savedPositionDto = positionService.cretePosition(
+                request.getName(),
                 request.getTicker(),
                 request.getType(),
                 request.getPortfolioId(),
