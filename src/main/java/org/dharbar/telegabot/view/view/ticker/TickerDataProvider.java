@@ -41,19 +41,19 @@ public class TickerDataProvider extends ListDataProvider<TickerDto> {
         return tickerController.getTickers();
     }
 
-    public boolean saveNewTicker(String tickerName, TickerType type) {
+    public TickerDto saveNewTicker(String tickerName, TickerType type) {
         try {
             CreateTickerRequest createTickerRequest = tickerViewMapper.toCreateTickerRequest(tickerName, type);
             TickerDto ticker = tickerController.createTicker(createTickerRequest);
 
             getItems().add(ticker);
             refreshAll();
-            return true;
+            return ticker;
         } catch (Exception e) {
             Notification notification = new Notification("Failed to add new ticker " + tickerName, 5000, Notification.Position.TOP_END);
             notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             notification.open();
-            return false;
+            throw e;
         }
     }
 

@@ -28,8 +28,8 @@ public class PortfolioCreationDialog extends Dialog {
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
         Button cancelButton = new Button("Cancel", e -> close());
-        getFooter().add(cancelButton);
         getFooter().add(saveButton);
+        getFooter().add(cancelButton);
     }
 
     private VerticalLayout createAddPortfolioLayout() {

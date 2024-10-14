@@ -8,6 +8,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -15,12 +16,12 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import lombok.extern.slf4j.Slf4j;
 import org.dharbar.telegabot.repository.entity.PositionType;
-import org.dharbar.telegabot.repository.entity.TickerType;
 import org.dharbar.telegabot.service.ticker.dto.TickerDto;
 import org.dharbar.telegabot.view.model.PositionViewModel;
 import org.dharbar.telegabot.view.view.alarm.AlarmListCustomField;
 import org.dharbar.telegabot.view.view.order.OrderDialog;
 import org.dharbar.telegabot.view.view.position.PositionDataProvider;
+import org.dharbar.telegabot.view.view.ticker.TickerCreationDialog;
 import org.dharbar.telegabot.view.view.ticker.TickerDataProvider;
 
 import java.math.BigDecimal;
@@ -35,7 +36,10 @@ public class PositionForm extends Div {
 
     private final TextField nameField = new TextField("Name");
     private final TextArea commentArea = new TextArea("Comment");
+
     private final ComboBox<TickerDto> tickerComboBox = new ComboBox<>("Ticker");
+    private final Button addTickerButton = new Button(VaadinIcon.PLUS.create());
+
     private final ComboBox<PositionType> positionTypeComboBox = new ComboBox<>("Type");
 
     private final PriceTriggersCustomField priceTriggersCustomField = new PriceTriggersCustomField();
@@ -63,7 +67,8 @@ public class PositionForm extends Div {
         content.addClassName("right-form-content");
         add(content);
 
-        setupTickerComboBox(tickerDataProvider);
+        TickerCreationDialog tickerCreationDialog = new TickerCreationDialog(tickerDataProvider);
+        Component tickerLayout = setupTickerLayoutComboBox(tickerDataProvider, tickerCreationDialog);
         setupPositionTypeComboBox();
         // Component priceSettingsLayout = setupPriceSettings();
 
@@ -75,7 +80,7 @@ public class PositionForm extends Div {
         orderDialog = new OrderDialog();
 
         Stream.of(nameField,
-                        tickerComboBox,
+                        tickerLayout,
                         positionTypeComboBox,
                         commentArea,
                         priceTriggersCustomField,
@@ -87,24 +92,23 @@ public class PositionForm extends Div {
         showForm(false);
     }
 
-    private void setupTickerComboBox(TickerDataProvider dataProvider) {
+    private Component setupTickerLayoutComboBox(TickerDataProvider dataProvider, TickerCreationDialog tickerCreationDialog) {
         tickerComboBox.setItems(dataProvider.getItems());
         tickerComboBox.setRequired(true);
-        tickerComboBox.setAllowCustomValue(true);
         tickerComboBox.setAllowedCharPattern("[A-Z]");
         tickerComboBox.setItemLabelGenerator(TickerDto::getTicker);
-        tickerComboBox.addCustomValueSetListener(e -> {
-            String newTickerValue = e.getDetail();
-            // TODO How to make ticket for crypto. Use type from position ???
-            boolean isSaved = dataProvider.saveNewTicker(newTickerValue, TickerType.STOCK);
-            if (isSaved) {
-                tickerComboBox.setItems(dataProvider.getItems());
-                tickerComboBox.setValue(dataProvider.getByTicker(newTickerValue));
-            }
-            if (nameField.isEmpty()) {
-                nameField.setValue(newTickerValue);
-            }
-        });
+        tickerComboBox.addValueChangeListener(e -> nameField.setValue(e.getValue().getTicker()));
+
+        addTickerButton.addClickListener(event ->
+                tickerCreationDialog.open(tickerDto -> {
+                    tickerComboBox.setItems(dataProvider.getItems());
+                    tickerComboBox.setValue(tickerDto);
+                }));
+
+        HorizontalLayout horizontalLayout = new HorizontalLayout(tickerComboBox, addTickerButton);
+        horizontalLayout.setVerticalComponentAlignment(FlexComponent.Alignment.END, addTickerButton);
+
+        return horizontalLayout;
     }
 
     private void setupPositionTypeComboBox() {
