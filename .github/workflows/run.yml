@@ -16,7 +16,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    #    latest doesn't support heroku cli
+    runs-on: ubuntu:22.04
 
     strategy:
       matrix:
@@ -41,9 +42,16 @@ jobs:
         run: mvn -B package --file pom.xml
 
       - name: Heroku Container Registry login
-        uses: gonuit/heroku-docker-deploy@v1.3.3 # GitHub action name (leave it as it is).
-        with:
-          email: ${{ secrets.HEROKU_EMAIL }}
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
 
+      - name: Build and push
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:push -a ${{ secrets.HEROKU_APP_NAME }} web
+
+      - name: Release
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release -a ${{ secrets.HEROKU_APP_NAME }} web
