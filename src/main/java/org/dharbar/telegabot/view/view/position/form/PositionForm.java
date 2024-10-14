@@ -97,7 +97,12 @@ public class PositionForm extends Div {
         tickerComboBox.setRequired(true);
         tickerComboBox.setAllowedCharPattern("[A-Z]");
         tickerComboBox.setItemLabelGenerator(TickerDto::getTicker);
-        tickerComboBox.addValueChangeListener(e -> nameField.setValue(e.getValue().getTicker()));
+        tickerComboBox.addValueChangeListener(e -> {
+            TickerDto value = e.getValue();
+            if (value != null) {
+                nameField.setValue(value.getTicker());
+            }
+        });
 
         addTickerButton.addClickListener(event ->
                 tickerCreationDialog.open(tickerDto -> {

@@ -15,7 +15,6 @@ import org.dharbar.telegabot.view.view.position.form.PositionForm;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,19 +25,6 @@ public class PositionGrid extends Grid<PositionViewModel> {
         addClassName("position-grid");
         // setSizeFull();
 
-        DecimalFormat decimalFormat = new DecimalFormat();
-        decimalFormat.setMaximumFractionDigits(2);
-        decimalFormat.setMinimumFractionDigits(2);
-
-        // addComponentColumn(model -> {
-        //     if (!model.getAlarms().isEmpty()) {
-        //         Icon icon = VaadinIcon.CHECK_CIRCLE.create();
-        //         icon.setColor("red");
-        //         return icon;
-        //     }
-        //     return null;
-        // }).setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
-
         addColumn(PositionViewModel::getTicker).setHeader("Ticker").setKey("ticker").setFlexGrow(0)
                 .setSortable(true)
                 .setTextAlign(ColumnTextAlign.CENTER)
@@ -48,19 +34,17 @@ public class PositionGrid extends Grid<PositionViewModel> {
 
         Grid.Column<PositionViewModel> openAtColumn = addColumn(PositionViewModel::getOpenAt).setHeader("Date").setKey("openAt").setSortable(true)
                 .setFlexGrow(2);
-        // TODO
-        // product -> decimalFormat.format(product.getPrice()) + " $")
         addColumn(PositionViewModel::getBuyTotalAmount).setHeader("Invested").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
         addColumn(PositionViewModel::getBuyAveragePrice).setHeader("Buy Rate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
 
         addColumn(PositionViewModel::getSellAveragePrice).setHeader("Sell Rate").setKey("sellRate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
-        addColumn(pos -> toAmountAndPercentage(pos.getNetProfitAmount(),
+        addColumn(pos -> toAmountUsdAndPercentage(pos.getNetProfitAmount(),
                 pos.getProfitPercentage())).setHeader("Profit").setKey("profit").setTextAlign(ColumnTextAlign.CENTER)
                 .setFlexGrow(3)
                 .setClassNameGenerator(dto -> StyleUtils.toProfitStyle(dto.getProfitPercentage()));
 
         addColumn(PositionViewModel::getCurrentRatePrice).setHeader("Current Rate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
-        addColumn(pos -> toAmountAndPercentage(pos.getCurrentNetProfitAmount(),
+        addColumn(pos -> toAmountUsdAndPercentage(pos.getCurrentNetProfitAmount(),
                 pos.getCurrentProfitPercentage())).setHeader("Unreal. Profit").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3)
                 .setClassNameGenerator(dto -> StyleUtils.toProfitStyle(dto.getCurrentProfitPercentage()));
         // addColumn(PositionViewModel::dealDurationDays).setHeader("Deal days").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
@@ -80,8 +64,12 @@ public class PositionGrid extends Grid<PositionViewModel> {
         }));
     }
 
-    private static String toAmountAndPercentage(BigDecimal amount, BigDecimal percentage) {
+    private static String toAmountUsdAndPercentage(BigDecimal amount, BigDecimal percentage) {
         return percentage.setScale(1, RoundingMode.HALF_UP) + "% (" + amount.setScale(1, RoundingMode.HALF_UP) + "$)";
+    }
+
+    private static BigDecimal toAmount(BigDecimal amount) {
+        return amount.stripTrailingZeros();
     }
 
     private ComponentRenderer<PositionButtonTools, PositionViewModel> getToolButtonRenderer(PositionForm positionForm,

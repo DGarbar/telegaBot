@@ -17,6 +17,7 @@ import org.dharbar.telegabot.service.position.dto.PriceTriggerDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.math.BigDecimal;
 import java.util.Set;
 import java.util.UUID;
 
@@ -64,4 +65,8 @@ public interface PositionFacadeMapper {
     @Mapping(target = "buyQuantity", ignore = true)
     @Mapping(target = "buyAveragePrice", ignore = true)
     PositionDto toDto(UUID id, UpdatePositionRequest request, Set<OrderDto> orders, Set<PriceTriggerDto> priceTriggerDtos);
+
+    default BigDecimal toBigDecimal(BigDecimal value) {
+        return value == null ? null : value.stripTrailingZeros();
+    }
 }

@@ -75,8 +75,9 @@ telegram:
     chat-id: ${TELEGRAM_MY_CHAT_ID}
 
 task:
-  rate-message: 0 0 7,10 * * ?
-  ticker-price-update: 0 7 0 * * 1-5
+  current-rate-message: 0 0 7,10 * * ?
+  eod-ticker-price-update: 0 7 0 * * 1-5
+  current-ticker-price-update: 0 0/5 * * * ?
 
 vaadin:
   frontend:

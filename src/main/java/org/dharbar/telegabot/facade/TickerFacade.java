@@ -20,6 +20,7 @@ public class TickerFacade {
         return tickerService.getAll();
     }
 
+    @Transactional
     public TickerDto createTicker(String ticker, TickerType type) {
         return tickerService.createTicker(ticker, type);
     }

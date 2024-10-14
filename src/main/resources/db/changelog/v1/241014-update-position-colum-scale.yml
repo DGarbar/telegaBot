@@ -1,0 +1,83 @@
+databaseChangeLog:
+  - changeSet:
+      id: 241014-update-position-colum-scale
+      author: dgarbar
+      changes:
+        - tagDatabase:
+            tag: 241014-update-position-colum-scale
+
+        - modifyDataType:
+            tableName: order
+            columnName: quantity
+            newDataType: decimal(19, 8)
+
+        - modifyDataType:
+            tableName: order
+            columnName: rate
+            newDataType: decimal(19, 8)
+
+        - modifyDataType:
+            tableName: order
+            columnName: commission_amount
+            newDataType: decimal(19, 8)
+
+        - modifyDataType:
+            tableName: position
+            columnName: net_profit_amount
+            newDataType: decimal(19, 8)
+
+        - modifyDataType:
+            tableName: position
+            columnName: buy_total_amount
+            newDataType: decimal(19, 8)
+
+        - modifyDataType:
+            tableName: position
+            columnName: buy_quantity
+            newDataType: decimal(19, 8)
+
+        - modifyDataType:
+            tableName: position
+            columnName: buy_average_price
+            newDataType: decimal(19, 8)
+
+        - modifyDataType:
+            tableName: position
+            columnName: sell_total_amount
+            newDataType: decimal(19, 8)
+
+        - modifyDataType:
+            tableName: position
+            columnName: sell_quantity
+            newDataType: decimal(19, 8)
+
+        - modifyDataType:
+            tableName: position
+            columnName: sell_average_price
+            newDataType: decimal(19, 8)
+
+        - modifyDataType:
+            tableName: position
+            columnName: commission_total_amount
+            newDataType: decimal(19, 8)
+
+
+        - modifyDataType:
+            tableName: ticker
+            columnName: price
+            newDataType: decimal(19, 8)
+
+        - modifyDataType:
+            tableName: ticker
+            columnName: price_buy
+            newDataType: decimal(19, 8)
+
+        - modifyDataType:
+            tableName: ticker
+            columnName: price_sell
+            newDataType: decimal(19, 8)
+
+        - modifyDataType:
+            tableName: ticker
+            columnName: ema_day_200_price
+            newDataType: decimal(20,10)

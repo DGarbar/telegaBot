@@ -7,3 +7,9 @@ spring:
 
   jpa:
     show-sql: true
+
+
+task:
+  current-rate-message: 0 0 0 * 12 ?
+  eod-ticker-price-update: 0 0 0 * 12 ?
+  current-ticker-price-update: 0 0 0 */1 12 ?

@@ -9,8 +9,6 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-
 @Data
 @Builder
 public class PositionViewModel {
@@ -54,20 +52,20 @@ public class PositionViewModel {
     BigDecimal currentNetProfitAmount;
     BigDecimal currentProfitPercentage;
 
-    public String getViewSellRate() {
-        return BigDecimal.ZERO.equals(sellAveragePrice) ? "*" + currentRatePrice : sellAveragePrice.toString();
-    }
-
-    public String getViewNetProfitAmount() {
-        return !isClosed && BigDecimal.ZERO.equals(netProfitAmount) ? "*" + currentNetProfitAmount : netProfitAmount.toString();
-    }
-
-    public String getViewProfitPercentage() {
-        return !isClosed && BigDecimal.ZERO.equals(profitPercentage)  ? "*" + currentProfitPercentage : profitPercentage.toString();
-    }
-
-    public long dealDurationDays() {
-        LocalDate positionEnd = closedAt == null ? LocalDate.now() : closedAt;
-        return DAYS.between(openAt, positionEnd);
-    }
+    // public String getViewSellRate() {
+    //     return BigDecimal.ZERO.equals(sellAveragePrice) ? "*" + currentRatePrice : sellAveragePrice.toString();
+    // }
+    //
+    // public String getViewNetProfitAmount() {
+    //     return !isClosed && BigDecimal.ZERO.equals(netProfitAmount) ? "*" + currentNetProfitAmount : netProfitAmount.toString();
+    // }
+    //
+    // public String getViewProfitPercentage() {
+    //     return !isClosed && BigDecimal.ZERO.equals(profitPercentage)  ? "*" + currentProfitPercentage : profitPercentage.toString();
+    // }
+    //
+    // public long dealDurationDays() {
+    //     LocalDate positionEnd = closedAt == null ? LocalDate.now() : closedAt;
+    //     return DAYS.between(openAt, positionEnd);
+    // }
 }

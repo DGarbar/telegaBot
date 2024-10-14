@@ -18,7 +18,7 @@ public class BinanceRateService {
     private final BinanceP2pClient binanceP2pClient;
     private final RateServiceMapper rateServiceMapper;
 
-    public List<RateDto> getRates(List<Currency> currencyFrom, Currency currencyTo) {
+    public List<RateDto> getP2pRates(List<Currency> currencyFrom, Currency currencyTo) {
         BinanceP2pOrderRequest request = BinanceP2pOrderRequest.builder()
                 .fiat(currencyTo.getCurrencyCode())
                 .page(1)

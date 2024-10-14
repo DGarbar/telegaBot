@@ -25,7 +25,7 @@ public class BotTaskService {
     @Value("${telegram.my.chat-id}")
     private Long chatId;
 
-    @Scheduled(cron = "${task.rate-message}")
+    @Scheduled(cron = "${task.current-rate-message}")
     public void sendRates() {
         Map<RateProvider, List<RateDto>> currencyRates = rateService.getFiatCurrencyRates();
         Map<RateProvider, List<RateDto>> cryptoRates = rateService.getCryptoRates();

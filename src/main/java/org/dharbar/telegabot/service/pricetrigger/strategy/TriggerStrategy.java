@@ -3,6 +3,7 @@ package org.dharbar.telegabot.service.pricetrigger.strategy;
 import org.dharbar.telegabot.repository.PriceTriggerRepository;
 import org.dharbar.telegabot.repository.entity.TriggerType;
 import org.dharbar.telegabot.service.alarm.AlarmService;
+import org.dharbar.telegabot.service.ticker.dto.TickerPrice;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,5 +24,9 @@ public abstract class TriggerStrategy {
 
     public boolean isSupports(TriggerType type) {
         return type().equals(type);
+    }
+
+    public void checkCurrent(TickerPrice latestPrice) {
+        // TODO enabledAt add to filter out not needed triggers
     }
 }

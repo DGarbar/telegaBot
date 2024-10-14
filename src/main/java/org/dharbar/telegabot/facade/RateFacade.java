@@ -39,7 +39,7 @@ public class RateFacade {
     }
 
     public Map<RateProvider, List<RateDto>> getCryptoRates() {
-        return Map.of(BINANCE, binanceRateService.getRates(CURRENCY_FROM, UAH));
+        return Map.of(BINANCE, binanceRateService.getP2pRates(CURRENCY_FROM, UAH));
     }
 
 }

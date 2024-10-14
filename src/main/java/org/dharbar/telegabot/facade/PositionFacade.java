@@ -103,6 +103,7 @@ public class PositionFacade {
     private static PositionResponse populatePositionWithCurrentValues(PositionResponse positionResponse, TickerDto tickerDto) {
         BigDecimal currentRate = tickerDto.getPrice();
         positionResponse.setCurrentRatePrice(currentRate);
+
         if (positionResponse.getIsClosed() || positionResponse.getOrders().isEmpty()) {
             positionResponse.setCurrentNetProfitAmount(BigDecimal.ZERO);
             positionResponse.setCurrentProfitPercentage(BigDecimal.ZERO);
