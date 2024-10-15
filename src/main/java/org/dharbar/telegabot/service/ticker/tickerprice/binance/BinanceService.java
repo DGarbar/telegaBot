@@ -23,13 +23,13 @@ public class BinanceService implements TickerPriceProvider {
 
     @Override
     public TickerPrice getLatestPrice(String ticker) {
-        BinanceTickerPriceResponse tickerPrice = binanceClient.getTickerPrice(ticker + "USDT");
+        BinanceTickerPriceResponse tickerPrice = binanceClient.getTickerPrice(toSingleTicker(ticker));
         return tickerPriceMapper.toDto(tickerPrice);
     }
 
     @Override
     public Map<String, TickerPrice> getLatestPrices(List<String> tickers) {
-        List<String> binanceTickers = tickers.stream().map(ticker -> ticker + "USDT").toList();
+        String binanceTickers = tickers.stream().map(BinanceService::toSingleTicker).collect(Collectors.joining("\",\"", "[\"", "\"]"));
         return binanceClient.getTickerPrices(binanceTickers).stream()
                 .map(tickerPriceMapper::toDto)
                 .collect(Collectors.toMap(TickerPrice::getTicker, Function.identity()));
@@ -38,5 +38,9 @@ public class BinanceService implements TickerPriceProvider {
     @Override
     public TickerType getTickerType() {
         return TickerType.CRYPTO;
+    }
+
+    private static String toSingleTicker(String ticker) {
+        return ticker + "USDT";
     }
 }

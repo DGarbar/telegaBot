@@ -15,7 +15,8 @@ public interface BinanceClient {
     @GetMapping(value = "/api/v3/ticker/price")
     BinanceTickerPriceResponse getTickerPrice(@RequestParam String symbol);
 
+    // TODO custom mapper to lists
     // [BTCUSDT, ETHUSDT]
     @GetMapping(value = "/api/v3/ticker/price")
-    List<BinanceTickerPriceResponse> getTickerPrices(@RequestParam List<String> symbols);
+    List<BinanceTickerPriceResponse> getTickerPrices(@RequestParam String symbols);
 }

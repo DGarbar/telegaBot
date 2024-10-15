@@ -62,9 +62,10 @@ public class TickerService {
     @Transactional
     public void updateCurrentTickerPricesFromProvider() {
         // Only for crypto for now. Stock has only EOD.
-        TickerPriceProvider stockPriceProvider = typeToProvider.get(TickerType.STOCK);
+        TickerType crypto = TickerType.CRYPTO;
+        TickerPriceProvider stockPriceProvider = typeToProvider.get(crypto);
 
-        List<TickerEntity> cryptoTickers = tickerRepository.findByType(TickerType.CRYPTO);
+        List<TickerEntity> cryptoTickers = tickerRepository.findByType(crypto);
         List<String> tickerNames = cryptoTickers.stream().map(TickerEntity::getTicker).toList();
         Map<String, TickerPrice> latestPrices = stockPriceProvider.getLatestPrices(tickerNames);
 
