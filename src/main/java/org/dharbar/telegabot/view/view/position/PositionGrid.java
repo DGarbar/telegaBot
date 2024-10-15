@@ -34,7 +34,7 @@ public class PositionGrid extends Grid<PositionViewModel> {
 
         Grid.Column<PositionViewModel> openAtColumn = addColumn(PositionViewModel::getOpenAt).setHeader("Date").setKey("openAt").setSortable(true)
                 .setFlexGrow(2);
-        addColumn(PositionViewModel::getBuyTotalAmount).setHeader("Invested").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
+        addColumn(model -> model.getBuyTotalAmount().setScale(2, RoundingMode.HALF_UP)).setHeader("Invested").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
         addColumn(PositionViewModel::getBuyAveragePrice).setHeader("Buy Rate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
 
         addColumn(PositionViewModel::getSellAveragePrice).setHeader("Sell Rate").setKey("sellRate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);

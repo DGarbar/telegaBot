@@ -203,6 +203,7 @@ public class PositionForm extends Div {
                 .orders(new HashSet<>())
                 .priceTriggers(new HashSet<>())
                 .portfolioId(portfolioId)
+                .type(PositionType.SIMPLE)
                 .build();
         positionViewBinder.setBean(position);
     }

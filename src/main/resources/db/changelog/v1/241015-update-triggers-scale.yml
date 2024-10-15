@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 241015-update-triggers-scale
+      author: dgarbar
+      changes:
+        - tagDatabase:
+            tag: 241015-update-triggers-scale
+
+        - modifyDataType:
+            tableName: price_trigger
+            columnName: trigger_price
+            newDataType: decimal(19, 8)

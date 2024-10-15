@@ -13,16 +13,17 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
 import static org.dharbar.telegabot.service.position.PositionCalculationService.PositionCalculation;
 
-@Mapper(componentModel = "spring", collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED, imports = {OrderType.class})
+@Mapper(componentModel = "spring", collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED, imports = {OrderType.class, LocalDate.class})
 public interface PositionServiceMapper {
 
-    @Mapping(target = "openAt", expression = "java(java.time.LocalDate.now())")
+    @Mapping(target = "openAt", expression = "java(orders.stream().map(OrderEntity::getDateAt).min(LocalDate::compareTo).orElse(LocalDate.now()))")
     @Mapping(target = "alarms", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "closedAt", ignore = true)

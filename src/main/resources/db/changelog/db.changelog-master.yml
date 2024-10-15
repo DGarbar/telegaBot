@@ -25,4 +25,6 @@ databaseChangeLog:
       file: classpath:db/changelog/v1/241006-add-colum-name-position.yml
   - include:
       file: classpath:db/changelog/v1/241014-update-position-colum-scale.yml
+  - include:
+      file: classpath:db/changelog/v1/241015-update-triggers-scale.yml
 
