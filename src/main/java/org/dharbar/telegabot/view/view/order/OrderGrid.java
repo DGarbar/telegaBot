@@ -8,7 +8,6 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import org.dharbar.telegabot.view.model.OrderViewModel;
 import org.dharbar.telegabot.view.view.position.PositionDataProvider;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 public class OrderGrid extends Grid<OrderViewModel> {
@@ -17,17 +16,12 @@ public class OrderGrid extends Grid<OrderViewModel> {
         addClassName("order-grid");
         setAllRowsVisible(true);
 
-        DecimalFormat decimalFormat = new DecimalFormat();
-        decimalFormat.setMaximumFractionDigits(2);
-        decimalFormat.setMinimumFractionDigits(2);
-
         Column<OrderViewModel> date = addColumn(OrderViewModel::getDateAt).setHeader("Date").setKey("dateAt").setSortable(true).setFlexGrow(5);
         addColumn(OrderViewModel::getTotalUsd).setHeader("Total Buy").setKey("sellRate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
-        addColumn(OrderViewModel::getRate).setHeader("Rate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
         addColumn(OrderViewModel::getQuantity).setHeader("Quantity").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
+        addColumn(OrderViewModel::getRate).setHeader("Rate").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
         addColumn(OrderViewModel::getType).setHeader("Type").setKey("type").setTextAlign(ColumnTextAlign.CENTER).setFlexGrow(3);
         addColumn(OrderViewModel::getComment).setHeader("Comment").setFlexGrow(5);
-
 
         OrderDialog orderDialog = new OrderDialog();
         ChangePositionDialog changePositionDialog = new ChangePositionDialog(positionDataProvider);

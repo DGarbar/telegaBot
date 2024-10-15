@@ -4,13 +4,12 @@ import org.dharbar.telegabot.repository.entity.TickerEntity;
 import org.dharbar.telegabot.repository.entity.TickerType;
 import org.dharbar.telegabot.service.ticker.dto.TickerDto;
 import org.dharbar.telegabot.service.ticker.dto.TickerPrice;
+import org.dharbar.telegabot.utils.mapper.StripBigDecimalMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import java.math.BigDecimal;
-
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {StripBigDecimalMapper.class})
 public interface TickerMapper {
 
     @Mapping(target = "ticker", source = "ticker")
@@ -30,7 +29,4 @@ public interface TickerMapper {
 
     TickerDto toDto(TickerEntity entity);
 
-    default BigDecimal toBigDecimal(BigDecimal value) {
-        return value == null ? null : value.stripTrailingZeros();
-    }
 }

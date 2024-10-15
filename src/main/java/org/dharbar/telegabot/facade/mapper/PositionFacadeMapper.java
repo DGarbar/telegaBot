@@ -14,14 +14,14 @@ import org.dharbar.telegabot.service.position.dto.AlarmDto;
 import org.dharbar.telegabot.service.position.dto.OrderDto;
 import org.dharbar.telegabot.service.position.dto.PositionDto;
 import org.dharbar.telegabot.service.position.dto.PriceTriggerDto;
+import org.dharbar.telegabot.utils.mapper.StripBigDecimalMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.math.BigDecimal;
 import java.util.Set;
 import java.util.UUID;
 
-@Mapper(componentModel = "spring", imports = {OrderType.class})
+@Mapper(componentModel = "spring", uses = {StripBigDecimalMapper.class}, imports = {OrderType.class})
 public interface PositionFacadeMapper {
 
     @Mapping(target = "currentRatePrice", ignore = true)
@@ -66,7 +66,4 @@ public interface PositionFacadeMapper {
     @Mapping(target = "buyAveragePrice", ignore = true)
     PositionDto toDto(UUID id, UpdatePositionRequest request, Set<OrderDto> orders, Set<PriceTriggerDto> priceTriggerDtos);
 
-    default BigDecimal toBigDecimal(BigDecimal value) {
-        return value == null ? null : value.stripTrailingZeros();
-    }
 }
