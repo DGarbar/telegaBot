@@ -1,7 +1,6 @@
 package org.dharbar.telegabot.view.view.position;
 
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.KeyModifier;
+import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -11,7 +10,9 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import org.dharbar.telegabot.controller.PortfolioController;
@@ -23,8 +24,8 @@ import org.dharbar.telegabot.view.mapper.PositionViewMapper;
 import org.dharbar.telegabot.view.mapper.TickerViewMapper;
 import org.dharbar.telegabot.view.model.PortfolioViewModel;
 import org.dharbar.telegabot.view.model.PositionViewModel;
-import org.dharbar.telegabot.view.view.portfolio.PortfolioCreationDialog;
 import org.dharbar.telegabot.view.view.portfolio.PortfolioDataProvider;
+import org.dharbar.telegabot.view.view.portfolio.PortfolioDialog;
 import org.dharbar.telegabot.view.view.position.form.PositionForm;
 import org.dharbar.telegabot.view.view.ticker.TickerDataProvider;
 
@@ -39,17 +40,20 @@ public class PositionsView extends HorizontalLayout {
 
     private final Grid<PositionViewModel> grid;
     private final PositionForm positionForm;
-    private final PortfolioCreationDialog portfolioCreationDialog;
+    private final PortfolioDialog portfolioCreationDialog;
 
     private final Checkbox isShowClosedCheckbox = new Checkbox("Show Closed", false);
     private final Select<PortfolioViewModel> portfolioSelect = new Select<>();
+    private final Binder<PortfolioViewModel> portfolioBinder = new Binder<>(PortfolioViewModel.class);
 
     private final PositionDataProvider positionDataProvider;
     private final PortfolioDataProvider portfolioDataProvider;
     private final TickerDataProvider tickerDataProvider;
 
     private TextField filter;
-    private Button newPostitionButton;
+    private final Button portfolioButton = new Button("Add Portfolio", VaadinIcon.PLUS_CIRCLE.create());
+    private final Button newPostitionButton = new Button("New position", VaadinIcon.PLUS_CIRCLE.create());
+    private final Accordion portfolioInfoTab = new Accordion();
 
     public PositionsView(TickerController tickerController,
                          TickerViewMapper tickerViewMapper,
@@ -64,9 +68,10 @@ public class PositionsView extends HorizontalLayout {
         portfolioDataProvider = new PortfolioDataProvider(portfolioController, portfolioViewMapper);
         tickerDataProvider = new TickerDataProvider(tickerController, tickerViewMapper);
 
-        portfolioCreationDialog = new PortfolioCreationDialog(portfolioDataProvider);
+        portfolioCreationDialog = new PortfolioDialog(portfolioDataProvider, portfolioBinder);
 
         HorizontalLayout gridToolbar = setupGridToolbar(portfolioDataProvider);
+        Accordion portfolioInfo = setupPortfolioInfo(portfolioBinder);
 
         positionForm = new PositionForm(positionDataProvider, tickerDataProvider);
 
@@ -77,6 +82,7 @@ public class PositionsView extends HorizontalLayout {
 
         VerticalLayout barAndGridLayout = new VerticalLayout();
         barAndGridLayout.add(gridToolbar);
+        barAndGridLayout.add(portfolioInfo);
         barAndGridLayout.add(grid);
         barAndGridLayout.setFlexGrow(0, gridToolbar);
         barAndGridLayout.setFlexGrow(1, grid);
@@ -97,40 +103,59 @@ public class PositionsView extends HorizontalLayout {
         portfolioSelect.setItemLabelGenerator(item -> item != null ? item.getName() : "All Portfolios");
         portfolioSelect.setDataProvider(portfolioDataProvider);
         portfolioSelect.addValueChangeListener(e -> {
-            newPostitionButton.setEnabled(e.getValue() != null);
+            portfolioBinder.setBean(e.getValue());
+            if (e.getValue() != null) {
+                portfolioButton.setText("Edit Portfolio");
+                portfolioButton.setIcon(VaadinIcon.EDIT.create());
+
+                portfolioInfoTab.setVisible(true);
+                portfolioInfoTab.getChildren().forEach(component -> component.setVisible(true));
+            } else {
+                portfolioButton.setText("Add Portfolio");
+                portfolioButton.setIcon(VaadinIcon.PLUS_CIRCLE.create());
+
+                portfolioInfoTab.setVisible(false);
+                portfolioInfoTab.getChildren().forEach(component -> component.setVisible(false));
+            }
             listPositions();
         });
 
-        Button addPortfolioButton = new Button("Add Portfolio", VaadinIcon.PLUS_CIRCLE.create());
-        addPortfolioButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        addPortfolioButton.addClickListener(e -> portfolioCreationDialog.open());
+        portfolioButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        portfolioButton.addClickListener(click -> portfolioCreationDialog.open());
 
         filter = new TextField();
         filter.setPlaceholder("(TODO) Filter name, availability or category");
-        // Apply the filter to grid's data provider. TextField value is never
-        // filter.addValueChangeListener(event -> dataProvider.setFilter(event.getValue()));
-        // A shortcut to focus on the textField by pressing ctrl + F
-        // filter.addFocusShortcut(Key.KEY_F, KeyModifier.CONTROL);
 
-        newPostitionButton = new Button("New position", VaadinIcon.PLUS_CIRCLE.create());
         newPostitionButton.setEnabled(false);
-        // Setting theme variant of new production button to LUMO_PRIMARY that
-        // changes its background color to blue and its text color to white
         newPostitionButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         newPostitionButton.addClickListener(click -> positionForm.showNewPosition(getSelectedPortfolioId()));
-        // A shortcut to click the new product button by pressing ALT + N
-        newPostitionButton.addClickShortcut(Key.KEY_N, KeyModifier.ALT);
 
         HorizontalLayout topLayout = new HorizontalLayout();
         topLayout.setWidth("100%");
         topLayout.add(portfolioSelect);
-        topLayout.add(addPortfolioButton);
+        topLayout.add(portfolioButton);
         topLayout.add(isShowClosedCheckbox);
         topLayout.add(filter);
         topLayout.add(newPostitionButton);
         topLayout.setVerticalComponentAlignment(Alignment.START, filter);
         topLayout.expand(filter);
+
         return topLayout;
+    }
+
+    private Accordion setupPortfolioInfo(Binder<PortfolioViewModel> portfolioBinder) {
+        portfolioInfoTab.close();
+        portfolioInfoTab.setWidth("100%");
+        portfolioInfoTab.setVisible(false);
+
+        TextArea description = new TextArea();
+        description.setWidthFull();
+        portfolioBinder.bind(description, PortfolioViewModel::getDescription, PortfolioViewModel::setDescription);
+
+        HorizontalLayout infoLayout = new HorizontalLayout(description);
+        portfolioInfoTab.add("Portfolio Info", infoLayout);
+
+        return portfolioInfoTab;
     }
 
     private void listPositions() {

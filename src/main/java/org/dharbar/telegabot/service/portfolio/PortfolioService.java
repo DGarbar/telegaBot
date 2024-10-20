@@ -6,6 +6,7 @@ import org.dharbar.telegabot.repository.entity.PortfolioEntity;
 import org.dharbar.telegabot.service.portfolio.dto.PortfolioDto;
 import org.dharbar.telegabot.service.portfolio.mapper.PortfolioServiceMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +35,14 @@ public class PortfolioService {
     public PortfolioDto create(PortfolioDto portfolioDto) {
         PortfolioEntity entity = mapper.toEntity(portfolioDto);
         PortfolioEntity savedPortfolio = portfolioRepository.save(entity);
+        return mapper.toDto(savedPortfolio);
+    }
+
+    @Transactional
+    public PortfolioDto update(UUID id, PortfolioDto dto) {
+        PortfolioEntity portfolio = portfolioRepository.findById(id).orElseThrow();
+        PortfolioEntity updatedPortfolio = mapper.update(portfolio, dto);
+        PortfolioEntity savedPortfolio = portfolioRepository.save(updatedPortfolio);
         return mapper.toDto(savedPortfolio);
     }
 }

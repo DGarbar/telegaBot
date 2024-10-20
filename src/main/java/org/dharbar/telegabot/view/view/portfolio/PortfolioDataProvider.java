@@ -43,15 +43,26 @@ public class PortfolioDataProvider extends AbstractBackEndDataProvider<Portfolio
         return portfolioController.getPortfolios();
     }
 
-    public void saveNewPortfolio(String name, String description) {
+    public void savePortfolio(String name, String description) {
         CreatePortfolioRequest createPortfolioRequest = portfolioViewMapper.toCreatePortfolioRequest(name, description);
         portfolioController.createPortfolio(createPortfolioRequest);
-
         refreshAll();
+    }
+
+    public void updatePortfolio(PortfolioViewModel portfolio) {
+        CreatePortfolioRequest createPortfolioRequest = portfolioViewMapper.toCreatePortfolioRequest(portfolio);
+        PortfolioResponse response = portfolioController.updatePortfolio(portfolio.getId(), createPortfolioRequest);
+        PortfolioViewModel model = toModel(response);
+        refreshItem(model);
     }
 
     @Override
     public UUID getId(PortfolioViewModel item) {
+        if (item == null) {
+            // Kostil
+            // Select use null (All portfolios) value that fails refreshItem(model)
+            return UUID.randomUUID();
+        }
         return item.getId();
     }
 

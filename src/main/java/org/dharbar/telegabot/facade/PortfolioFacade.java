@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +30,12 @@ public class PortfolioFacade {
     public PortfolioResponse createPortfolio(CreatePortfolioRequest request) {
         PortfolioDto dto = portfolioFacadeMapper.toDto(request);
         PortfolioDto savedPortfolio = portfolioService.create(dto);
+        return portfolioFacadeMapper.toResponse(savedPortfolio);
+    }
+
+    public PortfolioResponse updatePortfolio(UUID id, CreatePortfolioRequest request) {
+        PortfolioDto dto = portfolioFacadeMapper.toDto(request);
+        PortfolioDto savedPortfolio = portfolioService.update(id, dto);
         return portfolioFacadeMapper.toResponse(savedPortfolio);
     }
 

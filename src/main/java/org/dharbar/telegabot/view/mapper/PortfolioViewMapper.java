@@ -14,5 +14,7 @@ public interface PortfolioViewMapper {
 
     List<PortfolioViewModel> toModel(List<PortfolioResponse> response);
 
+    CreatePortfolioRequest toCreatePortfolioRequest(PortfolioViewModel model);
+
     CreatePortfolioRequest toCreatePortfolioRequest(String name, String description);
 }
