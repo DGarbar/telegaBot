@@ -4,11 +4,12 @@ import org.dharbar.telegabot.repository.PriceTriggerRepository;
 import org.dharbar.telegabot.repository.entity.PriceTriggerEntity;
 import org.dharbar.telegabot.repository.entity.TriggerType;
 import org.dharbar.telegabot.service.alarm.AlarmService;
+import org.dharbar.telegabot.service.ticker.dto.TickerPrice;
+import org.dharbar.telegabot.service.ticker.dto.TickerRangePrice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,10 +21,24 @@ public class StopLossTriggerStrategy extends TriggerStrategy {
 
     @Override
     @Transactional
-    public void checkEndOfDay(String ticker, BigDecimal low, BigDecimal high, LocalDateTime date) {
-        List<PriceTriggerEntity> stopLossTriggers = priceTriggerRepository.findAllByTickerAndTypeAndPriceIn(ticker, TriggerType.STOP_LOSS, low, high);
+    public void checkEndOfDay(TickerRangePrice tickerRangePrice) {
+        String ticker = tickerRangePrice.getTicker();
+        BigDecimal low = tickerRangePrice.getLowPrice();
+        List<PriceTriggerEntity> stopLossTriggers = priceTriggerRepository.findAllByTickerAndTypeAndPriceMore(ticker, type(), low);
+        process(stopLossTriggers);
+    }
+
+    @Override
+    public void checkCurrent(TickerPrice latestPrice) {
+        String ticker = latestPrice.getTicker();
+        BigDecimal price = latestPrice.getPrice();
+        List<PriceTriggerEntity> stopLossTriggers = priceTriggerRepository.findAllByTickerAndTypeAndPriceMore(ticker, type(), price);
+        process(stopLossTriggers);
+    }
+
+    private void process(List<PriceTriggerEntity> stopLossTriggers) {
         for (PriceTriggerEntity stopLossTrigger : stopLossTriggers) {
-            alarmService.createAlarm(stopLossTrigger.getPosition().getId(), TriggerType.STOP_LOSS);
+            alarmService.createAlarm(stopLossTrigger.getPosition().getId(), type());
             stopLossTrigger.setIsTriggered(true);
             priceTriggerRepository.save(stopLossTrigger);
         }

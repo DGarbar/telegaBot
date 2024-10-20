@@ -5,6 +5,7 @@ import org.dharbar.telegabot.client.binance.BinanceClient;
 import org.dharbar.telegabot.client.binance.response.BinanceTickerPriceResponse;
 import org.dharbar.telegabot.repository.entity.TickerType;
 import org.dharbar.telegabot.service.ticker.dto.TickerPrice;
+import org.dharbar.telegabot.service.ticker.dto.TickerRangePrice;
 import org.dharbar.telegabot.service.ticker.mapper.TickerPriceMapper;
 import org.dharbar.telegabot.service.ticker.tickerprice.TickerPriceProvider;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,15 @@ public class BinanceService implements TickerPriceProvider {
         return binanceClient.getTickerPrices(binanceTickers).stream()
                 .map(tickerPriceMapper::toDto)
                 .collect(Collectors.toMap(TickerPrice::getTicker, Function.identity()));
+    }
+
+    @Override
+    public Map<String, TickerRangePrice> getDayPrices(List<String> tickers) {
+        String binanceTickers = tickers.stream().map(BinanceService::toSingleTicker).collect(Collectors.joining("\",\"", "[\"", "\"]"));
+        return binanceClient.getDayPrice(binanceTickers, null)
+                .stream()
+                .map(tickerPriceMapper::toDto)
+                .collect(Collectors.toMap(TickerRangePrice::getTicker, Function.identity()));
     }
 
     @Override

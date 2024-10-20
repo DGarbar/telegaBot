@@ -4,9 +4,7 @@ import org.dharbar.telegabot.repository.PriceTriggerRepository;
 import org.dharbar.telegabot.repository.entity.TriggerType;
 import org.dharbar.telegabot.service.alarm.AlarmService;
 import org.dharbar.telegabot.service.ticker.dto.TickerPrice;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import org.dharbar.telegabot.service.ticker.dto.TickerRangePrice;
 
 public abstract class TriggerStrategy {
 
@@ -18,15 +16,13 @@ public abstract class TriggerStrategy {
         this.priceTriggerRepository = priceTriggerRepository;
     }
 
-    public abstract void checkEndOfDay(String ticker, BigDecimal low, BigDecimal high, LocalDateTime time);
+    public abstract void checkEndOfDay(TickerRangePrice tickerRangePrice);
+
+    public abstract void checkCurrent(TickerPrice latestPrice);
 
     public abstract TriggerType type();
 
     public boolean isSupports(TriggerType type) {
         return type().equals(type);
-    }
-
-    public void checkCurrent(TickerPrice latestPrice) {
-        // TODO enabledAt add to filter out not needed triggers
     }
 }

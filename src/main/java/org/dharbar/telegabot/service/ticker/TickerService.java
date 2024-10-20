@@ -6,6 +6,7 @@ import org.dharbar.telegabot.repository.entity.TickerType;
 import org.dharbar.telegabot.service.pricetrigger.PriceTriggerService;
 import org.dharbar.telegabot.service.ticker.dto.TickerDto;
 import org.dharbar.telegabot.service.ticker.dto.TickerPrice;
+import org.dharbar.telegabot.service.ticker.dto.TickerRangePrice;
 import org.dharbar.telegabot.service.ticker.mapper.TickerMapper;
 import org.dharbar.telegabot.service.ticker.tickerprice.TickerPriceProvider;
 import org.springframework.stereotype.Service;
@@ -78,20 +79,24 @@ public class TickerService {
         });
     }
 
+    // TODO transaction segregation
     @Transactional
     public void updateEndOfDayTickerPricesFromProvider() {
-        // tickerRepository.findAll()
-        //         .forEach(this::updateTickerPriceFromProvider);
-    }
+        for (TickerType tickerType : TickerType.values()) {
 
-    // TODO in new transaction ?
-    private void updateTickerPriceFromProvider(TickerEntity tickerEntity) {
-        TickerPriceProvider tickerPriceProvider = typeToProvider.get(tickerEntity.getType());
-        TickerPrice latestPrice = tickerPriceProvider.getLatestPrice(tickerEntity.getTicker());
+            TickerPriceProvider stockPriceProvider = typeToProvider.get(tickerType);
 
-        TickerEntity updatedEntity = tickerMapper.toEntity(latestPrice, tickerEntity);
-        tickerRepository.save(updatedEntity);
+            List<TickerEntity> cryptoTickers = tickerRepository.findByType(tickerType);
+            List<String> tickerNames = cryptoTickers.stream().map(TickerEntity::getTicker).toList();
+            Map<String, TickerRangePrice> dayPrices = stockPriceProvider.getDayPrices(tickerNames);
 
-        // priceTriggerService.checkEndOfDay(tickerName, response.getLow(), response.getHigh(), updatedEntity.getPriceUpdatedAt());
+            cryptoTickers.forEach(ticker -> {
+                TickerRangePrice tickerRangePrice = dayPrices.get(ticker.getTicker());
+                TickerEntity updatedEntity = tickerMapper.toEntity(tickerRangePrice, ticker);
+                tickerRepository.save(updatedEntity);
+
+                priceTriggerService.checkEndOfDay(tickerRangePrice);
+            });
+        }
     }
 }

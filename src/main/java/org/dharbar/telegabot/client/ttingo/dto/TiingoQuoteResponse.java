@@ -15,15 +15,14 @@ public class TiingoQuoteResponse {
     private double adjOpen;
     private long adjVolume;
 
-    private BigDecimal close;
-
     private ZonedDateTime date;
 
     private double divCash;
 
     private BigDecimal high;
     private BigDecimal low;
-    private double open;
+    private BigDecimal open;
+    private BigDecimal close;
 
     @JsonProperty("splitFactor")
     private double splitFactor;

@@ -22,4 +22,24 @@ public interface PriceTriggerRepository extends CrudRepository<PriceTriggerEntit
                                                               TriggerType type,
                                                               BigDecimal low,
                                                               BigDecimal high);
+
+    // Stop Loss
+    @Query("SELECT p FROM PriceTriggerEntity p "
+            + "WHERE p.position.ticker = :ticker "
+            + "and p.triggerPrice >= :price "
+            + "and p.type = :type "
+            + "and p.isTriggered = false")
+    List<PriceTriggerEntity> findAllByTickerAndTypeAndPriceMore(String ticker,
+                                                                TriggerType type,
+                                                                BigDecimal price);
+
+    // Take Profit
+    @Query("SELECT p FROM PriceTriggerEntity p "
+            + "WHERE p.position.ticker = :ticker "
+            + "and p.triggerPrice <= :price "
+            + "and p.type = :type "
+            + "and p.isTriggered = false")
+    List<PriceTriggerEntity> findAllByTickerAndTypeAndPriceLess(String ticker,
+                                                                TriggerType type,
+                                                                BigDecimal price);
 }

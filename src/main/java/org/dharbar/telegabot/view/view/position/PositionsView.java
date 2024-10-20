@@ -107,12 +107,14 @@ public class PositionsView extends HorizontalLayout {
             if (e.getValue() != null) {
                 portfolioButton.setText("Edit Portfolio");
                 portfolioButton.setIcon(VaadinIcon.EDIT.create());
+                newPostitionButton.setEnabled(true);
 
                 portfolioInfoTab.setVisible(true);
                 portfolioInfoTab.getChildren().forEach(component -> component.setVisible(true));
             } else {
                 portfolioButton.setText("Add Portfolio");
                 portfolioButton.setIcon(VaadinIcon.PLUS_CIRCLE.create());
+                newPostitionButton.setEnabled(false);
 
                 portfolioInfoTab.setVisible(false);
                 portfolioInfoTab.getChildren().forEach(component -> component.setVisible(false));

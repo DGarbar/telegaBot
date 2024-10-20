@@ -1,6 +1,7 @@
 package org.dharbar.telegabot.client.binance;
 
 import org.dharbar.telegabot.client.binance.config.BinanceFeignConfig;
+import org.dharbar.telegabot.client.binance.response.BinanceDayResponse;
 import org.dharbar.telegabot.client.binance.response.BinanceTickerPriceResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,10 @@ public interface BinanceClient {
     @GetMapping(value = "/api/v3/ticker/price")
     BinanceTickerPriceResponse getTickerPrice(@RequestParam String symbol);
 
-    // TODO custom mapper to lists
     // [BTCUSDT, ETHUSDT]
     @GetMapping(value = "/api/v3/ticker/price")
     List<BinanceTickerPriceResponse> getTickerPrices(@RequestParam String symbols);
+
+    @GetMapping(value = "/api/v3/ticker/24hr")
+    List<BinanceDayResponse> getDayPrice(@RequestParam String symbols, @RequestParam(required = false, defaultValue = "MINI") String type);
 }
