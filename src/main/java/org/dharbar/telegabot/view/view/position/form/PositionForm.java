@@ -99,7 +99,7 @@ public class PositionForm extends Div {
         tickerComboBox.setItemLabelGenerator(TickerDto::getTicker);
         tickerComboBox.addValueChangeListener(e -> {
             TickerDto value = e.getValue();
-            if (value != null) {
+            if (value != null && nameField.isEmpty()) {
                 nameField.setValue(value.getTicker());
             }
         });

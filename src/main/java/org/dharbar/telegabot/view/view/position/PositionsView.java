@@ -152,6 +152,8 @@ public class PositionsView extends HorizontalLayout {
 
         TextArea description = new TextArea();
         description.setWidthFull();
+        description.setReadOnly(true);
+        // TODO add update button to edit description
         portfolioBinder.bind(description, PortfolioViewModel::getDescription, PortfolioViewModel::setDescription);
 
         HorizontalLayout infoLayout = new HorizontalLayout(description);

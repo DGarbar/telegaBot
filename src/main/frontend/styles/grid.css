@@ -179,7 +179,7 @@
 }
 
 .xrp {
-    background-color: rgba(0, 113, 255, 0.1);
+    background-color: rgba(227, 186, 186, 0.92);
     color: rgba(91, 7, 77, 0.91);
 }
 
@@ -195,7 +195,7 @@
 
 .near {
     background-color: rgba(229, 203, 203, 0.67);
-    color: rgba(0, 255, 45, 0.91);
+    color: rgba(93, 187, 112, 0.91);
 }
 
 .atom {
@@ -208,4 +208,9 @@
     color: rgba(110, 11, 133, 0.91);
 }
 
+
+.sol {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: rgb(170, 131, 183);
+}
 
