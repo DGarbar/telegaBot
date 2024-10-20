@@ -82,6 +82,7 @@ public class PositionService {
         positionMapper.updateEntity(position,
                 positionDto.getName(),
                 positionDto.getType(),
+                positionDto.getComment(),
                 orderChange.getAdded(),
                 priceTriggerChange.getAdded(),
                 positionCalculation);

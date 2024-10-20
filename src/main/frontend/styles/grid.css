@@ -165,3 +165,47 @@
     background-color: rgba(161, 104, 57, 0.1);
     color: rgba(190, 55, 51, 0.56);
 }
+
+
+/*crypto*/
+.btc {
+    background-color: rgba(239, 239, 239, 0.1);
+    color: rgba(255, 168, 0, 0.91);
+}
+
+.eth {
+    background-color: rgba(255, 245, 245, 0.1);
+    color: rgba(0, 113, 255, 0.91);
+}
+
+.xrp {
+    background-color: rgba(0, 113, 255, 0.1);
+    color: rgba(91, 7, 77, 0.91);
+}
+
+.sfp {
+    background-color: rgba(255, 255, 255, 0.6);
+    color: rgba(126, 0, 243, 0.91);
+}
+
+.dot {
+    background-color: rgba(35, 20, 20, 0.6);
+    color: rgba(250, 2, 2, 0.91);
+}
+
+.near {
+    background-color: rgba(229, 203, 203, 0.67);
+    color: rgba(0, 255, 45, 0.91);
+}
+
+.atom {
+    background-color: rgb(255, 255, 255);
+    color: rgba(0, 0, 0, 0.91);
+}
+
+.pol {
+    background-color: rgba(255, 147, 147, 0.6);
+    color: rgba(110, 11, 133, 0.91);
+}
+
+

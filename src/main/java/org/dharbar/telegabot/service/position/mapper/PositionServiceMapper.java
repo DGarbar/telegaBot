@@ -46,13 +46,13 @@ public interface PositionServiceMapper {
     @Mapping(target = "closedAt", expression = "java(calculation.isClosed() ? java.time.LocalDate.now() : null)")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "openAt", ignore = true)
-    @Mapping(target = "comment", ignore = true)
     @Mapping(target = "ticker", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     void updateEntity(@MappingTarget PositionEntity position,
                       String name,
                       PositionType type,
+                      String comment,
                       Set<OrderEntity> orders,
                       Set<PriceTriggerEntity> priceTriggers,
                       PositionCalculation calculation);
