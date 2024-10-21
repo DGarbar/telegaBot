@@ -111,13 +111,14 @@ public class PositionFacade {
         }
 
         BigDecimal leftQuantity = positionResponse.getBuyQuantity().subtract(positionResponse.getSellQuantity());
-        BigDecimal currentLeftPrice = leftQuantity.multiply(currentRate);
+        BigDecimal currentLeftAmount = leftQuantity.multiply(currentRate);
+        BigDecimal sellAllAmount = currentLeftAmount.add(positionResponse.getSellTotalAmount());
 
-        BigDecimal currentNetProfitAmount = currentLeftPrice
-                .subtract(leftQuantity.multiply(positionResponse.getBuyAveragePrice()))
-                .add(positionResponse.getSellTotalAmount())
+        BigDecimal currentNetProfitAmount = sellAllAmount
+                .subtract(positionResponse.getBuyTotalAmount())
                 .subtract(positionResponse.getCommissionTotalAmount())
                 .setScale(3, RoundingMode.HALF_UP);
+
         positionResponse.setCurrentNetProfitAmount(currentNetProfitAmount);
 
         BigDecimal buyTotalAmount = positionResponse.getBuyTotalAmount().scaleByPowerOfTen(-2);
