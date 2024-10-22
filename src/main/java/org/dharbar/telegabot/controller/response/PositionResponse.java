@@ -37,6 +37,7 @@ public class PositionResponse {
     BigDecimal sellQuantity;
     BigDecimal sellAveragePrice;
 
+    BigDecimal investedAmount;
     BigDecimal commissionTotalAmount;
 
     BigDecimal netProfitAmount;

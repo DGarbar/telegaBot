@@ -41,6 +41,8 @@ public class PositionViewModel {
     BigDecimal sellQuantity;
     BigDecimal sellAveragePrice;
 
+    BigDecimal investedAmount;
+
     BigDecimal commissionTotalAmount;
 
     BigDecimal netProfitAmount;

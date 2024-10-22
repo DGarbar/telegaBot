@@ -27,7 +27,8 @@ public interface PositionFacadeMapper {
     @Mapping(target = "currentRatePrice", ignore = true)
     @Mapping(target = "currentNetProfitAmount", ignore = true)
     @Mapping(target = "currentProfitPercentage", ignore = true)
-    PositionResponse toResponse(PositionDto positionDto);
+    @Mapping(target = "investedAmount", expression = "java(dto.getBuyTotalAmount().subtract(dto.getSellTotalAmount()).setScale(2, java.math.RoundingMode.HALF_UP))")
+    PositionResponse toResponse(PositionDto dto);
 
     OrderResponse toResponse(OrderDto dto);
     PriceTriggerResponse toResponse(PriceTriggerDto dto);
