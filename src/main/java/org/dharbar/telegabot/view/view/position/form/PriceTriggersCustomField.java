@@ -16,17 +16,17 @@ import java.util.Set;
 public class PriceTriggersCustomField extends CustomField<Set<PriceTriggerViewModel>> {
 
     private final BigDecimalField stopLossField = new BigDecimalField("Stop Loss");
-    private final Checkbox stopLossEnabledCheckbox = new Checkbox("E s", true);
+    private final Checkbox stopLossEnabledCheckbox = new Checkbox("Set l", false);
 
     private final BigDecimalField takeProfitField = new BigDecimalField("Take Profit");
-    private final Checkbox takeProfitEnabledCheckbox = new Checkbox("E t", true);
+    private final Checkbox takeProfitEnabledCheckbox = new Checkbox("Set p", false);
 
     private final BigDecimalField gridBuyPriceField = new BigDecimalField("Grid Buy Price");
-    private final Checkbox gridBuyEnabledCheckbox = new Checkbox("E Gb", true);
+    private final Checkbox gridBuyEnabledCheckbox = new Checkbox("Set gb", false);
     private final HorizontalLayout gridBuyLayout = new HorizontalLayout();
 
     private final BigDecimalField gridSellPriceField = new BigDecimalField("Grid Sell Price");
-    private final Checkbox gridSellEnabledCheckbox = new Checkbox("E gs", true);
+    private final Checkbox gridSellEnabledCheckbox = new Checkbox("Set gs", false);
     private final HorizontalLayout gridSellLayout = new HorizontalLayout();
 
     public PriceTriggersCustomField() {
@@ -108,13 +108,13 @@ public class PriceTriggersCustomField extends CustomField<Set<PriceTriggerViewMo
     @Override
     protected void setPresentationValue(Set<PriceTriggerViewModel> priceTriggerViewModels) {
         stopLossField.clear();
-        stopLossEnabledCheckbox.setValue(true);
+        stopLossEnabledCheckbox.setValue(false);
         takeProfitField.clear();
-        takeProfitEnabledCheckbox.setValue(true);
+        takeProfitEnabledCheckbox.setValue(false);
         gridBuyPriceField.clear();
-        gridSellEnabledCheckbox.setValue(true);
+        gridSellEnabledCheckbox.setValue(false);
         gridSellPriceField.clear();
-        gridSellEnabledCheckbox.setValue(true);
+        gridSellEnabledCheckbox.setValue(false);
 
         priceTriggerViewModels.forEach(priceTriggerViewModel -> {
             TriggerType type = priceTriggerViewModel.getType();
