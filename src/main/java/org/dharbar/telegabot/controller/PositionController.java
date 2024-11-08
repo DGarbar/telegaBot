@@ -75,8 +75,14 @@ public class PositionController {
         return positionsFacade.updatePositionOrder(id, orderId, request);
     }
 
+    @DeleteMapping("/api/positions/{id}")
+    public void deletePosition(@PathVariable UUID id) {
+        positionsFacade.deletePosition(id);
+    }
+
     @DeleteMapping("/api/positions/{id}/alarms/{alarmId}")
     public void deleteAlarm(@PathVariable UUID id, @PathVariable UUID alarmId) {
         positionsFacade.deletePositionAlarm(id, alarmId);
     }
+
 }

@@ -24,7 +24,7 @@ public class OrderGrid extends Grid<OrderViewModel> {
         addColumn(OrderViewModel::getComment).setHeader("Comment").setFlexGrow(5);
 
         OrderDialog orderDialog = new OrderDialog();
-        ChangePositionDialog changePositionDialog = new ChangePositionDialog(positionDataProvider);
+        ChangeOrderDialog changePositionDialog = new ChangeOrderDialog(positionDataProvider);
         addColumn(new ComponentRenderer<>(
                 OrderButtonTools::new,
                 (tools, order) -> {

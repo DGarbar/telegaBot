@@ -15,6 +15,7 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dharbar.telegabot.repository.entity.PositionType;
 import org.dharbar.telegabot.service.ticker.dto.TickerDto;
 import org.dharbar.telegabot.view.model.PositionViewModel;
@@ -48,9 +49,10 @@ public class PositionForm extends Div {
     private final Binder<PositionViewModel> positionViewBinder = new Binder<>(PositionViewModel.class);
 
     private final Button saveButton = new Button("Save Position");
-    private final Button addOrderButton = new Button("Add Order", VaadinIcon.DOLLAR.create());
-    private final Button sellAllOrderButton = new Button("Sell All Order", VaadinIcon.CLOSE_CIRCLE.create());
-    private final Button recalcualtePositionButton = new Button("Recalc.", VaadinIcon.REFRESH.create());
+    private final Button addOrderButton = new Button("Buy", VaadinIcon.DIAMOND.create());
+    private final Button sellAllOrderButton = new Button("Sell", VaadinIcon.CASH.create());
+    private final Button recalcualtePositionButton = new Button( VaadinIcon.REFRESH.create());
+    private final Button deletePositionButton = new Button(VaadinIcon.TRASH.create());
 
     private final PositionDataProvider positionDataProvider;
     private final OrderDialog orderDialog;
@@ -131,7 +133,7 @@ public class PositionForm extends Div {
 
     private Component setupOrderButtonLayout() {
         addOrderButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
-        addOrderButton.setIcon(VaadinIcon.DOLLAR.create());
+        addOrderButton.setIcon(VaadinIcon.DIAMOND.create());
         addOrderButton.addClickListener(e -> {
             PositionViewModel position = positionViewBinder.getBean();
             orderDialog.showNewOrder(position.getTicker(), BigDecimal.ZERO, position.getId(), order -> position.getOrders().add(order));
@@ -142,7 +144,7 @@ public class PositionForm extends Div {
             PositionViewModel position = positionViewBinder.getBean();
             openSellAllOrder(position);
         });
-        sellAllOrderButton.setIcon(VaadinIcon.CLOSE_CIRCLE.create());
+        sellAllOrderButton.setIcon(VaadinIcon.CASH.create());
 
         return new HorizontalLayout(addOrderButton, sellAllOrderButton);
     }
@@ -164,7 +166,16 @@ public class PositionForm extends Div {
 
         closeButton.addClickListener(e -> showForm(false));
 
-        return new HorizontalLayout(saveButton, recalcualtePositionButton, closeButton);
+        deletePositionButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        deletePositionButton.addClickListener(e -> {
+            PositionViewModel position = positionViewBinder.getBean();
+            UUID id = position.getId();
+            positionDataProvider.deletePosition(id);
+            Notification.show(position.getTicker() + " removed").setPosition(Notification.Position.TOP_END);
+            showForm(false);
+        });
+
+        return new HorizontalLayout(saveButton, recalcualtePositionButton, deletePositionButton, closeButton);
     }
 
     private void processPositionOrderCreation() {
@@ -194,6 +205,11 @@ public class PositionForm extends Div {
         positionViewBinder.bind(priceTriggersCustomField, PositionViewModel::getPriceTriggers, PositionViewModel::setPriceTriggers);
 
         positionViewBinder.bind(alarmListComponent, PositionViewModel::getAlarms, PositionViewModel::setAlarms);
+
+        positionViewBinder.addStatusChangeListener(event -> {
+            PositionViewModel position = positionViewBinder.getBean();
+            deletePositionButton.setVisible(position != null && position.getId() != null && CollectionUtils.isEmpty(position.getOrders()));
+        });
     }
 
     public void showNewPosition(UUID portfolioId) {
@@ -215,7 +231,8 @@ public class PositionForm extends Div {
 
     public void openSellAllOrder(PositionViewModel position) {
         BigDecimal quantity = position.getBuyQuantity().subtract(position.getSellQuantity());
-        orderDialog.showSellAllOrder(position.getTicker(),
+        orderDialog.showSellAllOrder(
+                position.getTicker(),
                 position.getCurrentRatePrice(),
                 quantity,
                 position.getId(),

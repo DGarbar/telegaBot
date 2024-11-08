@@ -9,6 +9,7 @@ import org.dharbar.telegabot.controller.response.PortfolioResponse;
 import org.dharbar.telegabot.view.mapper.PortfolioViewMapper;
 import org.dharbar.telegabot.view.model.PortfolioViewModel;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -29,6 +30,7 @@ public class PortfolioDataProvider extends AbstractBackEndDataProvider<Portfolio
     protected Stream<PortfolioViewModel> fetchFromBackEnd(Query query) {
         log.info("Get portfolios");
         return getPortfoliosResponse(query).stream()
+                .sorted(Comparator.comparing(PortfolioResponse::getName))
                 .map(this::toModel);
     }
 

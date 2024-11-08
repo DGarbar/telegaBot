@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Slf4j
-public class ChangePositionDialog extends Dialog {
+public class ChangeOrderDialog extends Dialog {
 
     private final VerticalLayout content;
 
@@ -30,7 +30,7 @@ public class ChangePositionDialog extends Dialog {
 
     private OrderViewModel currentOrder;
 
-    public ChangePositionDialog(PositionDataProvider positionDataProvider) {
+    public ChangeOrderDialog(PositionDataProvider positionDataProvider) {
         this.positionDataProvider = positionDataProvider;
 
         setHeaderTitle("Change position");

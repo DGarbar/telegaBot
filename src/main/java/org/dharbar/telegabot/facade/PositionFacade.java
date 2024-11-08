@@ -128,6 +128,10 @@ public class PositionFacade {
         return positionResponse;
     }
 
+    public void deletePosition(UUID positionId) {
+        positionService.delete(positionId);
+    }
+
     @Transactional
     public void deletePositionAlarm(UUID positionId, UUID alarmId) {
         positionService.deleteAlarm(alarmId, positionId);

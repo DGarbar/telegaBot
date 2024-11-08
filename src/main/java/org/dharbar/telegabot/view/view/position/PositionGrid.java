@@ -82,7 +82,7 @@ public class PositionGrid extends Grid<PositionViewModel> {
                         UUID positionId = position.getId();
                         orderDialog.showNewOrder(
                                 position.getTicker(),
-                                BigDecimal.ZERO,
+                                position.getCurrentRatePrice(),
                                 positionId,
                                 order -> positionDataProvider.addOrderToPosition(positionId, order));
                     });
@@ -98,7 +98,7 @@ public class PositionGrid extends Grid<PositionViewModel> {
                                 order -> positionDataProvider.addOrderToPosition(positionId, order));
                     });
                     tools.setupEditButton(position, e -> positionForm.showPosition(position));
-                    tools.setupShowOrdersButton(e -> setDetailsVisible(position, !isDetailsVisible(position)));
+                    tools.setupShowOrdersButton(position, e -> setDetailsVisible(position, !isDetailsVisible(position)));
                 });
     }
 

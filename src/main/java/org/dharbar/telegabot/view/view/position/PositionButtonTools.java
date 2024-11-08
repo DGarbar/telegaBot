@@ -21,15 +21,15 @@ public class PositionButtonTools extends HorizontalLayout {
 
     public void setupAddOrderButton(ComponentEventListener<ClickEvent<Button>> listener) {
         addBuyOrderButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        addBuyOrderButton.setTooltipText("Add buy order");
+        addBuyOrderButton.setTooltipText("Buy");
         addBuyOrderButton.addClickListener(listener);
-        addBuyOrderButton.setIcon(VaadinIcon.DOLLAR.create());
+        addBuyOrderButton.setIcon(VaadinIcon.DIAMOND.create());
     }
 
     public void setupSellAllButton(PositionViewModel position, ComponentEventListener<ClickEvent<Button>> listener) {
         sellAllButton.setEnabled(!position.getIsClosed());
         sellAllButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        sellAllButton.setTooltipText("Sell all");
+        sellAllButton.setTooltipText("Sell");
         sellAllButton.addClickListener(listener);
         sellAllButton.setIcon(VaadinIcon.CASH.create());
     }
@@ -48,11 +48,15 @@ public class PositionButtonTools extends HorizontalLayout {
         editButton.addClickListener(listener);
     }
 
-    public Button setupShowOrdersButton(ComponentEventListener<ClickEvent<Button>> listener) {
+    public Button setupShowOrdersButton(PositionViewModel position, ComponentEventListener<ClickEvent<Button>> listener) {
         showOrdersButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         showOrdersButton.setTooltipText("Show orders");
         showOrdersButton.addClickListener(listener);
         showOrdersButton.setIcon(VaadinIcon.CLIPBOARD.create());
+
+        if (position.getOrders().isEmpty()) {
+            showOrdersButton.setEnabled(false);
+        }
         return editButton;
     }
 }

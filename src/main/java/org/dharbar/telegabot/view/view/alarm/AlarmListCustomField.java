@@ -33,8 +33,12 @@ public class AlarmListCustomField extends CustomField<Set<AlarmViewModel>> {
     @Override
     protected void setPresentationValue(Set<AlarmViewModel> alarms) {
         content.removeAll();
-        setVisible(!alarms.isEmpty());
+        if (alarms == null || alarms.isEmpty()) {
+            setVisible(false);
+            return;
+        }
 
+        setVisible(true);
         alarms.forEach(alarm -> content.add(setupAlarm(alarm)));
     }
 

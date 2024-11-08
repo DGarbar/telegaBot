@@ -140,6 +140,11 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
         refreshItem(positionModel);
     }
 
+    public void deletePosition(UUID positionId) {
+        positionController.deletePosition(positionId);
+        refreshAll();
+    }
+
     public void deleteAlarm(UUID positionId, UUID alarmId) {
         positionController.deleteAlarm(positionId, alarmId);
         // refreshItem();

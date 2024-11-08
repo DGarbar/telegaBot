@@ -19,3 +19,9 @@ services:
       - ./data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    name: finance_app_network
