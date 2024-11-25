@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.dharbar.telegabot.bot.scenario.CommandScenario;
 import org.dharbar.telegabot.bot.scenario.ScenarioResult;
-import org.dharbar.telegabot.job.JobService;
-import org.dharbar.telegabot.job.jobs.AlertPriceJob.AlertPriceJobData;
+import org.dharbar.telegabot.job.BinanceP2pAlertPriceJobService;
+import org.dharbar.telegabot.job.jobs.BinanceP2pAlertPriceJob.AlertPriceJobData;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -28,7 +28,7 @@ public class WatchScenario implements CommandScenario {
     public static final String WATCH_CUSTOM_COMMAND = "/watchCustom";
     public static final int MIN_AMOUNT = 10000;
 
-    private final JobService jobService;
+    private final BinanceP2pAlertPriceJobService jobService;
 
     // TODO to db
     private static double defaultPrice = 40.31;

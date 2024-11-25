@@ -20,6 +20,7 @@ public class UpdatePositionRequest {
 
     Set<UpdateOrderRequest> orders = new HashSet<>();
     Set<UpdatePriceTriggerRequest> priceTriggers = new HashSet<>();
+    Set<UpdateDateTriggerRequest> dateTriggers = new HashSet<>();
 
     String comment;
 }

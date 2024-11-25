@@ -28,6 +28,7 @@ public class PositionViewModel {
 
     Set<OrderViewModel> orders;
     Set<PriceTriggerViewModel> priceTriggers;
+    Set<DateTriggerViewModel> dateTriggers;
     Set<AlarmViewModel> alarms;
 
     // Calculated fields

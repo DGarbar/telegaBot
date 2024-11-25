@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dharbar.telegabot.bot.scenario.CommandScenario;
 import org.dharbar.telegabot.bot.scenario.ScenarioResult;
 import org.dharbar.telegabot.facade.RateFacade;
-import org.dharbar.telegabot.job.JobService;
+import org.dharbar.telegabot.job.BinanceP2pAlertPriceJobService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -24,7 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
 
-    private final JobService jobService;
+    private final BinanceP2pAlertPriceJobService jobService;
     private final RateFacade rateService;
 
     private final List<CommandScenario> commandScenarios;

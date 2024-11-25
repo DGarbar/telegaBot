@@ -3,12 +3,12 @@ package org.dharbar.telegabot.service.ticker;
 import org.dharbar.telegabot.repository.TickerRepository;
 import org.dharbar.telegabot.repository.entity.TickerEntity;
 import org.dharbar.telegabot.repository.entity.TickerType;
-import org.dharbar.telegabot.service.pricetrigger.PriceTriggerService;
 import org.dharbar.telegabot.service.ticker.dto.TickerDto;
 import org.dharbar.telegabot.service.ticker.dto.TickerPrice;
 import org.dharbar.telegabot.service.ticker.dto.TickerRangePrice;
 import org.dharbar.telegabot.service.ticker.mapper.TickerMapper;
 import org.dharbar.telegabot.service.ticker.tickerprice.TickerPriceProvider;
+import org.dharbar.telegabot.service.trigger.price.PriceTriggerService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

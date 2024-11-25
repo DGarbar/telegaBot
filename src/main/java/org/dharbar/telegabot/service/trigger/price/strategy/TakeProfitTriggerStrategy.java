@@ -1,5 +1,6 @@
-package org.dharbar.telegabot.service.pricetrigger.strategy;
+package org.dharbar.telegabot.service.trigger.price.strategy;
 
+import org.dharbar.telegabot.bot.TelegramBot;
 import org.dharbar.telegabot.repository.PriceTriggerRepository;
 import org.dharbar.telegabot.repository.entity.PriceTriggerEntity;
 import org.dharbar.telegabot.repository.entity.TriggerType;
@@ -15,8 +16,8 @@ import java.util.List;
 @Service
 public class TakeProfitTriggerStrategy extends TriggerStrategy {
 
-    protected TakeProfitTriggerStrategy(AlarmService alarmService, PriceTriggerRepository priceTriggerRepository) {
-        super(alarmService, priceTriggerRepository);
+    protected TakeProfitTriggerStrategy(AlarmService alarmService, PriceTriggerRepository priceTriggerRepository, TelegramBot telegramBot) {
+        super(alarmService, priceTriggerRepository, telegramBot);
     }
 
     @Override
@@ -41,6 +42,8 @@ public class TakeProfitTriggerStrategy extends TriggerStrategy {
             alarmService.createAlarm(stopLossTrigger.getPosition().getId(), type());
             stopLossTrigger.setIsTriggered(true);
             priceTriggerRepository.save(stopLossTrigger);
+
+            sendMessage("Take profit triggered for " + stopLossTrigger.getPosition().getTicker() + " at " + stopLossTrigger.getTriggerPrice());
         }
     }
 

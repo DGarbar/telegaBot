@@ -31,7 +31,7 @@ public class OrderGrid extends Grid<OrderViewModel> {
                     tools.setupEditButton(e -> orderDialog.showEdit(order, o -> positionDataProvider.updateOrderPosition(order.getPositionId(), o)));
                     tools.setupChangePositionButton(e -> changePositionDialog.showChangePosition(order));
                 }))
-                .setHeader("Edit").setFlexGrow(5);
+                .setHeader("Edit").setAutoWidth(true).setFlexGrow(5);
 
         sort(List.of(new GridSortOrder<>(date, SortDirection.DESCENDING)));
     }

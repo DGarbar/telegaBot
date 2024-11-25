@@ -27,6 +27,7 @@ public class PositionDto {
     Set<OrderDto> orders;
 
     Set<PriceTriggerDto> priceTriggers;
+    Set<DateTriggerDto> dateTriggers;
 
     Set<AlarmDto> alarms;
 

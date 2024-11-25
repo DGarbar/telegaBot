@@ -67,6 +67,10 @@ public class PositionEntity {
 
     @Setter(AccessLevel.PRIVATE)
     @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<DateTriggerEntity> dateTriggers = new HashSet<>();
+
+    @Setter(AccessLevel.PRIVATE)
+    @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AlarmEntity> alarms = new HashSet<>();
 
     @Column(nullable = false)
@@ -127,6 +131,16 @@ public class PositionEntity {
     public void removePriceTrigger(PriceTriggerEntity priceTrigger) {
         priceTriggers.remove(priceTrigger);
         priceTrigger.setPosition(null);
+    }
+
+    public void addDateTrigger(DateTriggerEntity dateTrigger) {
+        dateTriggers.add(dateTrigger);
+        dateTrigger.setPosition(this);
+    }
+
+    public void removeDateTrigger(DateTriggerEntity dateTrigger) {
+        dateTriggers.remove(dateTrigger);
+        dateTrigger.setPosition(null);
     }
 
     @Override

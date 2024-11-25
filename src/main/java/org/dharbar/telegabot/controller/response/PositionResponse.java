@@ -25,6 +25,7 @@ public class PositionResponse {
 
     Set<OrderResponse> orders;
     Set<PriceTriggerResponse> priceTriggers;
+    Set<DateTriggerResponse> dateTriggers;
     Set<AlarmResponse> alarms;
 
     Boolean isClosed;

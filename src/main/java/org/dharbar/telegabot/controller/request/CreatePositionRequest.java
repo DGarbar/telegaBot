@@ -20,7 +20,8 @@ public class CreatePositionRequest {
 
     Set<CreateOrderRequest> orders = new HashSet<>();
 
-    Set<CreatePriceTriggerRequest> priceTriggers= new HashSet<>();
+    Set<CreatePriceTriggerRequest> priceTriggers = new HashSet<>();
+    Set<CreateDateTriggerRequest> dateTriggers = new HashSet<>();
 
     String comment;
 }

@@ -54,6 +54,7 @@ public class PositionGrid extends Grid<PositionViewModel> {
 
         OrderDialog orderDialog = new OrderDialog();
         addColumn(getToolButtonRenderer(positionForm, positionDataProvider, orderDialog))
+                .setAutoWidth(true)
                 .setHeader("Tools").setFlexGrow(7);
 
         sort(List.of(new GridSortOrder<>(openAtColumn, SortDirection.DESCENDING)));

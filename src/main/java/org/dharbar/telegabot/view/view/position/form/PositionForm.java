@@ -218,6 +218,7 @@ public class PositionForm extends Div {
         PositionViewModel position = PositionViewModel.builder()
                 .orders(new HashSet<>())
                 .priceTriggers(new HashSet<>())
+                .dateTriggers(new HashSet<>())
                 .portfolioId(portfolioId)
                 .type(PositionType.SIMPLE)
                 .build();

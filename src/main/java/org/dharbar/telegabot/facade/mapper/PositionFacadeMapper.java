@@ -1,7 +1,9 @@
 package org.dharbar.telegabot.facade.mapper;
 
+import org.dharbar.telegabot.controller.request.CreateDateTriggerRequest;
 import org.dharbar.telegabot.controller.request.CreateOrderRequest;
 import org.dharbar.telegabot.controller.request.CreatePriceTriggerRequest;
+import org.dharbar.telegabot.controller.request.UpdateDateTriggerRequest;
 import org.dharbar.telegabot.controller.request.UpdateOrderRequest;
 import org.dharbar.telegabot.controller.request.UpdatePositionRequest;
 import org.dharbar.telegabot.controller.request.UpdatePriceTriggerRequest;
@@ -11,6 +13,7 @@ import org.dharbar.telegabot.controller.response.PositionResponse;
 import org.dharbar.telegabot.controller.response.PriceTriggerResponse;
 import org.dharbar.telegabot.repository.entity.OrderType;
 import org.dharbar.telegabot.service.position.dto.AlarmDto;
+import org.dharbar.telegabot.service.position.dto.DateTriggerDto;
 import org.dharbar.telegabot.service.position.dto.OrderDto;
 import org.dharbar.telegabot.service.position.dto.PositionDto;
 import org.dharbar.telegabot.service.position.dto.PriceTriggerDto;
@@ -40,6 +43,10 @@ public interface PositionFacadeMapper {
     Set<PriceTriggerDto> toDtoPriceTriggers(Set<CreatePriceTriggerRequest> requests);
 
     @Mapping(target = "id", ignore = true)
+    DateTriggerDto toDto(CreateDateTriggerRequest request);
+    Set<DateTriggerDto> toDtoDateTriggers(Set<CreateDateTriggerRequest> requests);
+
+    @Mapping(target = "id", ignore = true)
     OrderDto toDto(CreateOrderRequest orders);
     Set<OrderDto> toDtoOrders(Set<CreateOrderRequest> orders);
 
@@ -51,6 +58,9 @@ public interface PositionFacadeMapper {
     @Mapping(target = "isTriggered", constant = "false")
     PriceTriggerDto toDto(UpdatePriceTriggerRequest request);
     Set<PriceTriggerDto> toDtoUpdatePriceTriggers(Set<UpdatePriceTriggerRequest> requests);
+
+    DateTriggerDto toDto(UpdateDateTriggerRequest request);
+    Set<DateTriggerDto> toDtoUpdateDateTriggers(Set<UpdateDateTriggerRequest> requests);
 
     @Mapping(target = "alarms", ignore = true)
     @Mapping(target = "sellTotalAmount", ignore = true)
@@ -65,6 +75,10 @@ public interface PositionFacadeMapper {
     @Mapping(target = "buyTotalAmount", ignore = true)
     @Mapping(target = "buyQuantity", ignore = true)
     @Mapping(target = "buyAveragePrice", ignore = true)
-    PositionDto toDto(UUID id, UpdatePositionRequest request, Set<OrderDto> orders, Set<PriceTriggerDto> priceTriggerDtos);
+    PositionDto toDto(UUID id,
+                      UpdatePositionRequest request,
+                      Set<OrderDto> orders,
+                      Set<PriceTriggerDto> priceTriggerDtos,
+                      Set<DateTriggerDto> dateTriggerDtos);
 
 }

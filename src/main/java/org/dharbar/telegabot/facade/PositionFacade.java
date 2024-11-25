@@ -8,6 +8,7 @@ import org.dharbar.telegabot.controller.request.UpdatePositionRequest;
 import org.dharbar.telegabot.controller.response.PositionResponse;
 import org.dharbar.telegabot.facade.mapper.PositionFacadeMapper;
 import org.dharbar.telegabot.service.position.PositionService;
+import org.dharbar.telegabot.service.position.dto.DateTriggerDto;
 import org.dharbar.telegabot.service.position.dto.OrderDto;
 import org.dharbar.telegabot.service.position.dto.PositionDto;
 import org.dharbar.telegabot.service.position.dto.PriceTriggerDto;
@@ -48,6 +49,7 @@ public class PositionFacade {
     public PositionResponse createPosition(CreatePositionRequest request) {
         Set<OrderDto> orderDtos = positionFacadeMapper.toDtoOrders(request.getOrders());
         Set<PriceTriggerDto> priceTriggerDtos = positionFacadeMapper.toDtoPriceTriggers(request.getPriceTriggers());
+        Set<DateTriggerDto> dateTriggerDtos = positionFacadeMapper.toDtoDateTriggers(request.getDateTriggers());
         PositionDto savedPositionDto = positionService.cretePosition(
                 request.getName(),
                 request.getTicker(),
@@ -55,7 +57,9 @@ public class PositionFacade {
                 request.getPortfolioId(),
                 request.getComment(),
                 orderDtos,
-                priceTriggerDtos);
+                priceTriggerDtos,
+                dateTriggerDtos);
+
         PositionResponse response = positionFacadeMapper.toResponse(savedPositionDto);
         return populateWithAnalytic(response);
     }
@@ -64,7 +68,8 @@ public class PositionFacade {
     public PositionResponse updatePosition(UUID id, UpdatePositionRequest request) {
         Set<OrderDto> orderDtos = positionFacadeMapper.toDtoUpdateOrders(request.getOrders());
         Set<PriceTriggerDto> priceTriggerDtos = positionFacadeMapper.toDtoUpdatePriceTriggers(request.getPriceTriggers());
-        PositionDto positionDto = positionFacadeMapper.toDto(id, request, orderDtos, priceTriggerDtos);
+        Set<DateTriggerDto> dateTriggerDtos = positionFacadeMapper.toDtoUpdateDateTriggers(request.getDateTriggers());
+        PositionDto positionDto = positionFacadeMapper.toDto(id, request, orderDtos, priceTriggerDtos, dateTriggerDtos);
 
         PositionDto savedPositionDto = positionService.updatePosition(positionDto);
         PositionResponse response = positionFacadeMapper.toResponse(savedPositionDto);
@@ -94,10 +99,10 @@ public class PositionFacade {
         return populateWithAnalytic(mappedDto);
     }
 
-    private PositionResponse populateWithAnalytic(PositionResponse positionAnalyticDto) {
-        return tickerService.find(positionAnalyticDto.getTicker())
-                .map(tickerDto -> populatePositionWithCurrentValues(positionAnalyticDto, tickerDto))
-                .orElse(positionAnalyticDto);
+    private PositionResponse populateWithAnalytic(PositionResponse positionResponse) {
+        return tickerService.find(positionResponse.getTicker())
+                .map(tickerDto -> populatePositionWithCurrentValues(positionResponse, tickerDto))
+                .orElse(positionResponse);
     }
 
     private static PositionResponse populatePositionWithCurrentValues(PositionResponse positionResponse, TickerDto tickerDto) {

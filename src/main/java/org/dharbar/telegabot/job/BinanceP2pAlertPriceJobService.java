@@ -2,7 +2,7 @@ package org.dharbar.telegabot.job;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dharbar.telegabot.job.jobs.AlertPriceJob;
+import org.dharbar.telegabot.job.jobs.BinanceP2pAlertPriceJob;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -19,24 +19,26 @@ import static org.quartz.TriggerBuilder.newTrigger;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class JobService {
+public class BinanceP2pAlertPriceJobService {
+
+    private static final String JOB_KEY_PREFIX = "binance-p2p-alert-job-USDT-";
 
     private final Scheduler scheduler;
 
-    public void watchTargetPrice(AlertPriceJob.AlertPriceJobData alertPriceJobData, int secondsRetry) {
+    public void watchTargetPrice(BinanceP2pAlertPriceJob.AlertPriceJobData alertPriceJobData, int secondsRetry) {
         long chatId = alertPriceJobData.getChatId();
-        JobKey jobKey = jobKey("alert-job-USDT-" + chatId);
+        JobKey jobKey = jobKey(JOB_KEY_PREFIX + chatId);
 
         removeJob(jobKey);
 
         JobDataMap dataMap = alertPriceJobData.toDataMap();
-        JobDetail job = newJob(AlertPriceJob.class)
+        JobDetail job = newJob(BinanceP2pAlertPriceJob.class)
                 .withIdentity(jobKey)
                 .usingJobData(dataMap)
                 .build();
 
         Trigger trigger = newTrigger()
-                .withIdentity("trigger-alert-job-USDT-" + chatId)
+                .withIdentity("trigger-binance-p2p-alert-job-USDT-" + chatId)
                 .startNow()
                 .withSchedule(repeatSecondlyForTotalCount(10, secondsRetry))
                 .build();
@@ -49,11 +51,11 @@ public class JobService {
     }
 
     public void watchEnd(Long chatId) {
-        JobKey jobKey = jobKey("alert-job-USDT-" + chatId);
+        JobKey jobKey = jobKey(JOB_KEY_PREFIX + chatId);
         removeJob(jobKey);
     }
 
-    private void removeJob(JobKey jobKey) {
+    public void removeJob(JobKey jobKey) {
         try {
             boolean result = scheduler.deleteJob(jobKey);
             if (result) log.info("Job deleted: {}", jobKey);

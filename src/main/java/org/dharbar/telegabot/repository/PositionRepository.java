@@ -24,10 +24,10 @@ public interface PositionRepository extends PagingAndSortingRepository<PositionE
     @Query("SELECT p FROM PositionEntity p WHERE p.id = :id")
     Optional<PositionEntity> findByIdForUpdate(@Param("id") UUID id);
 
-    @EntityGraph(attributePaths = {"orders", "priceTriggers", "alarms"})
+    @EntityGraph(attributePaths = {"orders", "priceTriggers", "dateTriggers", "alarms"})
     Page<PositionEntity> findAll(Specification<PositionEntity> spec, Pageable pageRequest);
 
-    @EntityGraph(attributePaths = {"orders", "priceTriggers", "alarms"})
+    @EntityGraph(attributePaths = {"orders", "priceTriggers", "dateTriggers", "alarms"})
     Optional<PositionEntity> findById(UUID id);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

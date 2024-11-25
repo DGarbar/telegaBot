@@ -11,7 +11,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
@@ -50,7 +49,6 @@ public class PositionsView extends HorizontalLayout {
     private final PortfolioDataProvider portfolioDataProvider;
     private final TickerDataProvider tickerDataProvider;
 
-    private TextField filter;
     private final Button portfolioButton = new Button("Add Portfolio", VaadinIcon.PLUS_CIRCLE.create());
     private final Button newPostitionButton = new Button("New position", VaadinIcon.PLUS_CIRCLE.create());
     private final Accordion portfolioInfoTab = new Accordion();
@@ -77,6 +75,7 @@ public class PositionsView extends HorizontalLayout {
 
         grid = new PositionGrid(positionForm, positionDataProvider);
         grid.setDataProvider(positionDataProvider);
+        grid.setWidthFull();
         // Allows user to select a single row in the grid.
         // grid.asSingleSelect().addValueChangeListener(event -> viewLogic.rowSelected(event.getValue()));
 
@@ -84,8 +83,8 @@ public class PositionsView extends HorizontalLayout {
         barAndGridLayout.add(gridToolbar);
         barAndGridLayout.add(portfolioInfo);
         barAndGridLayout.add(grid);
-        barAndGridLayout.setFlexGrow(0, gridToolbar);
-        barAndGridLayout.setFlexGrow(1, grid);
+        // barAndGridLayout.setFlexGrow(0, gridToolbar);
+        // barAndGridLayout.setFlexGrow(0, grid);
         barAndGridLayout.setSizeFull();
         barAndGridLayout.expand(grid);
 
@@ -125,9 +124,6 @@ public class PositionsView extends HorizontalLayout {
         portfolioButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         portfolioButton.addClickListener(click -> portfolioCreationDialog.open());
 
-        filter = new TextField();
-        filter.setPlaceholder("(TODO) Filter name, availability or category");
-
         newPostitionButton.setEnabled(false);
         newPostitionButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         newPostitionButton.addClickListener(click -> positionForm.showNewPosition(getSelectedPortfolioId()));
@@ -137,10 +133,7 @@ public class PositionsView extends HorizontalLayout {
         topLayout.add(portfolioSelect);
         topLayout.add(portfolioButton);
         topLayout.add(isShowClosedCheckbox);
-        topLayout.add(filter);
         topLayout.add(newPostitionButton);
-        topLayout.setVerticalComponentAlignment(Alignment.START, filter);
-        topLayout.expand(filter);
 
         return topLayout;
     }

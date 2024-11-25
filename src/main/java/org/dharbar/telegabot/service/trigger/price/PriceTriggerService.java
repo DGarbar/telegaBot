@@ -1,9 +1,9 @@
-package org.dharbar.telegabot.service.pricetrigger;
+package org.dharbar.telegabot.service.trigger.price;
 
 import lombok.RequiredArgsConstructor;
-import org.dharbar.telegabot.service.pricetrigger.strategy.TriggerStrategy;
 import org.dharbar.telegabot.service.ticker.dto.TickerPrice;
 import org.dharbar.telegabot.service.ticker.dto.TickerRangePrice;
+import org.dharbar.telegabot.service.trigger.price.strategy.TriggerStrategy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

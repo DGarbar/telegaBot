@@ -6,15 +6,18 @@ import com.vaadin.flow.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import org.dharbar.telegabot.controller.PositionController;
+import org.dharbar.telegabot.controller.request.CreateDateTriggerRequest;
 import org.dharbar.telegabot.controller.request.CreateOrderRequest;
 import org.dharbar.telegabot.controller.request.CreatePositionRequest;
 import org.dharbar.telegabot.controller.request.CreatePriceTriggerRequest;
+import org.dharbar.telegabot.controller.request.UpdateDateTriggerRequest;
 import org.dharbar.telegabot.controller.request.UpdateOrderRequest;
 import org.dharbar.telegabot.controller.request.UpdatePositionRequest;
 import org.dharbar.telegabot.controller.request.UpdatePriceTriggerRequest;
 import org.dharbar.telegabot.controller.response.PositionResponse;
 import org.dharbar.telegabot.view.mapper.PositionViewMapper;
 import org.dharbar.telegabot.view.model.AlarmViewModel;
+import org.dharbar.telegabot.view.model.DateTriggerViewModel;
 import org.dharbar.telegabot.view.model.OrderViewModel;
 import org.dharbar.telegabot.view.model.PortfolioViewModel;
 import org.dharbar.telegabot.view.model.PositionViewModel;
@@ -22,6 +25,7 @@ import org.dharbar.telegabot.view.model.PriceTriggerViewModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -81,10 +85,19 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
     public void saveNewPosition(PositionViewModel position) {
         Set<CreateOrderRequest> createOrderRequests = positionViewMapper.toCreateOrderRequests(position.getOrders());
         Set<CreatePriceTriggerRequest> createPriceTriggerRequests = positionViewMapper.toCreatePriceTriggerRequests(position.getPriceTriggers());
+        Set<CreateDateTriggerRequest> createDateTriggerRequests = positionViewMapper.toCreateDateTriggerRequests(position.getDateTriggers());
 
-        CreatePositionRequest createPositionRequest = positionViewMapper.toCreatePositionRequest(position,
+
+        createDateTriggerRequests.add(CreateDateTriggerRequest.builder()
+                        .comment("TEST")
+                        .triggerDate(LocalDateTime.now().plusSeconds(10))
+                .build());
+
+        CreatePositionRequest createPositionRequest = positionViewMapper.toCreatePositionRequest(
+                position,
                 createOrderRequests,
-                createPriceTriggerRequests);
+                createPriceTriggerRequests,
+                createDateTriggerRequests);
         positionController.createPosition(createPositionRequest);
 
         refreshAll();
@@ -93,10 +106,13 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
     public void updatePosition(PositionViewModel position) {
         Set<UpdateOrderRequest> updateOrderRequests = positionViewMapper.toUpdateOrderRequests(position.getOrders());
         Set<UpdatePriceTriggerRequest> updatePriceTriggerRequests = positionViewMapper.toUpdatePriceTriggerRequests(position.getPriceTriggers());
+        Set<UpdateDateTriggerRequest> updateDateTriggerRequests = positionViewMapper.toUpdateDateTriggerRequests(position.getDateTriggers());
 
-        UpdatePositionRequest updatePositionRequest = positionViewMapper.toUpdatePositionRequest(position,
+        UpdatePositionRequest updatePositionRequest = positionViewMapper.toUpdatePositionRequest(
+                position,
                 updateOrderRequests,
-                updatePriceTriggerRequests);
+                updatePriceTriggerRequests,
+                updateDateTriggerRequests);
         PositionResponse positionResponse = positionController.updatePosition(position.getId(), updatePositionRequest);
         PositionViewModel model = toModel(positionResponse);
 
@@ -159,8 +175,9 @@ public class PositionDataProvider extends AbstractBackEndDataProvider<PositionVi
         UUID positionId = positionResponse.getId();
         Set<OrderViewModel> orders = positionViewMapper.toOrderModels(positionResponse.getOrders(), positionId);
         Set<PriceTriggerViewModel> priceTriggers = positionViewMapper.toPriceTriggerModels(positionResponse.getPriceTriggers(), positionId);
+        Set<DateTriggerViewModel> dateTriggers = positionViewMapper.toDateTriggerModels(positionResponse.getDateTriggers(), positionId);
         Set<AlarmViewModel> alarms = positionViewMapper.toAlarmModels(positionResponse.getAlarms(), positionId);
 
-        return positionViewMapper.toModel(positionResponse, orders, priceTriggers, alarms);
+        return positionViewMapper.toModel(positionResponse, orders, priceTriggers, dateTriggers, alarms);
     }
 }

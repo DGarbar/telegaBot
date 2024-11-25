@@ -1,5 +1,6 @@
-package org.dharbar.telegabot.service.pricetrigger.strategy;
+package org.dharbar.telegabot.service.trigger.price.strategy;
 
+import org.dharbar.telegabot.bot.TelegramBot;
 import org.dharbar.telegabot.repository.PriceTriggerRepository;
 import org.dharbar.telegabot.repository.entity.PriceTriggerEntity;
 import org.dharbar.telegabot.repository.entity.TriggerType;
@@ -15,8 +16,8 @@ import java.util.List;
 @Service
 public class StopLossTriggerStrategy extends TriggerStrategy {
 
-    protected StopLossTriggerStrategy(AlarmService alarmService, PriceTriggerRepository priceTriggerRepository) {
-        super(alarmService, priceTriggerRepository);
+    protected StopLossTriggerStrategy(AlarmService alarmService, PriceTriggerRepository priceTriggerRepository, TelegramBot telegramBot) {
+        super(alarmService, priceTriggerRepository, telegramBot);
     }
 
     @Override
@@ -38,9 +39,13 @@ public class StopLossTriggerStrategy extends TriggerStrategy {
 
     private void process(List<PriceTriggerEntity> stopLossTriggers) {
         for (PriceTriggerEntity stopLossTrigger : stopLossTriggers) {
+
+            // !!! Why do I need alarm if I can just see IsTriggered
             alarmService.createAlarm(stopLossTrigger.getPosition().getId(), type());
             stopLossTrigger.setIsTriggered(true);
             priceTriggerRepository.save(stopLossTrigger);
+
+            sendMessage("Stop loss triggered for " + stopLossTrigger.getPosition().getTicker() + " at " + stopLossTrigger.getTriggerPrice());
         }
     }
 

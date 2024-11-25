@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: 241124-add-date-trigger
+      author: dgarbar
+      changes:
+        - tagDatabase:
+            tag: 241124-add-date-trigger
+
+        - createTable:
+            tableName: date_trigger
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: position_id
+                  type: UUID
+                  constraints:
+                    foreignKeyName: fk_date_trigger_position
+                    references: position(id)
+              - column:
+                  name: comment
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: trigger_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false

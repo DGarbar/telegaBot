@@ -18,7 +18,7 @@ import java.util.Map;
 @Component
 @Log4j2
 @RequiredArgsConstructor
-public class AlertPriceJob extends BotJob {
+public class BinanceP2pAlertPriceJob extends BotJob {
 
     public static final String TARGET_PRICE_PARAMETER = "targetPrice";
     public static final String MIN_AMOUNT_PARAMETER = "minAmount";

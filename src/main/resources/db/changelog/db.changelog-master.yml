@@ -27,4 +27,6 @@ databaseChangeLog:
       file: classpath:db/changelog/v1/241014-update-position-colum-scale.yml
   - include:
       file: classpath:db/changelog/v1/241015-update-triggers-scale.yml
+  - include:
+      file: classpath:db/changelog/v1/241124-add-date-trigger.yml
 
